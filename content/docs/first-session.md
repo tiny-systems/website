@@ -20,6 +20,8 @@ through the night.
 - `tiny new` with no task attaches you straight into the agent's terminal.
 - `tiny new --image golang:1.26 --cpu 2 --memory 4Gi "…"` starts it in your
   toolchain, sized.
+- `tiny new --agent codex "…"` runs [Codex instead of Claude](/docs/agents/);
+  `--model` picks the model for either.
 - Attach any time from any machine with the fleet screen; the session is
   exactly where you left it.
 

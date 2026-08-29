@@ -26,6 +26,7 @@ Run `tiny` with no arguments:
 | `enter` | attach to the session's terminal |
 | `a` | answer a ✳ question — answering performs the action, as you |
 | `m` | type a message straight into a session's prompt |
+| `b` | broadcast one message to every unfinished session |
 | `d` | delete a session |
 
 **Drop a file** onto the terminal — fleet screen or attached session — and

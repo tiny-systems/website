@@ -19,6 +19,17 @@ echo "issue #7: checkout test is flaky" | tiny deliver root --ensure
 
 `--ensure` creates the session if it doesn't exist yet.
 
+## Broadcast
+
+`b` on the fleet screen sends one message to **every unfinished session's**
+inbox — running, paused on a usage limit, or mid-restart alike. The same
+megaphone exists as a command for cron and CI:
+
+```
+tiny broadcast "demo at 10 — wrap up & open PRs"
+echo "ship it" | tiny broadcast
+```
+
 ## Uploads
 
 Drop a file onto the terminal — fleet screen or attached session — and it
