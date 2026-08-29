@@ -11,17 +11,17 @@ tiny now runs OpenAI's Codex next to Claude Code:
 tiny new --agent codex "add rate limiting, open a PR"
 ```
 
-Same fleet screen, same human gate, same credential-less outbox, same
-pod-death resume. We had a design goal that the second agent should prove
-the runtime is agent-agnostic — here's how that held up.
+The fleet screen, the gate, the outbox and pod-death resume work the same
+as with Claude. We wanted the second agent to prove the runtime is
+agent-agnostic; here's how that held up.
 
 ## What transferred for free
 
 Everything above the agent binary. The session is a Deployment with a
-persistent workspace; the sidecar's MCP tools (`ask_human`, `set_title`,
-`session_create`…) speak streamable HTTP on localhost; the inbox types
-into a tmux pane. Codex supports MCP over HTTP and lives happily in tmux,
-so the fleet screen showed a Codex session's live title on the first try.
+persistent workspace, the sidecar's MCP tools speak HTTP on localhost,
+and the inbox types into a tmux pane. Codex supports MCP over HTTP and
+runs fine in tmux, so the fleet screen showed a Codex session's live
+title on the first try.
 
 Codex is even easier to inject than Claude: it ships as a **static musl
 binary**, so it runs in any Linux image — no glibc contract, no node
@@ -39,19 +39,18 @@ nice invariant behind it: tiny runs **one pod per session** (Recreate
 strategy), so any writer lock present at startup belongs to a dead pod by
 definition. Sweep and resume.
 
-**The nudge race.** A resumed agent reopens its transcript and waits
-politely for input, so the entrypoint types a nudge into the terminal.
-Codex's TUI was still replaying the transcript when Enter arrived — the
-message sat in the composer, unsent, forever. The fix is embarrassing and
-honest: wait, press Enter again. Terminal automation is like that.
+**The nudge race.** A resumed agent reopens its transcript and waits for
+input, so the entrypoint types a nudge into the terminal. Codex's TUI was
+still replaying the transcript when Enter arrived, and the message sat in
+the composer, unsent, forever. The fix is embarrassing: wait a few
+seconds, press Enter again. Terminal automation is like that.
 
 ## Subscriptions, not meters
 
-The part we care about most: `codex login` on your laptop (ChatGPT
-Plus/Pro), then `tiny setup` finds the login and stores it in your
-cluster. A whole fleet on the flat plan you already pay for — same story
-as Claude Pro/Max, now on both sides of the fence.
+`codex login` on your laptop (ChatGPT Plus/Pro), then `tiny setup` finds
+the login and stores it in your cluster. Sessions run on the flat plan
+you already pay for, the same way Claude Pro/Max sessions do.
 
-Both bugs were in the seams — locks and terminals — not in anything
-model-specific. That's the runtime working as designed: agents are cattle,
-the garden is the product.
+Both bugs were in the seams (locks and terminals), not in anything
+model-specific. That is roughly what we hoped the second agent would
+show.

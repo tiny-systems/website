@@ -19,13 +19,13 @@ runs-on: [self-hosted, tiny]
 ## Why in-cluster
 
 The [issue → PR loop](/docs/github-loop/) needs to reach the sessions:
-`tiny deliver` writes to a Session object, `tiny export` lifts bundles
-over the exec API. Run those on GitHub's hosted runners and you'd be
-opening your cluster to the internet; run them on the in-cluster runner
-and the credentials never leave home — a labeled issue reaches its
-session's inbox in about **five seconds**, and the courier that empties
-the [outbox](/docs/outbox/) runs right next to the fleet.
+`tiny deliver` writes to a Session object and `tiny export` lifts bundles
+over the exec API. Running those on GitHub's hosted runners would mean
+exposing your cluster to the internet. On the in-cluster runner the
+cluster credentials stay in the cluster, a labeled issue reaches its
+session's inbox in about five seconds, and the courier that empties the
+[outbox](/docs/outbox/) runs next to the fleet.
 
-The runner image carries the `tiny` CLI (it installs itself via an init
-container — the same injection trick as [agent images](/docs/images/)).
-Both jobs use the binary you already know: `tiny deliver`, `tiny export`.
+The runner image carries the `tiny` CLI, installed by an init container
+the same way [agent images](/docs/images/) get theirs. The workflow jobs
+use the same binary you run on your laptop.

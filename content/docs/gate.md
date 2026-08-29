@@ -1,14 +1,14 @@
 ---
 title: The gate
-description: Every dangerous decision parks as an auditable Kubernetes object until a human answers.
+description: Dangerous decisions park as Kubernetes objects until a human answers.
 weight: 60
 section: THE LOOP
 ---
 
-When an agent reaches a decision it must not make alone — a force-push, a
-spawn, provisioning infrastructure — it calls the sidecar's `ask_human`
-tool, and that call **blocks**. Minutes or hours. The agent literally
-cannot proceed; there is no timeout-and-guess.
+When an agent reaches a decision it should not make alone (a force-push,
+a spawn, provisioning infrastructure), it calls the sidecar's `ask_human`
+tool, and that call blocks until someone answers. Minutes or hours. There
+is no timeout after which it guesses.
 
 The blocked call is a Question CR — visible to anyone with kubectl:
 
@@ -29,10 +29,10 @@ things happen as one:
    this add-on — your answer *performs it, with your credentials*. The
    cluster's audit log names you, not a service account.
 
-That second half is the design: there is no privileged manager acting on
-approvals. The sidecar that raises questions is powerless — it can create
-Questions and update its own session's status, nothing else. Your `y` is
-the only thing in the system with the power to say yes.
+There is no privileged manager acting on approvals. The sidecar that
+raises questions can create Questions and update its own session's
+status, and that is all it can do. The approved action runs with the
+answering human's credentials or it does not run.
 
 ## What flows through the gate
 
@@ -41,10 +41,10 @@ the only thing in the system with the power to say yes.
 - **Add-ons** — an agent that wants the artifact store calls
   `enable_store`; your answer provisions it and returns the wiring
   command to the agent.
-- **Anything the agent decides is truly yours** — the house rules tell it
-  to `ask_human` before anything hard to undo. It's a convention the
-  model follows, backed by the hard rule that the agent holds no
-  credentials with which to go around you.
+- **Anything hard to undo** — the house rules tell the agent to
+  `ask_human` first. That part is a convention the model follows; the
+  hard backstop is that the agent holds no credentials to go around you
+  with.
 
 Questions whose session is gone still show on the fleet screen as
-`(unattributed)` — no decision waits invisibly.
+`(unattributed)`, so no decision waits invisibly.

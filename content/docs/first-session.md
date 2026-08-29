@@ -15,9 +15,9 @@ $ tiny new "fix the flaky checkout test, open a PR"
 
 A session is a Kubernetes object whose workload is a plain Deployment:
 the agent in a detachable tmux plus a small sidecar. The workspace is a
-**persistent volume**; the pod is disposable. Close your laptop, lose
-wifi, let the pod be rescheduled — the session keeps working, and a
-replacement pod resumes the transcript mid-thought.
+persistent volume and the pod is disposable, so a rescheduled pod
+resumes the transcript instead of starting over. Closing your laptop
+does not interrupt anything.
 
 ## Ways to start one
 
@@ -38,9 +38,9 @@ memory.
 ## Attaching
 
 `enter` on the fleet screen, any time, from any machine with the
-kubeconfig. You land in the **real agent CLI over a TTY** — every hotkey,
-plan mode, slash commands, your `.mcp.json` servers. It's tmux under-
-neath (prefix `ctrl-q`, `ctrl-b` works too):
+kubeconfig. You land in the real agent CLI over a TTY, with its hotkeys, plan mode,
+slash commands and your `.mcp.json` servers. It's tmux underneath
+(prefix `ctrl-q`; `ctrl-b` also works):
 
 | keys | what |
 |---|---|
@@ -54,8 +54,8 @@ the agent — finished sessions included.
 
 ## Lifecycle
 
-A session ends when its work does, but it *stays* — workspace, transcript
-and all — until you delete it (`d` then `y` on the fleet screen, or
-`kubectl delete session <name>`). Deletion garbage-collects everything a
-session owns via owner references: pod, volume, secrets, children's
-nothing — children are their own sessions.
+A finished session stays, with its workspace and transcript, until you
+delete it (`d` then `y` on the fleet screen, or `kubectl delete session
+<name>`). Deletion garbage-collects what the session owns through owner
+references: pod, volume, its secrets. Children are separate sessions and
+keep running.

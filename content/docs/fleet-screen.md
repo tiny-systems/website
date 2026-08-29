@@ -1,6 +1,6 @@
 ---
 title: The fleet screen
-description: Who runs, who needs you — one screen for the whole namespace.
+description: One screen for the namespace, showing who runs and who is waiting on you.
 weight: 30
 section: START
 ---
@@ -23,16 +23,14 @@ Run `tiny` with no arguments:
 
 ## Reading it
 
-- **WHAT is live** — the agent's own declared title, refreshed by its own
-  turns, plus turn-by-turn activity. A paused session says why and when
-  it resumes; a session with a bad token quotes the agent's own error.
-- **CPU/MEM are self-reported** by each session from its own cgroup — no
-  metrics-server, no extra RBAC to grant.
-- **✳ means a question waits.** Rows keep creation order on purpose —
-  nothing jumps around when a question arrives; the glyph is the signal,
-  position is not.
-- **Children render under their parent** (`└`) — the spawn tree reads as
-  a tree.
+- **WHAT is live.** It shows the agent's own declared title, refreshed as
+  it works. A paused session says why and when it resumes; a session with
+  a bad token quotes the agent's own error message.
+- **CPU/MEM are self-reported** by each session from its own cgroup, so
+  the screen works without metrics-server or extra RBAC.
+- **✳ means a question waits.** Rows keep creation order on purpose, so
+  nothing jumps around when a question arrives.
+- **Children render under their parent** (`└`).
 
 ## Keys
 
@@ -43,7 +41,7 @@ Run `tiny` with no arguments:
 | `m` | message the selected session (durable inbox) |
 | `b` | broadcast to every unfinished session |
 | `n` / `o` | new session — blank / the full options form |
-| `d`, then `y` | delete — a session is a workspace and a transcript, never gone on one keystroke |
+| `d`, then `y` | delete (two keystrokes on purpose: a session is a workspace and a transcript) |
 | `r` | refresh |
 
 **Drop a file onto the terminal** — fleet screen or attached — and it
@@ -52,6 +50,6 @@ path.
 
 ## Namespace settings
 
-`☰` toggles the [add-ons](/docs/registry-cache/) — registry cache,
-artifact store, GitHub runner — one checkbox each, applied by your
-client with your credentials the moment you flip them.
+`☰` toggles the [add-ons](/docs/registry-cache/): registry cache,
+artifact store, GitHub runner. Your client applies each one with your
+credentials when you flip it.

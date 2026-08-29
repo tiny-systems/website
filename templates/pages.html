@@ -28,7 +28,7 @@
 </div>
 {{template "foot"}}{{end}}
 
-{{define "blogindex"}}{{template "head" (dict_ "title" "Field notes — the tiny blog" "desc" "Field notes from building tiny: design decisions, war stories, and what we learned running fleets of coding agents on Kubernetes." "path" "/blog/")}}
+{{define "blogindex"}}{{template "head" (dict_ "title" "Field notes — the tiny blog" "desc" "Notes from building tiny: design decisions and what broke along the way." "path" "/blog/")}}
 {{template "mast"}}
 <section style="padding-top:50px"><div class="wrap">
   <div class="man"><span>FIELD NOTES</span><span class="pg">the blog</span></div>
@@ -52,14 +52,14 @@
 </div>
 {{template "foot"}}{{end}}
 
-{{define "notfound"}}{{template "head" (dict_ "title" "404 — no manual entry" "desc" "This page was pruned, replanted, or never sown." "path" "/404.html")}}
+{{define "notfound"}}{{template "head" (dict_ "title" "404 — no manual entry" "desc" "This page does not exist." "path" "/404.html")}}
 {{template "mast"}}
 <div class="wrap nf">
   <div class="manbar" style="opacity:.55"><span>TINY(404)</span><span>No Manual Entry</span><span>TINY(404)</span></div>
   <div style="display:flex;justify-content:center;margin-top:34px"><span style="width:72px;height:72px;display:inline-block">{{template "sprout"}}</span></div>
   <h1>4<span class="g">0</span>4</h1>
-  <p class="m1">no manual entry for this path — it was pruned, replanted, or never sown.</p>
-  <p class="m2">The old site was composted; everything that mattered grew back in new beds:</p>
+  <p class="m1">no manual entry for this path.</p>
+  <p class="m2">The old site is gone. What mattered moved here:</p>
   <p class="links">
     <a href="/docs/">docs — the manual</a> &nbsp;·&nbsp; <a href="/blog/">blog — field notes</a> &nbsp;·&nbsp; <a href="/">home</a> &nbsp;·&nbsp; <a href="https://github.com/tiny-systems/tiny">github</a>
   </p>

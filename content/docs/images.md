@@ -1,6 +1,6 @@
 ---
 title: Custom images
-description: Any glibc image becomes an agent environment — an init container injects everything else.
+description: An init container injects the agent into any glibc image you name.
 weight: 70
 section: SESSIONS
 ---
@@ -14,10 +14,10 @@ tiny new --image registry.internal/yourco/dev:latest "…"
 
 ## How injection works
 
-You don't bake an agent image. An **init container copies the payload**
-— claude, codex, a static tmux, `tiny-notify`, the entrypoint — into a
-shared volume, and your image runs with that mounted at `/tiny`. The
-whole tree is relocatable; your image is untouched.
+You don't bake an agent image. An init container copies the payload
+(claude, codex, a static tmux, `tiny-notify`, the entrypoint) into a
+shared volume, and your image runs with that mounted at `/tiny`. Your
+image itself is untouched.
 
 The contract your image must meet is deliberately small:
 
@@ -26,8 +26,8 @@ The contract your image must meet is deliberately small:
 - **git**
 - **/bin/sh**
 
-If the contract is broken the pod fails **loudly at start** with the
-reason in the fleet row — never a silent wedge.
+If the contract is broken, the pod fails at start with the reason shown
+in the fleet row.
 
 ## Sizing and identity
 
@@ -46,5 +46,6 @@ buildah bud -t app-dev . \
   && buildah push --tls-verify=false app-dev $TINY_REGISTRY/team/app-dev:1
 ```
 
-The next session can `--image $TINY_REGISTRY/team/app-dev:1` — build,
-push, spawn, all inside the namespace, no external registry in the loop.
+The next session can run `--image $TINY_REGISTRY/team/app-dev:1`. The
+build, the push and the spawn all happen inside the namespace, without an
+external registry.

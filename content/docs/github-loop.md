@@ -1,13 +1,13 @@
 ---
 title: Issues to PRs
-description: The complete GitHub wiring — label an issue, harvest a pull request. Copy-paste ready.
+description: "The GitHub wiring, copy-paste ready: label an issue, get back a pull request."
 weight: 40
 section: THE LOOP
 ---
 
-The whole integration is **one workflow file** in your repo. No app to
-install, no webhook to register, no bot account: GitHub's own events, an
-in-cluster runner, and `tiny deliver`.
+The whole integration is one workflow file in your repo, built from
+GitHub's own events, the in-cluster runner, and `tiny deliver`. There is
+no app to install and no bot account.
 
 ## Prerequisites
 
@@ -62,11 +62,11 @@ jobs:
           } | tiny deliver root --ensure --repo "https://github.com/$GITHUB_REPOSITORY.git"
 ```
 
-That's the entire task hand-off: **a prompt piped into `tiny deliver`**.
-`--ensure` creates the root session on first contact, `--repo` seeds its
-workspace. The prompt carries the conventions — which branch names to
-use, how to send work back. Change the wording and you've changed your
-team's process; it's just text.
+The task hand-off is a prompt piped into `tiny deliver`. `--ensure`
+creates the root session on first contact and `--repo` seeds its
+workspace. The prompt carries your conventions (branch names, how to
+send work back), and since it is plain text, editing it is how you
+change the process.
 
 ## The courier job
 
@@ -103,20 +103,20 @@ you flip it), and reply branches.
 
 ## Why two jobs
 
-Token-pushed branches trigger no further workflows — GitHub's own
-recursion guard — so the courier finishes the story itself: push, PR,
-comment, ack. Nothing loops.
+Branches pushed with a job token trigger no further workflows (GitHub's
+recursion guard), so the courier has to finish the job itself: push,
+open the PR, comment, ack.
 
 ## Failure behavior
 
-- **Rebase conflict** — the courier aborts that branch with an error
-  annotation; the bundle stays pending. Fix in the session, re-bundle.
-- **Org toggle off** — PR creation returns 403; the courier fails loudly
-  and does NOT ack. Flip the toggle, the next run delivers.
-- **Runner down** — events queue in GitHub; jobs run when the runner
-  add-on is back.
+- **Rebase conflict:** the courier skips that branch with an error
+  annotation and the bundle stays pending. Fix it in the session and
+  re-bundle.
+- **Org toggle off:** PR creation returns 403. The courier fails without
+  acking, so the next run after you flip the toggle delivers.
+- **Runner down:** events queue in GitHub and the jobs run once the
+  runner add-on is back.
 
-A bundle is only ever retired after its work arrived. The loop's proof
-lives in the demo garden:
-[seedling PR #2](https://github.com/tiny-systems/seedling/pull/2), grown
-end to end from a labeled issue.
+A bundle is only retired after its work arrived. For a real end-to-end
+run, see [seedling PR #2](https://github.com/tiny-systems/seedling/pull/2),
+which started as a labeled issue.

@@ -1,4 +1,4 @@
-{{define "home"}}{{template "head" (dict_ "title" "tiny systems — a fleet of coding agents on your Kubernetes" "desc" "tiny runs Claude Code and Codex as durable Kubernetes workloads. Label a GitHub issue — harvest a pull request. No manager, no control plane, MIT licensed." "path" "/")}}
+{{define "home"}}{{template "head" (dict_ "title" "tiny systems — a fleet of coding agents on your Kubernetes" "desc" "tiny runs Claude Code and Codex as Kubernetes workloads on your own cluster. Label a GitHub issue and a pull request comes back. MIT licensed." "path" "/")}}
 {{template "mast"}}
 
 <header class="hero"><div class="wrap" style="position:relative">
@@ -14,12 +14,12 @@
   </div>
   <h1>A fleet of agents, <span class="g">growing your project</span> day&nbsp;and&nbsp;night.</h1>
   <div class="herogrid"><div>
-  <p class="sub" style="margin-top:0">tiny runs <b>Claude Code and Codex</b> as durable Kubernetes workloads. Label a GitHub issue — harvest a pull request. Attach any time, answer when asked, close the laptop. <b>No manager, no control plane — nothing to babysit.</b></p>
+  <p class="sub" style="margin-top:0">tiny runs <b>Claude Code and Codex</b> as Kubernetes workloads. Label a GitHub issue and a pull request comes back. You can close the laptop; the session keeps working, and there is no server of ours running next to it.</p>
 
   <div class="packet">
     <div class="ptop"><span>SEED PACKET Nº 1</span><span>GERMINATES IN SECONDS</span></div>
     <div class="pbody"><span class="p">$</span> brew install tiny-systems/tap/tiny</div>
-    <div class="pfoot">FULL SUN OR TOTAL DARKNESS · ANY CLUSTER · MIT</div>
+    <div class="pfoot">ANY CLUSTER · MIT LICENSED</div>
   </div>
 
   </div>
@@ -43,10 +43,10 @@
   <div class="man aud"><span>FOR YOUR TEAM</span><span class="pg">the loop: issue in · PR out</span></div>
   <h2 class="audh">Label an issue. <span class="g">Harvest a pull request.</span></h2>
   <div class="steps">
-    <div class="step"><span class="no">1</span><span><h3>Sow</h3><p>File a GitHub issue and add the <span class="k">tiny</span> label. That is the entire ceremony — anyone on the team, straight from the GitHub UI.</p></span></div>
-    <div class="step"><span class="no">2</span><span><h3>Deliver</h3><p>A <span class="g">five-second</span> Actions job on the in-cluster runner drops the issue into the root session's inbox. Event-driven; nothing polls, nothing waits around.</p></span></div>
-    <div class="step"><span class="no">3</span><span><h3>Grow</h3><p>The root session plans, spawns specialists in the right toolchains, and raises a <span style="color:var(--amber);font-weight:700">✳</span> only when a decision is truly yours. Overnight is fine — sessions survive everything, including us killing their pods on purpose.</p></span></div>
-    <div class="step"><span class="no">4</span><span><h3>Harvest</h3><p>Agents hold <span class="g">zero credentials</span>. Finished branches leave as git bundles through the outbox; a short-lived courier token opens the pull request and comments back on your issue.</p></span></div>
+    <div class="step"><span class="no">1</span><span><h3>Sow</h3><p>File a GitHub issue and add the <span class="k">tiny</span> label. That is the whole ceremony. Anyone on the team can do it from the GitHub UI.</p></span></div>
+    <div class="step"><span class="no">2</span><span><h3>Deliver</h3><p>An Actions job on the in-cluster runner pipes the issue into the root session's inbox. It usually takes about five seconds.</p></span></div>
+    <div class="step"><span class="no">3</span><span><h3>Grow</h3><p>The root session plans, spawns specialists in the right toolchains, and raises a <span style="color:var(--amber);font-weight:700">✳</span> when a decision needs a human. Overnight is fine; we test session recovery by killing pods mid-task.</p></span></div>
+    <div class="step"><span class="no">4</span><span><h3>Harvest</h3><p>Agents hold <span class="g">no credentials</span>. Finished branches leave as git bundles through the outbox, and a short-lived courier token opens the pull request and comments on your issue.</p></span></div>
   </div>
   <div class="plate" style="margin-top:34px;box-shadow:5px 5px 0 var(--green)">
     <div class="platetop"><span>THE ENTIRE INTEGRATION</span><span>.github/workflows/tiny.yml</span></div>
@@ -61,27 +61,27 @@
 <div class="row">      <span class="dim">- run: |</span></div>
 <div class="row">          printf 'issue #%s: %s\n\n%s' "$N" "$TITLE" "$BODY" \</div>
 <div class="row">            | <span class="grn">tiny deliver root --ensure</span> --repo "https://github.com/$REPO.git"</div>
-<div class="keys">the task hand-off is a prompt piped into tiny deliver — <a href="/docs/github-loop/" style="color:#7FD695">full workflow in the docs</a></div>
+<div class="keys">the task hand-off is a prompt piped into tiny deliver · <a href="/docs/github-loop/" style="color:#7FD695">full workflow in the docs</a></div>
     </div>
   </div>
-  <p class="proof">PROOF — this loop grew a real pull request in our demo garden: <a href="https://github.com/tiny-systems/seedling">github.com/tiny-systems/seedling</a></p>
+  <p class="proof">PROOF — this loop produced a real pull request in our demo repo: <a href="https://github.com/tiny-systems/seedling">github.com/tiny-systems/seedling</a></p>
 </div></section>
 
 <section><div class="wrap">
   <div class="man"><span>OPTIONS</span><span class="pg">the machinery under both</span></div>
   <dl class="opts">
-    <div class="opt"><dt>--the-real-thing</dt><dd>Attach into the genuine Claude Code CLI over a TTY — every hotkey, plan mode, skills, your <code>.mcp.json</code>. tiny wraps nothing; new features just appear.</dd></div>
-    <div class="opt"><dt>--survives-anything</dt><dd>Workspace on a volume, pod disposable. Kubernetes itself resurrects the dead; the replacement resumes the transcript mid-thought.</dd></div>
-    <div class="opt"><dt>--image any:tag</dt><dd><code>golang:1.26</code>, buildah, your dev image — the agent injects itself into whatever you name. Nothing to bake, nothing to maintain.</dd></div>
-    <div class="opt"><dt>--humans-hold-the-gate</dt><dd>Dangerous moves park as Question objects until you answer. Your <em>y</em> both approves and performs — audited as you, not a service account.</dd></div>
-    <div class="opt"><dt>--no-credentials</dt><dd>No deploy keys, no PATs, nothing stored in pods. Work leaves through the outbox; a compromised agent can neither push nor call GitHub.</dd></div>
-    <div class="opt"><dt>--no-control-plane</dt><dd>No operator, no server, no manager pod — the CLI and Kubernetes itself do everything. Only the sessions you run and the add-ons you switched on ever occupy the namespace.</dd></div>
-    <div class="opt"><dt>--tmux-native</dt><dd>Every session lives in tmux. Attaching is a real tmux attach — panes, scrollback, your muscle memory — and detaching never stops the work.</dd></div>
-    <div class="opt"><dt>--resources cpu,mem</dt><dd>Per-session requests and limits, straight from the session spec. The fleet screen shows live CPU and memory next to every name.</dd></div>
-    <div class="opt"><dt>--drop-a-file</dt><dd>Drag a file onto a session&#8217;s row in the fleet screen and it lands in that workspace. No <code>kubectl cp</code>, no scp gymnastics.</dd></div>
-    <div class="opt"><dt>--agent claude|codex</dt><dd>Two agents, one runtime. Claude Code by default; <code>--agent codex</code> runs OpenAI&#8217;s Codex — same fleet screen, same gate, same resume.</dd></div>
-    <div class="opt"><dt>--model your-pick</dt><dd>Pin the model per session — <code>claude --model</code> / <code>codex -m</code> underneath. Also a field on the options form.</dd></div>
-    <div class="opt"><dt>--broadcast</dt><dd>One message into every unfinished session&#8217;s inbox: <code>[b]</code> on the fleet screen, <code>tiny broadcast</code> for cron and CI.</dd></div>
+    <div class="opt"><dt>--the-real-thing</dt><dd>Attaching puts you in the actual Claude Code CLI over a TTY: hotkeys, plan mode, skills, your <code>.mcp.json</code>. tiny does not wrap or proxy the agent, so new agent features work without us doing anything.</dd></div>
+    <div class="opt"><dt>--survives-anything</dt><dd>The workspace is a persistent volume; the pod is disposable. Kubernetes replaces dead pods on its own, and the replacement resumes the transcript.</dd></div>
+    <div class="opt"><dt>--image any:tag</dt><dd><code>golang:1.26</code>, buildah, your own dev image: an init container injects the agent into whatever you name. You do not maintain a special image.</dd></div>
+    <div class="opt"><dt>--humans-hold-the-gate</dt><dd>Dangerous moves park as Question objects until you answer. Your <em>y</em> approves and performs the action with your credentials, so the audit log names you rather than a service account.</dd></div>
+    <div class="opt"><dt>--no-credentials</dt><dd>Pods store no deploy keys or tokens. Work leaves through the outbox, so a compromised agent cannot push or call GitHub.</dd></div>
+    <div class="opt"><dt>--no-control-plane</dt><dd>There is no operator or manager pod; the CLI and Kubernetes do the work. The namespace holds only the sessions you run and the add-ons you switched on.</dd></div>
+    <div class="opt"><dt>--tmux-native</dt><dd>Every session lives in tmux. Attaching is a real tmux attach, with panes and scrollback, and detaching does not stop the agent.</dd></div>
+    <div class="opt"><dt>--resources cpu,mem</dt><dd>Per-session requests and limits from the session spec. The fleet screen shows each session's own CPU and memory readings.</dd></div>
+    <div class="opt"><dt>--drop-a-file</dt><dd>Drag a file onto a session&#8217;s row in the fleet screen and it lands in that workspace under <code>/workspace/uploads/</code>.</dd></div>
+    <div class="opt"><dt>--agent claude|codex</dt><dd>Claude Code by default; <code>--agent codex</code> runs OpenAI&#8217;s Codex. The fleet screen, the gate and resume behave the same for both.</dd></div>
+    <div class="opt"><dt>--model your-pick</dt><dd>Pin the model per session (<code>claude --model</code> / <code>codex -m</code> underneath). Also a field on the options form.</dd></div>
+    <div class="opt"><dt>--broadcast</dt><dd>One message into every unfinished session's inbox: <code>[b]</code> on the fleet screen, or <code>tiny broadcast</code> from cron and CI.</dd></div>
   </dl>
   <div class="stamps"><span class="stamp">NO SERVER</span><span class="stamp">MIT LICENSED</span><span class="stamp">YOUR CLUSTER · YOUR KEYS</span></div>
 </div></section>
@@ -91,18 +91,18 @@
   <div class="addons">
     <div class="addon">
       <div class="atop"><span class="on">[✓] registry-cache</span><span class="what">ZOT</span></div>
-      <div class="abody"><p>Pull-through image cache inside your namespace. <code>golang:1.26</code> downloads once per cluster, not once per session — and docker.io rate limits stop being your problem. An optional DaemonSet teaches every node to trust it.</p></div>
+      <div class="abody"><p>Pull-through image cache in your namespace. <code>golang:1.26</code> downloads once instead of once per session, which also keeps you under docker.io rate limits. An optional DaemonSet installs its CA on the nodes.</p></div>
     </div>
     <div class="addon">
       <div class="atop"><span class="on">[✓] artifact-store</span><span class="what">MINIO</span></div>
-      <div class="abody"><p>S3-compatible store beside the sessions. Things too big for git — builds, screenshots, datasets — land here instead of dying with a pod.</p></div>
+      <div class="abody"><p>S3-compatible store next to the sessions, for things too big for git: builds, screenshots, datasets.</p></div>
     </div>
     <div class="addon">
       <div class="atop"><span class="on">[✓] github-runner</span><span class="what">ACTIONS</span></div>
-      <div class="abody"><p>In-cluster Actions runner. Delivery jobs run right next to the fleet — a labeled issue reaches its session&#8217;s inbox in about five seconds.</p></div>
+      <div class="abody"><p>In-cluster Actions runner, so delivery jobs can reach the sessions. A labeled issue lands in an inbox in about five seconds.</p></div>
     </div>
     <div class="addon ghost">
-      <span>[ ] your-next-one<br>the catalog keeps growing —<br>each one is a single toggle<br>in <b>tiny settings</b></span>
+      <span>[ ] your-next-one<br>each add-on is a single toggle<br>in <b>tiny settings</b></span>
     </div>
   </div>
 </div></section>
@@ -122,7 +122,7 @@
       <button class="dt" data-src="{{asset "/static/options.mp4"}}">session options</button>
     </div>
   </div>
-  <p class="proof">REAL — a real cluster, real tasks, a real <code style="font-family:var(--mono)">kubectl delete pod</code> mid-recording. Tapes in <a href="https://github.com/tiny-systems/website/tree/main/demo">the repo</a>.</p>
+  <p class="proof">Recorded against a real cluster, including the <code style="font-family:var(--mono)">kubectl delete pod</code>. Tapes in <a href="https://github.com/tiny-systems/website/tree/main/demo">the repo</a>.</p>
   <script>
   (function(){
     var vid = document.getElementById('demovid');
@@ -145,10 +145,10 @@
   <div class="man aud"><span>FOR ONE HUMAN</span><span class="pg">no team required</span></div>
   <h2 class="audh">Give your laptop a rest — <span class="g">host your Claude Code in the cloud.</span></h2>
   <div class="steps">
-    <div class="step"><span class="no">☾</span><span><h3>Close the lid</h3><p>Your session lives in the cluster, not on your machine. Close the lid mid-thought — the agent keeps working; <span class="g">attach from any terminal</span> and it's exactly where you left it.</p></span></div>
-    <div class="step"><span class="no">$</span><span><h3>Your subscription, not a token bill</h3><p>tiny runs the real CLI, so you sign in the same way you do on your laptop — <span class="g">Claude Pro/Max or ChatGPT Plus</span>. A whole fleet on the flat plan you already pay for; no thousands-of-dollars API meter.</p></span></div>
-    <div class="step"><span class="no">⏸</span><span><h3>Rate limits become naps</h3><p>Hit your usage limit at 1 a.m.? The fleet row says <span class="k">⏸ resuming 5:20am</span> — and it does, by itself. You find the finished work at breakfast.</p></span></div>
-    <div class="step"><span class="no">✳</span><span><h3>It asks before it leaps</h3><p>One glance at the fleet tells you who needs you. Answer inline, message a session without attaching, drop a file onto its row.</p></span></div>
+    <div class="step"><span class="no">☾</span><span><h3>Close the lid</h3><p>The session lives in the cluster, not on your machine. Close the lid and the agent keeps working; <span class="g">attach from any terminal</span> later and it is where you left it.</p></span></div>
+    <div class="step"><span class="no">$</span><span><h3>Your subscription, not a token bill</h3><p>tiny runs the real CLI, so you sign in the way you do on your laptop: <span class="g">Claude Pro/Max or ChatGPT Plus</span>. Sessions run on the flat plan you already pay for instead of a metered API key.</p></span></div>
+    <div class="step"><span class="no">⏸</span><span><h3>Rate limits become naps</h3><p>When a session hits your plan's usage limit, its fleet row shows <span class="k">⏸ resuming 5:20am</span>, and it resumes then on its own.</p></span></div>
+    <div class="step"><span class="no">✳</span><span><h3>It asks before it leaps</h3><p>The fleet screen shows who is waiting on you. You can answer inline, message a session without attaching, or drop a file onto its row.</p></span></div>
   </div>
 </div></section>
 
@@ -182,7 +182,7 @@ $ tiny new "make the tests not lie"</pre>
   <div class="starcall">
     <div>
       <h2 class="starhead">Built in the open, watered by stars.</h2>
-      <p class="starp">tiny is MIT-licensed and always will be. If a fleet of agents sounds like your kind of future, <b>a GitHub star is how you say “keep growing this.”</b> It's also how other gardeners find us.</p>
+      <p class="starp">tiny is MIT-licensed. We are early, and stars are the main way people find small projects like this one — <b>if you want this to keep growing, a star genuinely helps.</b></p>
     </div>
     <a class="bigstar" href="https://github.com/tiny-systems/tiny">
       <span class="bs-top">SUPPORT OUR WORK</span>
