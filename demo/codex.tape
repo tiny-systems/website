@@ -21,5 +21,5 @@ Type "q"
 Sleep 1s
 Type "clear"
 Enter
-Type "# OpenAI's Codex — same fleet, same gate, one flag."
+Type "# Codex runs on the same fleet, one flag away."
 Sleep 4s
