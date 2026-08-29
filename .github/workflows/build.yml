@@ -38,3 +38,4 @@ jobs:
           tags: |
             ghcr.io/tiny-systems/website:latest
             ghcr.io/tiny-systems/website:${{ github.sha }}
+            ghcr.io/tiny-systems/website:b${{ github.run_number }}
