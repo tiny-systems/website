@@ -1,0 +1,74 @@
+{{define "head"}}<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{.title}}</title>
+<meta name="description" content="{{.desc}}">
+<link rel="canonical" href="https://tinysystems.io{{.path}}">
+<meta property="og:title" content="{{.title}}">
+<meta property="og:description" content="{{.desc}}">
+<meta property="og:url" content="https://tinysystems.io{{.path}}">
+<meta property="og:type" content="{{if .article}}article{{else}}website{{end}}">
+<meta property="og:site_name" content="tiny systems">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400&display=swap">
+<link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+{{end}}
+
+{{define "sprout"}}<svg class="mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+  <path d="M16 18 C16 14.5 16 12.5 16 9.5" stroke="#20281F" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M16 11 C15 7.8 12.5 5.8 8.8 5.5 C9 9.5 11.5 11.6 16 11 Z" fill="#20281F"/>
+  <path d="M16 11 C16.3 6.8 19 4.2 23.5 4 C23.3 8.9 20.5 11.4 16 11 Z" fill="#2E7D41"/>
+  <rect x="8.5" y="18" width="15" height="3.2" rx="1.4" fill="#2E7D41"/>
+  <path d="M10.5 22 H21.5 L20.4 28.4 C20.3 29.1 19.6 29.5 19 29.5 H13 C12.4 29.5 11.7 29.1 11.6 28.4 Z" fill="#20281F"/>
+</svg>{{end}}
+
+{{define "mast"}}<div class="mast"><div class="wrap">
+  <div class="mastin">
+    <a href="/" style="display:flex;align-items:center" aria-label="tiny systems home">{{template "sprout"}}</a>
+    <a class="wordmark" href="/">tiny systems</a>
+    <span class="links"><a href="/docs/">docs</a><a href="/blog/">blog</a><a class="starbtn" href="https://github.com/tiny-systems/tiny">★ <span class="count" id="starcount">star</span></a></span>
+  </div>
+  <div class="manbar"><span>TINY(1)</span><span>General Commands Manual</span><span>TINY(1)</span></div>
+</div></div>{{end}}
+
+{{define "foot"}}<footer><div class="wrap in">
+  <span>tiny systems · MIT</span>
+  <a href="https://github.com/tiny-systems/tiny">github</a>
+  <a href="https://github.com/tiny-systems/homebrew-tap">brew tap</a>
+  <a href="https://github.com/tiny-systems/seedling">seedling — the demo garden</a>
+  <span style="margin-left:auto;opacity:.5">TINY(1)</span>
+</div></footer>
+<script>
+(function(){
+  var el = document.getElementById('starcount');
+  if (!el) return;
+  try {
+    var c = sessionStorage.getItem('gh-stars');
+    if (c) { el.textContent = c; return; }
+  } catch (e) {}
+  fetch('https://api.github.com/repos/tiny-systems/tiny')
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(d){
+      if (d && typeof d.stargazers_count === 'number') {
+        var n = d.stargazers_count.toLocaleString('en-US');
+        el.textContent = n;
+        try { sessionStorage.setItem('gh-stars', n); } catch (e) {}
+      }
+    })
+    .catch(function(){});
+})();
+</script>
+</body>
+</html>{{end}}
+
+{{define "docnav"}}<div class="docnav">
+  {{$cur := .cur}}{{$sec := ""}}
+  {{range .site.Docs}}{{if ne .Section $sec}}<div class="h">{{.Section}}</div>{{$sec = .Section}}{{end}}<a{{if eq .Slug $cur}} class="on"{{end}} href="{{.Path}}">{{.Title}}</a>
+  {{end}}
+</div>{{end}}

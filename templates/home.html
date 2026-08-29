@@ -1,0 +1,147 @@
+{{define "home"}}{{template "head" (dict_ "title" "tiny systems — a fleet of coding agents on your Kubernetes" "desc" "tiny runs Claude Code and Codex as durable Kubernetes workloads. Label a GitHub issue — harvest a pull request. No manager, no control plane, MIT licensed." "path" "/")}}
+{{template "mast"}}
+
+<header class="hero"><div class="wrap" style="position:relative">
+  <p class="name"><b>NAME</b> — tiny · Claude Code &amp; Codex sessions on your own Kubernetes</p>
+  <div class="dial">
+    <svg width="74" height="40" viewBox="0 0 74 40" aria-hidden="true">
+      <path d="M6 36 A32 32 0 0 1 68 36" fill="none" stroke="#20281F" stroke-width="1.6" stroke-dasharray="3 4"/>
+      <circle cx="14" cy="22" r="5.5" fill="#B4770F"/>
+      <g stroke="#B4770F" stroke-width="1.4"><line x1="14" y1="12" x2="14" y2="9"/><line x1="6" y1="16" x2="4" y2="14"/><line x1="22" y1="16" x2="24" y2="14"/></g>
+      <path d="M62 17 a6.5 6.5 0 1 0 0 11 a5.4 5.4 0 0 1 0 -11 Z" fill="#20281F"/>
+    </svg>
+    WORKS DAY &amp; NIGHT
+  </div>
+  <h1>A fleet of agents, <span class="g">growing your project</span> day&nbsp;and&nbsp;night.</h1>
+  <div class="herogrid"><div>
+  <p class="sub" style="margin-top:0">tiny runs <b>Claude Code and Codex</b> as durable Kubernetes workloads. Label a GitHub issue — harvest a pull request. Attach any time, answer when asked, close the laptop. <b>No manager, no control plane — nothing to babysit.</b></p>
+
+  <div class="packet">
+    <div class="ptop"><span>SEED PACKET Nº 1</span><span>GERMINATES IN SECONDS</span></div>
+    <div class="pbody"><span class="p">$</span> brew install tiny-systems/tap/tiny</div>
+    <div class="pfoot">FULL SUN OR TOTAL DARKNESS · ANY CLUSTER · MIT</div>
+  </div>
+
+  </div>
+  <div class="plate">
+    <div class="platetop"><span>THE FLEET SCREEN</span><span>prod/team-a</span></div>
+    <div class="platebody">
+<div><span class="p">$</span> tiny<span class="cursor"></span></div>
+<div class="row dim">    NAME            STATE        AGE    CPU     MEM   WHAT</div>
+<div class="row"><span class="amb">  ✳ checkout-bug</span>    <span>needs you</span><span class="dim">    2h    112m  840Mi</span>   May I force-push the fix? [y/N]</div>
+<div class="row"><span class="grn">  ● api-fix</span><span class="dim">         running      6h    212m  1.1Gi</span><span class="dim">   migrating auth tests to vitest</span></div>
+<div class="row"><span class="grn">  └ ● api-db</span><span class="dim">        running     41m    907m  2.9Gi   rewriting migrations in golang:1.26</span></div>
+<div class="row"><span class="grn">  ● night-run</span><span class="dim">       running     11h      1m  301Mi   ⏸ usage limit · resuming 5:20am</span></div>
+<div class="row dim">  ✓ readme          done         2d</div>
+<div class="keys">[enter] attach · [a] answer · [m] message · [b] broadcast to all · drop a file</div>
+    </div>
+  </div>
+  </div>
+</div></header>
+
+<section><div class="wrap">
+  <div class="man aud"><span>FOR YOUR TEAM</span><span class="pg">the loop: issue in · PR out</span></div>
+  <h2 class="audh">Label an issue. <span class="g">Harvest a pull request.</span></h2>
+  <div class="steps">
+    <div class="step"><span class="no">1</span><span><h3>Sow</h3><p>File a GitHub issue and add the <span class="k">tiny</span> label. That is the entire ceremony — anyone on the team, straight from the GitHub UI.</p></span></div>
+    <div class="step"><span class="no">2</span><span><h3>Deliver</h3><p>A <span class="g">five-second</span> Actions job on the in-cluster runner drops the issue into the root session's inbox. Event-driven; nothing polls, nothing waits around.</p></span></div>
+    <div class="step"><span class="no">3</span><span><h3>Grow</h3><p>The root session plans, spawns specialists in the right toolchains, and raises a <span style="color:var(--amber);font-weight:700">✳</span> only when a decision is truly yours. Overnight is fine — sessions survive everything, including us killing their pods on purpose.</p></span></div>
+    <div class="step"><span class="no">4</span><span><h3>Harvest</h3><p>Agents hold <span class="g">zero credentials</span>. Finished branches leave as git bundles through the outbox; a short-lived courier token opens the pull request and comments back on your issue.</p></span></div>
+  </div>
+  <p class="proof">PROOF — this loop grew a real pull request in our demo garden: <a href="https://github.com/tiny-systems/seedling">github.com/tiny-systems/seedling</a></p>
+</div></section>
+
+<section><div class="wrap">
+  <div class="man"><span>OPTIONS</span><span class="pg">the machinery under both</span></div>
+  <dl class="opts">
+    <div class="opt"><dt>--the-real-thing</dt><dd>Attach into the genuine Claude Code CLI over a TTY — every hotkey, plan mode, skills, your <code>.mcp.json</code>. tiny wraps nothing; new features just appear.</dd></div>
+    <div class="opt"><dt>--survives-anything</dt><dd>Workspace on a volume, pod disposable. Kubernetes itself resurrects the dead; the replacement resumes the transcript mid-thought.</dd></div>
+    <div class="opt"><dt>--image any:tag</dt><dd><code>golang:1.26</code>, buildah, your dev image — the agent injects itself into whatever you name. Nothing to bake, nothing to maintain.</dd></div>
+    <div class="opt"><dt>--humans-hold-the-gate</dt><dd>Dangerous moves park as Question objects until you answer. Your <em>y</em> both approves and performs — audited as you, not a service account.</dd></div>
+    <div class="opt"><dt>--no-credentials</dt><dd>No deploy keys, no PATs, nothing stored in pods. Work leaves through the outbox; a compromised agent can neither push nor call GitHub.</dd></div>
+    <div class="opt"><dt>--no-control-plane</dt><dd>No operator, no server, no manager pod — the CLI and Kubernetes itself do everything. Only the sessions you run and the add-ons you switched on ever occupy the namespace.</dd></div>
+    <div class="opt"><dt>--tmux-native</dt><dd>Every session lives in tmux. Attaching is a real tmux attach — panes, scrollback, your muscle memory — and detaching never stops the work.</dd></div>
+    <div class="opt"><dt>--resources cpu,mem</dt><dd>Per-session requests and limits, straight from the session spec. The fleet screen shows live CPU and memory next to every name.</dd></div>
+    <div class="opt"><dt>--drop-a-file</dt><dd>Drag a file onto a session&#8217;s row in the fleet screen and it lands in that workspace. No <code>kubectl cp</code>, no scp gymnastics.</dd></div>
+  </dl>
+  <div class="stamps"><span class="stamp">NO SERVER</span><span class="stamp">MIT LICENSED</span><span class="stamp">YOUR CLUSTER · YOUR KEYS</span></div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="man"><span>ADD-ONS</span><span class="pg">one checkbox each · three today, and counting</span></div>
+  <div class="addons">
+    <div class="addon">
+      <div class="atop"><span class="on">[✓] registry-cache</span><span class="what">ZOT</span></div>
+      <div class="abody"><p>Pull-through image cache inside your namespace. <code>golang:1.26</code> downloads once per cluster, not once per session — and docker.io rate limits stop being your problem. An optional DaemonSet teaches every node to trust it.</p></div>
+    </div>
+    <div class="addon">
+      <div class="atop"><span class="on">[✓] artifact-store</span><span class="what">MINIO</span></div>
+      <div class="abody"><p>S3-compatible store beside the sessions. Things too big for git — builds, screenshots, datasets — land here instead of dying with a pod.</p></div>
+    </div>
+    <div class="addon">
+      <div class="atop"><span class="on">[✓] github-runner</span><span class="what">ACTIONS</span></div>
+      <div class="abody"><p>In-cluster Actions runner. Delivery jobs run right next to the fleet — a labeled issue reaches its session&#8217;s inbox in about five seconds.</p></div>
+    </div>
+    <div class="addon ghost">
+      <span>[ ] your-next-one<br>the catalog keeps growing —<br>each one is a single toggle<br>in <b>tiny settings</b></span>
+    </div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="man"><span>DEMONSTRATION</span><span class="pg">recorded, not staged</span></div>
+  <div class="demo"><div class="play">▶</div><p>VHS terminal recording — re-rendered by CI on every release, so it can never go stale</p></div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="man aud"><span>FOR ONE HUMAN</span><span class="pg">no team required</span></div>
+  <h2 class="audh">Give your laptop a rest — <span class="g">host your Claude Code in the cloud.</span></h2>
+  <div class="steps">
+    <div class="step"><span class="no">☾</span><span><h3>Close the lid</h3><p>Your session lives in the cluster, not on your machine. Close the lid mid-thought — the agent keeps working; <span class="g">attach from any terminal</span> and it's exactly where you left it.</p></span></div>
+    <div class="step"><span class="no">$</span><span><h3>Your subscription, not a token bill</h3><p>tiny runs the real CLI, so you sign in the same way you do on your laptop — <span class="g">Claude Pro/Max or ChatGPT Plus</span>. A whole fleet on the flat plan you already pay for; no thousands-of-dollars API meter.</p></span></div>
+    <div class="step"><span class="no">⏸</span><span><h3>Rate limits become naps</h3><p>Hit your usage limit at 1 a.m.? The fleet row says <span class="k">⏸ resuming 5:20am</span> — and it does, by itself. You find the finished work at breakfast.</p></span></div>
+    <div class="step"><span class="no">✳</span><span><h3>It asks before it leaps</h3><p>One glance at the fleet tells you who needs you. Answer inline, message a session without attaching, drop a file onto its row.</p></span></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="man"><span>FIELD NOTES</span><span class="pg">the blog</span></div>
+  <div class="cat">
+    {{range $i, $p := .Site.Posts}}{{if lt $i 3}}<div class="entry"><a href="{{$p.Path}}">{{$p.Title}}</a><span class="lead"></span><span class="date">{{$p.Date}}</span></div>
+    <p class="blurb">{{$p.Description}}</p>
+    {{end}}{{end}}
+  </div>
+  <p class="proof"><a href="/blog/">all field notes →</a></p>
+</div></section>
+
+<section><div class="wrap">
+  <div class="man"><span>MANUAL</span><span class="pg">the docs — every page one static file</span></div>
+  <div class="docwrap" style="margin-top:0">
+    {{template "docnav" (dict_ "site" .Site "cur" "install")}}
+    <div class="docmain prose">
+      <h1>Install</h1>
+      <p>One binary, one wizard, no pods until your first session.</p>
+      <pre>$ brew install tiny-systems/tap/tiny
+$ tiny setup     # cluster · runtime · claude token
+$ tiny new "make the tests not lie"</pre>
+      <p>tiny pins one cluster per machine, chosen with an arrow-key picker on every start — enter&#8209;enter repeats yesterday's choice. <a href="/docs/install/">Read the full manual →</a></p>
+    </div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="man"><span>SEE ALSO</span><span class="pg">support the garden</span></div>
+  <div class="starcall">
+    <div>
+      <h2 class="starhead">Built in the open, watered by stars.</h2>
+      <p class="starp">tiny is MIT-licensed and always will be. If a fleet of agents sounds like your kind of future, <b>a GitHub star is how you say “keep growing this.”</b> It's also how other gardeners find us.</p>
+    </div>
+    <a class="bigstar" href="https://github.com/tiny-systems/tiny">
+      <span class="bs-top">SUPPORT OUR WORK</span>
+      <span class="bs-mid">★ Leave a star</span>
+      <span class="bs-bot">github.com/tiny-systems/tiny</span>
+    </a>
+  </div>
+</div></section>
+
+{{template "foot"}}{{end}}
