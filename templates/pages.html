@@ -66,3 +66,40 @@
   <p class="exit">EXIT STATUS: 404 · TRY AGAIN FROM THE INDEX</p>
 </div>
 {{template "foot"}}{{end}}
+
+{{define "privacy"}}{{template "head" (dict_ "title" "Privacy" "desc" "What this site collects, which is very little, and how to turn it off." "path" "/privacy/")}}
+{{template "mast"}}
+<div class="wrap">
+  <article class="article prose">
+    <h1>Privacy</h1>
+    <p class="adate">policy version 2026-08-29</p>
+    <p>This site is static files. There are no accounts, no forms, and no
+    advertising.</p>
+    <h2>Analytics</h2>
+    <p>We count visits with <a href="https://www.goatcounter.com/">GoatCounter</a>,
+    self-hosted at <code>ct.tinysystems.io</code>. It records the page, the
+    referrer, browser family and country. It does not use cookies and does
+    not store personal data or IP addresses.</p>
+    <p>Under the UK Data (Use and Access) Act 2025 this kind of aggregated,
+    ad-free analytics needs a notice and an easy opt-out rather than a
+    consent banner, which is why you saw a small note instead of a wall.
+    Your choice is recorded (as a salted hash, no identity) in a
+    <a href="https://tickbox.dev">Tickbox</a> audit log so we can prove we
+    honored it.</p>
+    <p><button id="privacy-toggle" style="font-family:var(--mono);font-size:14px;border:2px solid var(--ink);background:var(--paper-2);padding:8px 16px;cursor:pointer;border-radius:0"></button></p>
+    <h2>The star counter</h2>
+    <p>The masthead fetches the repo's star count from api.github.com in
+    your browser. GitHub sees that request; we see nothing.</p>
+    <h2>Questions</h2>
+    <p>dev@tinysystems.io</p>
+  </article>
+</div>
+<script>
+(function(){
+  var b=document.getElementById('privacy-toggle');
+  function label(){ b.textContent = (window.tinyConsent && tinyConsent.granted()) ? 'analytics: on — click to opt out' : 'analytics: off — click to opt back in'; }
+  function wait(){ if(window.tinyConsent){ label(); b.onclick=function(){ tinyConsent.set(!tinyConsent.granted()); label(); }; } else setTimeout(wait,150); }
+  wait();
+})();
+</script>
+{{template "foot"}}{{end}}

@@ -115,6 +115,7 @@ func run() error {
 	jobs := []job{
 		{"home", "index.html", nil},
 		{"notfound", "404.html", nil},
+		{"privacy", "privacy/index.html", nil},
 		{"docindex", "docs/index.html", nil},
 		{"blogindex", "blog/index.html", nil},
 	}
@@ -228,6 +229,7 @@ func writeSitemap(dist string, data *SiteData) error {
 	add("/")
 	add("/docs/")
 	add("/blog/")
+	add("/privacy/")
 	for _, d := range data.Docs {
 		add(d.Path)
 	}
