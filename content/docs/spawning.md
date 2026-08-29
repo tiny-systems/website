@@ -1,25 +1,38 @@
 ---
 title: Spawning sessions
-description: Sessions spawn sessions — through a human gate.
+description: Sessions spawn specialists — each one through the human gate.
 weight: 80
 section: SESSIONS
 ---
 
-A light root session plans, then asks to start specialists in the right
-toolchain with the right cpu/memory. Each spawn is a
-[Question](/docs/gate/):
+A root session plans; specialists execute. When the plan needs a
+toolchain the current image lacks, the agent doesn't improvise an install
+— the house rules tell it to spawn a specialist with `session_create`,
+naming the right `image` and sizing (`cpu`, `memory`).
+
+Every spawn is a [Question](/docs/gate/):
 
 ```
 …start a session in golang:1.26 (cpu 1) — allow?
 ```
 
-You approve from the fleet screen; **your approval materialises the
-workload with your credentials**. Children render under their parent, and
-deleting a session garbage-collects everything it owns via owner
-references.
+Your approval **materialises the child's workload with your
+credentials** — no service account creates anything on its own. Children
+render under their parent on the fleet screen; a child whose parent is
+gone shows as a root.
 
-There is no server and no operator pod behind any of this: whoever
-*creates* a session — your CLI on `tiny new`, a runner job on `tiny
-deliver`, you answering a spawn question — builds its workload. Kubernetes
-itself resurrects dead pods; kill one mid-task and the replacement resumes
-the transcript. That's stock ReplicaSet behavior, not tiny code.
+## Watching the tree
+
+The parent watches its children with `session_list` — names, phases, and
+their live titles. Children report by keeping their titles current; a
+parent typically waits, aggregates, and ships through its own
+[outbox](/docs/outbox/).
+
+## No manager anywhere
+
+The same rule as everywhere else: whoever *creates* a session builds its
+workload — your CLI on `tiny new`, a runner job on `tiny deliver`, you
+answering a spawn question. Kubernetes itself resurrects dead pods (stock
+ReplicaSet behavior); deleting a session garbage-collects everything it
+owns via owner references. There is no operator with standing power —
+[we deleted it](/blog/we-deleted-our-operator/).

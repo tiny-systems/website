@@ -1,6 +1,6 @@
 ---
 title: Custom images
-description: Any image becomes an agent environment — nothing to bake.
+description: Any glibc image becomes an agent environment — an init container injects everything else.
 weight: 70
 section: SESSIONS
 ---
@@ -9,17 +9,42 @@ section: SESSIONS
 tiny new --image golang:1.26 "…"
 tiny new --image maven:3-eclipse-temurin-21 "…"
 tiny new --image quay.io/buildah/stable --user 1000 "…"
+tiny new --image registry.internal/yourco/dev:latest "…"
 ```
 
-An init container injects the agent — claude, a static tmux, the
-entrypoint — into whatever image you name. The contract is small: **glibc,
-git, /bin/sh**. Nothing to bake, nothing to maintain; your dev image works
-as-is.
+## How injection works
 
-Builder sessions (buildah) can build images and push them to the namespace
-[registry cache](/docs/registry-cache/) at `$TINY_REGISTRY` — the next
-session runs what the last one built. Build, push, spawn, all inside the
-namespace.
+You don't bake an agent image. An **init container copies the payload**
+— claude, codex, a static tmux, `tiny-notify`, the entrypoint — into a
+shared volume, and your image runs with that mounted at `/tiny`. The
+whole tree is relocatable; your image is untouched.
 
-Size sessions with `--cpu` and `--memory`; the fleet screen shows live
-usage next to every name.
+The contract your image must meet is deliberately small:
+
+- **glibc** (debian/ubuntu/fedora-family tags; alpine/musl won't run
+  claude — codex, a static musl binary, runs anywhere)
+- **git**
+- **/bin/sh**
+
+If the contract is broken the pod fails **loudly at start** with the
+reason in the fleet row — never a silent wedge.
+
+## Sizing and identity
+
+`--cpu` / `--memory` set requests (memory is also the limit, so a runaway
+build OOMs its own session, not the node). `--user` overrides the uid for
+images whose tooling is wired to one — buildah's rootless machinery needs
+its `build` user (1000), or subuid lookups fail.
+
+## Builders: images made inside the namespace
+
+With the [registry cache](/docs/registry-cache/) on, `$TINY_REGISTRY` is
+set in every session and the cache doubles as a **push target**:
+
+```
+buildah bud -t app-dev . \
+  && buildah push --tls-verify=false app-dev $TINY_REGISTRY/team/app-dev:1
+```
+
+The next session can `--image $TINY_REGISTRY/team/app-dev:1` — build,
+push, spawn, all inside the namespace, no external registry in the loop.

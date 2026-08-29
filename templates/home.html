@@ -48,6 +48,22 @@
     <div class="step"><span class="no">3</span><span><h3>Grow</h3><p>The root session plans, spawns specialists in the right toolchains, and raises a <span style="color:var(--amber);font-weight:700">✳</span> only when a decision is truly yours. Overnight is fine — sessions survive everything, including us killing their pods on purpose.</p></span></div>
     <div class="step"><span class="no">4</span><span><h3>Harvest</h3><p>Agents hold <span class="g">zero credentials</span>. Finished branches leave as git bundles through the outbox; a short-lived courier token opens the pull request and comments back on your issue.</p></span></div>
   </div>
+  <div class="plate" style="margin-top:34px;box-shadow:5px 5px 0 var(--green)">
+    <div class="platetop"><span>THE ENTIRE INTEGRATION</span><span>.github/workflows/tiny.yml</span></div>
+    <div class="platebody" style="font-size:13px;line-height:1.8">
+<div class="row"><span class="dim">on:</span></div>
+<div class="row"><span class="dim">  issues: { types: [labeled] }</span></div>
+<div class="row"><span class="dim">jobs:</span></div>
+<div class="row">  deliver:</div>
+<div class="row"><span class="dim">    if: github.event.label.name == 'tiny'</span></div>
+<div class="row"><span class="dim">    runs-on: [self-hosted, tiny]</span></div>
+<div class="row"><span class="dim">    steps:</span></div>
+<div class="row">      <span class="dim">- run: |</span></div>
+<div class="row">          printf 'issue #%s: %s\n\n%s' "$N" "$TITLE" "$BODY" \</div>
+<div class="row">            | <span class="grn">tiny deliver root --ensure</span> --repo "https://github.com/$REPO.git"</div>
+<div class="keys">the task hand-off is a prompt piped into tiny deliver — <a href="/docs/github-loop/" style="color:#7FD695">full workflow in the docs</a></div>
+    </div>
+  </div>
   <p class="proof">PROOF — this loop grew a real pull request in our demo garden: <a href="https://github.com/tiny-systems/seedling">github.com/tiny-systems/seedling</a></p>
 </div></section>
 

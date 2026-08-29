@@ -5,15 +5,28 @@ weight: 110
 section: ADD-ONS
 ---
 
-A **minio** store in the namespace for things too big for git — builds,
-screenshots, datasets. They land here instead of dying with a pod.
+A **minio** store in the namespace for things too big for git — build
+outputs, screenshots, datasets, coverage tarballs. They land here instead
+of dying with a pod.
 
-Sessions hand each other files:
+Every session arrives pre-wired: when the store runs, the entrypoint
+configures `mc` with a `store` alias, so handing a file to the namespace
+is one command —
 
 ```
 mc cp build.tar store/artifacts/
+mc cp store/artifacts/build.tar .        # …and picking it up in another session
+mc mb store/coverage                     # buckets as needed
 ```
 
-Like every add-on it's one checkbox in namespace settings — and agents can
-request it themselves through the [gate](/docs/gate/): the store question
-parks until you answer, and your `y` provisions it.
+## Agents can ask for it
+
+A session that wants the store and doesn't find the alias calls the
+`enable_store` tool. The request parks at the [gate](/docs/gate/); your
+`y` provisions minio (with *your* credentials) and the tool returns the
+wiring command to the agent. Infrastructure on request, human on the
+trigger.
+
+Like every add-on it's also a checkbox in `☰ namespace settings` —
+applied when you flip it, torn down when you unflip it, data volume
+preserved.
