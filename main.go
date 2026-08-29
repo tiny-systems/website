@@ -75,15 +75,19 @@ func run() error {
 
 	data := &SiteData{Docs: docs, Posts: posts}
 
-	cssRaw, err := os.ReadFile("static/styles.css")
-	if err != nil {
-		return err
+	// asset stamps a content-hash version onto a /static path so a changed
+	// file always gets a fresh URL past the day-long edge cache.
+	asset := func(p string) (string, error) {
+		raw, err := os.ReadFile(strings.TrimPrefix(p, "/"))
+		if err != nil {
+			return "", fmt.Errorf("asset %s: %w", p, err)
+		}
+		return p + "?v=" + fmt.Sprintf("%x", sha256.Sum256(raw))[:8], nil
 	}
-	cssVer := fmt.Sprintf("%x", sha256.Sum256(cssRaw))[:8]
 
 	tpl, err := template.New("").Funcs(template.FuncMap{
 		"nicedate": niceDate,
-		"cssver":   func() string { return cssVer },
+		"asset":    asset,
 		"dict_": func(kv ...any) (map[string]any, error) {
 			if len(kv)%2 != 0 {
 				return nil, fmt.Errorf("dict_ needs key/value pairs")

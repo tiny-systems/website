@@ -93,16 +93,18 @@
 
 <section><div class="wrap">
   <div class="man"><span>DEMONSTRATION</span><span class="pg">recorded, not staged — pick a scene</span></div>
-  <div class="demotabs" role="tablist">
-    <button class="dt on" data-src="/static/demo.mp4">survive a pod kill</button>
-    <button class="dt" data-src="/static/codex.mp4">codex in the fleet</button>
-    <button class="dt" data-src="/static/broadcast.mp4">broadcast to all</button>
-    <button class="dt" data-src="/static/options.mp4">session options</button>
-  </div>
-  <div class="demo" style="aspect-ratio:auto">
-    <video id="demovid" autoplay loop muted playsinline preload="metadata" style="width:100%;display:block">
-      <source src="/static/demo.mp4" type="video/mp4">
-    </video>
+  <div class="demowrap">
+    <div class="demo" style="aspect-ratio:auto">
+      <video id="demovid" autoplay loop muted playsinline preload="metadata" style="width:100%;display:block">
+        <source src="{{asset "/static/demo.mp4"}}" type="video/mp4">
+      </video>
+    </div>
+    <div class="demotabs" role="tablist">
+      <button class="dt on" data-src="{{asset "/static/demo.mp4"}}">survive a pod kill</button>
+      <button class="dt" data-src="{{asset "/static/codex.mp4"}}">codex in the fleet</button>
+      <button class="dt" data-src="{{asset "/static/broadcast.mp4"}}">broadcast to all</button>
+      <button class="dt" data-src="{{asset "/static/options.mp4"}}">session options</button>
+    </div>
   </div>
   <p class="proof">REAL — a real cluster, real tasks, a real <code style="font-family:var(--mono)">kubectl delete pod</code> mid-recording. Tapes in <a href="https://github.com/tiny-systems/website/tree/main/demo">the repo</a>.</p>
   <script>
