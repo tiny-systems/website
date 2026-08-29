@@ -4,6 +4,7 @@ package main
 
 import (
 	"bytes"
+	"crypto/sha256"
 	"fmt"
 	"html/template"
 	"io"
@@ -74,8 +75,15 @@ func run() error {
 
 	data := &SiteData{Docs: docs, Posts: posts}
 
+	cssRaw, err := os.ReadFile("static/styles.css")
+	if err != nil {
+		return err
+	}
+	cssVer := fmt.Sprintf("%x", sha256.Sum256(cssRaw))[:8]
+
 	tpl, err := template.New("").Funcs(template.FuncMap{
 		"nicedate": niceDate,
+		"cssver":   func() string { return cssVer },
 		"dict_": func(kv ...any) (map[string]any, error) {
 			if len(kv)%2 != 0 {
 				return nil, fmt.Errorf("dict_ needs key/value pairs")
