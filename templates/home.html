@@ -63,6 +63,9 @@
     <div class="opt"><dt>--tmux-native</dt><dd>Every session lives in tmux. Attaching is a real tmux attach — panes, scrollback, your muscle memory — and detaching never stops the work.</dd></div>
     <div class="opt"><dt>--resources cpu,mem</dt><dd>Per-session requests and limits, straight from the session spec. The fleet screen shows live CPU and memory next to every name.</dd></div>
     <div class="opt"><dt>--drop-a-file</dt><dd>Drag a file onto a session&#8217;s row in the fleet screen and it lands in that workspace. No <code>kubectl cp</code>, no scp gymnastics.</dd></div>
+    <div class="opt"><dt>--agent claude|codex</dt><dd>Two agents, one runtime. Claude Code by default; <code>--agent codex</code> runs OpenAI&#8217;s Codex — same fleet screen, same gate, same resume.</dd></div>
+    <div class="opt"><dt>--model your-pick</dt><dd>Pin the model per session — <code>claude --model</code> / <code>codex -m</code> underneath. Also a field on the options form.</dd></div>
+    <div class="opt"><dt>--broadcast</dt><dd>One message into every unfinished session&#8217;s inbox: <code>[b]</code> on the fleet screen, <code>tiny broadcast</code> for cron and CI.</dd></div>
   </dl>
   <div class="stamps"><span class="stamp">NO SERVER</span><span class="stamp">MIT LICENSED</span><span class="stamp">YOUR CLUSTER · YOUR KEYS</span></div>
 </div></section>
@@ -89,14 +92,35 @@
 </div></section>
 
 <section><div class="wrap">
-  <div class="man"><span>DEMONSTRATION</span><span class="pg">recorded, not staged</span></div>
+  <div class="man"><span>DEMONSTRATION</span><span class="pg">recorded, not staged — pick a scene</span></div>
+  <div class="demotabs" role="tablist">
+    <button class="dt on" data-src="/static/demo.mp4">survive a pod kill</button>
+    <button class="dt" data-src="/static/codex.mp4">codex in the fleet</button>
+    <button class="dt" data-src="/static/broadcast.mp4">broadcast to all</button>
+    <button class="dt" data-src="/static/options.mp4">session options</button>
+  </div>
   <div class="demo" style="aspect-ratio:auto">
-    <video autoplay loop muted playsinline style="width:100%;display:block">
+    <video id="demovid" autoplay loop muted playsinline preload="metadata" style="width:100%;display:block">
       <source src="/static/demo.mp4" type="video/mp4">
-      <img src="/static/demo.gif" alt="tiny demo: a session is created, the fleet screen shows it working, its pod is killed, and the fleet screen shows it still working">
     </video>
   </div>
-  <p class="proof">REAL — a real cluster, a real task, a real <code style="font-family:var(--mono)">kubectl delete pod</code> mid-recording. The session doesn't notice. Tape in <a href="https://github.com/tiny-systems/website/blob/main/demo/demo.tape">the repo</a>.</p>
+  <p class="proof">REAL — a real cluster, real tasks, a real <code style="font-family:var(--mono)">kubectl delete pod</code> mid-recording. Tapes in <a href="https://github.com/tiny-systems/website/tree/main/demo">the repo</a>.</p>
+  <script>
+  (function(){
+    var vid = document.getElementById('demovid');
+    var tabs = document.querySelectorAll('.demotabs .dt');
+    tabs.forEach(function(b){
+      b.addEventListener('click', function(){
+        if (b.classList.contains('on')) return;
+        tabs.forEach(function(x){ x.classList.remove('on'); });
+        b.classList.add('on');
+        vid.src = b.getAttribute('data-src');
+        vid.load();
+        vid.play().catch(function(){});
+      });
+    });
+  })();
+  </script>
 </div></section>
 
 <section><div class="wrap">
