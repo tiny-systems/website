@@ -90,7 +90,13 @@
 
 <section><div class="wrap">
   <div class="man"><span>DEMONSTRATION</span><span class="pg">recorded, not staged</span></div>
-  <div class="demo"><div class="play">▶</div><p>VHS terminal recording — re-rendered by CI on every release, so it can never go stale</p></div>
+  <div class="demo" style="aspect-ratio:auto">
+    <video autoplay loop muted playsinline style="width:100%;display:block">
+      <source src="/static/demo.mp4" type="video/mp4">
+      <img src="/static/demo.gif" alt="tiny demo: a session is created, the fleet screen shows it working, its pod is killed, and the fleet screen shows it still working">
+    </video>
+  </div>
+  <p class="proof">REAL — a real cluster, a real task, a real <code style="font-family:var(--mono)">kubectl delete pod</code> mid-recording. The session doesn't notice. Tape in <a href="https://github.com/tiny-systems/website/blob/main/demo/demo.tape">the repo</a>.</p>
 </div></section>
 
 <section><div class="wrap">

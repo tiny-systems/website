@@ -117,6 +117,7 @@ section{padding:74px 0 0}
 .demo .play{width:64px;height:64px;border-radius:50%;border:2.5px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--paper)}
 .demo p{font-family:var(--mono);font-size:12.5px;opacity:.65;margin:0}
 .demo img,.demo video{max-width:100%;display:block}
+.demo:has(video){aspect-ratio:auto;padding:0;overflow:hidden}
 
 /* blog: catalog index with leader dots */
 .cat .entry{display:flex;align-items:baseline;gap:8px;padding:13px 0 0;font-size:17px}
