@@ -35,6 +35,10 @@ a blank session, `o` (or the `⚙ new session with options…` row) opens a
 form with every field — task, name, repo, image, agent, model, cpu,
 memory.
 
+Already mid-conversation on your laptop? [`tiny handoff`](/docs/handoff/)
+moves that session — files, uncommitted changes and transcript — into the
+cluster and keeps it going there.
+
 ## Attaching
 
 `enter` on the fleet screen, or `tiny attach <session>` directly — any
