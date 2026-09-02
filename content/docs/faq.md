@@ -29,6 +29,20 @@ short version: the pod is the sandbox, the gate holds the credentials,
 and the worst an injected agent can do is waste tokens and write files
 into its own outbox.
 
+## Is this safer than just running the agent on my laptop?
+
+For autonomous work, yes, and here is the honest comparison. Overnight
+work needs permissions bypassed somewhere. On your laptop, an agent
+running that way has everything you have: SSH keys, gh token, browser
+sessions, cloud credentials, every repo you've cloned. In tiny the same
+agent has a workspace volume and a model token. No git credentials,
+non-root, resource-limited, and anything dangerous parks at the
+[gate](/docs/gate/) until a human's own credentials perform it.
+
+For supervised work the comparison is different: local Claude Code in
+default mode asks before each command, which is its own kind of safe.
+tiny is for the runs where nobody is watching.
+
 ## What does it cost to run?
 
 Idle: nothing but the CRD definitions. A running session is one pod

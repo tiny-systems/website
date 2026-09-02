@@ -74,7 +74,7 @@
     <div class="opt"><dt>--survives-anything</dt><dd>The workspace is a persistent volume; the pod is disposable. Kubernetes replaces dead pods on its own, and the replacement resumes the transcript.</dd></div>
     <div class="opt"><dt>--image any:tag</dt><dd><code>golang:1.26</code>, buildah, your own dev image: an init container injects the agent into whatever you name. You do not maintain a special image.</dd></div>
     <div class="opt"><dt>--humans-hold-the-gate</dt><dd>Dangerous moves park as Question objects until you answer. Your <em>y</em> approves and performs the action with your credentials, so the audit log names you rather than a service account.</dd></div>
-    <div class="opt"><dt>--no-credentials</dt><dd>Pods store no deploy keys or tokens. Work leaves through the outbox, so a compromised agent cannot push or call GitHub.</dd></div>
+    <div class="opt"><dt>--no-credentials</dt><dd>Pods store no deploy keys or tokens. Work leaves through the outbox, so a compromised agent cannot push or call GitHub. On a laptop, a bypass-mode agent has your SSH keys and browser sessions; here it has a workspace and a model token.</dd></div>
     <div class="opt"><dt>--no-control-plane</dt><dd>There is no operator or manager pod; the CLI and Kubernetes do the work. The namespace holds only the sessions you run and the add-ons you switched on.</dd></div>
     <div class="opt"><dt>--tmux-native</dt><dd>Every session lives in tmux. Attaching is a real tmux attach, with panes and scrollback, and detaching does not stop the agent.</dd></div>
     <div class="opt"><dt>--resources cpu,mem</dt><dd>Per-session requests and limits from the session spec. The fleet screen shows each session's own CPU and memory readings.</dd></div>
