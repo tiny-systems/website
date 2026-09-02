@@ -37,8 +37,8 @@ memory.
 
 ## Attaching
 
-`enter` on the fleet screen, any time, from any machine with the
-kubeconfig. You land in the real agent CLI over a TTY, with its hotkeys, plan mode,
+`enter` on the fleet screen, or `tiny attach <session>` directly — any
+time, from any machine with the kubeconfig. You land in the real agent CLI over a TTY, with its hotkeys, plan mode,
 slash commands and your `.mcp.json` servers. It's tmux underneath
 (prefix `ctrl-q`; `ctrl-b` also works):
 

@@ -36,7 +36,7 @@ Run `tiny` with no arguments:
 
 | key | what |
 |---|---|
-| `enter` | attach; on an idle "waiting for you" row, attaching clears the mark |
+| `enter` | attach (also `tiny attach <session>` from a plain shell); on an idle "waiting for you" row, attaching clears the mark |
 | `a` | answer the selected ✳ — [answering is acting](/docs/gate/) |
 | `m` | message the selected session (durable inbox) |
 | `b` | broadcast to every unfinished session |
