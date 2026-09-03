@@ -49,8 +49,10 @@ tiny profile save home --context k3s-nuc -n tiny
 tiny -p work            # any command takes -p
 ```
 
-`tiny profile list` shows what's saved; the pinned no-flag default stays
-whatever you chose on first contact. `tiny setup` prints its target
+`tiny profile list` shows what's saved. With two or more profiles, the
+bare `tiny` start asks which fleet with an arrow-key list — last-used
+first, so enter-enter repeats yesterday's choice. Scripted and flagged
+calls never see the prompt. `tiny setup` prints its target
 before touching anything, so the wrong-cluster token mistake announces
 itself.
 
