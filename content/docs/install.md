@@ -38,6 +38,22 @@ Re-run it any time: it offers only what's missing and asks before
 replacing an existing token. Rotation is the same wizard with a new
 token.
 
+## Several clusters
+
+Work and home clusters stop needing memorized context strings — name
+them once:
+
+```
+tiny profile save work --context gke_yourco_prod -n team-a
+tiny profile save home --context k3s-nuc -n tiny
+tiny -p work            # any command takes -p
+```
+
+`tiny profile list` shows what's saved; the pinned no-flag default stays
+whatever you chose on first contact. `tiny setup` prints its target
+before touching anything, so the wrong-cluster token mistake announces
+itself.
+
 ## CI installs
 
 `tiny init` is the scriptable subset: runtime install, no questions.
