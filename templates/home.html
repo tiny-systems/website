@@ -1,4 +1,4 @@
-{{define "home"}}{{template "head" (dict_ "title" "tiny systems — a fleet of coding agents on your Kubernetes" "desc" "tiny runs Claude Code and Codex as Kubernetes workloads on your own cluster. Label a GitHub issue and a pull request comes back. MIT licensed." "path" "/")}}
+{{define "home"}}{{template "head" (dict_ "title" "tiny systems — your Claude Code on your own Kubernetes" "desc" "Run the real Claude Code and Codex CLIs as pods on your own Kubernetes. Close the laptop and the session keeps working; hand off the one you are in. MIT licensed." "path" "/")}}
 {{template "mast"}}
 
 <header class="hero"><div class="wrap" style="position:relative">
@@ -12,9 +12,9 @@
     </svg>
     WORKS DAY &amp; NIGHT
   </div>
-  <h1>A fleet of agents, <span class="g">growing your project</span> day&nbsp;and&nbsp;night.</h1>
+  <h1>Close the laptop. <span class="g">Your Claude Code keeps&nbsp;working.</span></h1>
   <div class="herogrid"><div>
-  <p class="sub" style="margin-top:0">tiny runs <b>Claude Code and Codex</b> as Kubernetes workloads. Label a GitHub issue and a pull request comes back. You can close the laptop; the session keeps working, and there is no server of ours running next to it.</p>
+  <p class="sub" style="margin-top:0">tiny runs the <b>real Claude Code and Codex CLIs</b> as pods on your own Kubernetes — the tools you already use, not a copy of them. Close the lid and the session keeps working. Already mid-conversation on your laptop? <b>tiny handoff</b> moves that session into the cluster. Attach from any terminal; and when you want the team flow, a labeled GitHub issue comes back as a pull request.</p>
 
   <div class="packet">
     <div class="ptop"><span>SEED PACKET Nº 1</span><span>GERMINATES IN SECONDS</span></div>
@@ -40,31 +40,14 @@
 </div></header>
 
 <section><div class="wrap">
-  <div class="man aud"><span>FOR YOUR TEAM</span><span class="pg">the loop: issue in · PR out</span></div>
-  <h2 class="audh">Label an issue. <span class="g">Harvest a pull request.</span></h2>
+  <div class="man aud"><span>FOR ONE HUMAN</span><span class="pg">no team required</span></div>
+  <h2 class="audh">Give your laptop a rest — <span class="g">run your Claude Code on your own cluster.</span></h2>
   <div class="steps">
-    <div class="step"><span class="no">1</span><span><h3>Sow</h3><p>File a GitHub issue and add the <span class="k">tiny</span> label. That is the whole ceremony. Anyone on the team can do it from the GitHub UI.</p></span></div>
-    <div class="step"><span class="no">2</span><span><h3>Deliver</h3><p>An Actions job on the in-cluster runner pipes the issue into the root session's inbox. It usually takes about five seconds.</p></span></div>
-    <div class="step"><span class="no">3</span><span><h3>Grow</h3><p>The root session plans, spawns specialists in the right toolchains, and raises a <span style="color:var(--amber);font-weight:700">✳</span> when a decision needs a human. Overnight is fine; we test session recovery by killing pods mid-task.</p></span></div>
-    <div class="step"><span class="no">4</span><span><h3>Harvest</h3><p>Agents hold <span class="g">no credentials</span>. Finished branches leave as git bundles through the outbox, and a short-lived courier token opens the pull request and comments on your issue.</p></span></div>
+    <div class="step"><span class="no">☾</span><span><h3>Close the lid</h3><p>The session lives in the cluster, not on your machine. Mid-conversation locally? <span class="g">tiny handoff</span> moves it there, uncommitted changes and transcript included. Close the lid; attach from any terminal later.</p></span></div>
+    <div class="step"><span class="no">$</span><span><h3>Your subscription, not a token bill</h3><p>tiny runs the real CLI, so you sign in the way you do on your laptop: <span class="g">Claude Pro/Max or ChatGPT Plus</span>, the same plan you already use. (Automated or customer-facing work should use a metered API key under the provider's terms.)</p></span></div>
+    <div class="step"><span class="no">⏸</span><span><h3>Rate limits become naps</h3><p>When a session hits your plan's usage limit, its fleet row shows <span class="k">⏸ resuming 5:20am</span>, and it resumes then on its own.</p></span></div>
+    <div class="step"><span class="no">✳</span><span><h3>It asks before it leaps</h3><p>The fleet screen shows who is waiting on you. You can answer inline, message a session without attaching, or drop a file onto its row.</p></span></div>
   </div>
-  <div class="plate" style="margin-top:34px;box-shadow:5px 5px 0 var(--green)">
-    <div class="platetop"><span>THE ENTIRE INTEGRATION</span><span>.github/workflows/tiny.yml</span></div>
-    <div class="platebody" style="font-size:13px;line-height:1.8">
-<div class="row"><span class="dim">on:</span></div>
-<div class="row"><span class="dim">  issues: { types: [labeled] }</span></div>
-<div class="row"><span class="dim">jobs:</span></div>
-<div class="row">  deliver:</div>
-<div class="row"><span class="dim">    if: github.event.label.name == 'tiny'</span></div>
-<div class="row"><span class="dim">    runs-on: [self-hosted, tiny]</span></div>
-<div class="row"><span class="dim">    steps:</span></div>
-<div class="row">      <span class="dim">- run: |</span></div>
-<div class="row">          printf 'issue #%s: %s\n\n%s' "$N" "$TITLE" "$BODY" \</div>
-<div class="row">            | <span class="grn">tiny deliver root --ensure</span> --repo "https://github.com/$REPO.git"</div>
-<div class="keys">the task hand-off is a prompt piped into tiny deliver · <a href="/docs/github-loop/" style="color:#7FD695">full workflow in the docs</a></div>
-    </div>
-  </div>
-  <p class="proof">PROOF — this loop produced a real pull request in our demo repo: <a href="https://github.com/tiny-systems/seedling">github.com/tiny-systems/seedling</a></p>
 </div></section>
 
 <section><div class="wrap">
@@ -142,14 +125,31 @@
 </div></section>
 
 <section><div class="wrap">
-  <div class="man aud"><span>FOR ONE HUMAN</span><span class="pg">no team required</span></div>
-  <h2 class="audh">Give your laptop a rest — <span class="g">host your Claude Code in the cloud.</span></h2>
+  <div class="man aud"><span>FOR YOUR TEAM</span><span class="pg">the loop: issue in · PR out</span></div>
+  <h2 class="audh">Label an issue. <span class="g">Harvest a pull request.</span></h2>
   <div class="steps">
-    <div class="step"><span class="no">☾</span><span><h3>Close the lid</h3><p>The session lives in the cluster, not on your machine. Mid-conversation locally? <span class="g">tiny handoff</span> moves it there, uncommitted changes and transcript included. Close the lid; attach from any terminal later.</p></span></div>
-    <div class="step"><span class="no">$</span><span><h3>Your subscription, not a token bill</h3><p>tiny runs the real CLI, so you sign in the way you do on your laptop: <span class="g">Claude Pro/Max or ChatGPT Plus</span>. Sessions run on the flat plan you already pay for instead of a metered API key.</p></span></div>
-    <div class="step"><span class="no">⏸</span><span><h3>Rate limits become naps</h3><p>When a session hits your plan's usage limit, its fleet row shows <span class="k">⏸ resuming 5:20am</span>, and it resumes then on its own.</p></span></div>
-    <div class="step"><span class="no">✳</span><span><h3>It asks before it leaps</h3><p>The fleet screen shows who is waiting on you. You can answer inline, message a session without attaching, or drop a file onto its row.</p></span></div>
+    <div class="step"><span class="no">1</span><span><h3>Sow</h3><p>File a GitHub issue and add the <span class="k">tiny</span> label. That is the whole ceremony. Anyone on the team can do it from the GitHub UI.</p></span></div>
+    <div class="step"><span class="no">2</span><span><h3>Deliver</h3><p>An Actions job on the in-cluster runner pipes the issue into the root session's inbox. It usually takes about five seconds.</p></span></div>
+    <div class="step"><span class="no">3</span><span><h3>Grow</h3><p>The root session plans, spawns specialists in the right toolchains, and raises a <span style="color:var(--amber);font-weight:700">✳</span> when a decision needs a human. Overnight is fine; we test session recovery by killing pods mid-task.</p></span></div>
+    <div class="step"><span class="no">4</span><span><h3>Harvest</h3><p>Agents hold <span class="g">no credentials</span>. Finished branches leave as git bundles through the outbox, and a short-lived courier token opens the pull request and comments on your issue.</p></span></div>
   </div>
+  <div class="plate" style="margin-top:34px;box-shadow:5px 5px 0 var(--green)">
+    <div class="platetop"><span>THE ENTIRE INTEGRATION</span><span>.github/workflows/tiny.yml</span></div>
+    <div class="platebody" style="font-size:13px;line-height:1.8">
+<div class="row"><span class="dim">on:</span></div>
+<div class="row"><span class="dim">  issues: { types: [labeled] }</span></div>
+<div class="row"><span class="dim">jobs:</span></div>
+<div class="row">  deliver:</div>
+<div class="row"><span class="dim">    if: github.event.label.name == 'tiny'</span></div>
+<div class="row"><span class="dim">    runs-on: [self-hosted, tiny]</span></div>
+<div class="row"><span class="dim">    steps:</span></div>
+<div class="row">      <span class="dim">- run: |</span></div>
+<div class="row">          printf 'issue #%s: %s\n\n%s' "$N" "$TITLE" "$BODY" \</div>
+<div class="row">            | <span class="grn">tiny deliver root --ensure</span> --repo "https://github.com/$REPO.git"</div>
+<div class="keys">the task hand-off is a prompt piped into tiny deliver · <a href="/docs/github-loop/" style="color:#7FD695">full workflow in the docs</a></div>
+    </div>
+  </div>
+  <p class="proof">PROOF — this loop produced a real pull request in our demo repo: <a href="https://github.com/tiny-systems/seedling">github.com/tiny-systems/seedling</a></p>
 </div></section>
 
 <section><div class="wrap">
