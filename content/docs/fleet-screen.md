@@ -48,6 +48,27 @@ Run `tiny` with no arguments:
 streams to `/workspace/uploads/` with live progress; the agent gets the
 path.
 
+## What did they change?
+
+The fleet screen says what each session is *doing*; `tiny diff` says what
+it has *done*:
+
+```
+$ tiny diff
+  root           on tiny/issue-1   3 files +100/-3
+  night-run      on tiny/issue-9   7 files +210/-44
+
+  touched by more than one session
+    internal/auth.go                       night-run, root
+```
+
+It reads each workspace live over the exec API — committed work on the
+session's branch, dirty files, untracked additions, and any bundles
+waiting in the outbox. Naming one session (`tiny diff night-run`) lists
+its files; the bare form summarizes the fleet and flags files two
+sessions are both editing, which is the collision nothing else warns you
+about.
+
 ## Namespace settings
 
 `☰` toggles the [add-ons](/docs/registry-cache/): registry cache,
