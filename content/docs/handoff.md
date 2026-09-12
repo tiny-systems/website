@@ -39,3 +39,5 @@ drops you back into the same conversation from any machine.
   handing off a monorepo with models in it.
 - One direction for now: laptop → cluster. The reverse (`tiny pull`) is
   an open issue.
+- No local conversation to carry? [`tiny new --dir .`](/docs/first-session/)
+  ships just the folder — same transfer, no transcript.

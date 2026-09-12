@@ -25,6 +25,7 @@ does not interrupt anything.
 tiny new                                   # no task: boots idle, attaches you straight in
 tiny new "…task…"                          # fire and forget; watch with `tiny`
 tiny new --repo git@github.com:you/app.git "…"    # clone first (deploy key from setup)
+tiny new --dir . "…"                       # ship this folder as it stands, no remote needed
 tiny new --image golang:1.26 --cpu 2 --memory 4Gi "…"   # your toolchain, sized
 tiny new --agent codex --model gpt-5.2-codex "…"        # OpenAI's Codex instead
 tiny new --name refactor-auth "…"          # pick the name yourself
@@ -38,6 +39,13 @@ memory.
 Already mid-conversation on your laptop? [`tiny handoff`](/docs/handoff/)
 moves that session — files, uncommitted changes and transcript — into the
 cluster and keeps it going there.
+
+`--dir` is the same transfer without a conversation to carry: the folder
+arrives exactly as it sits, dirty files and history included. Useful when
+the work was never pushed, or when the cluster has no route to your git
+host — the files travel through the Kubernetes API the way `kubectl exec`
+does, so a cloud cluster in a private VPC needs no inbound access, no
+bastion and no scp.
 
 ## Attaching
 
