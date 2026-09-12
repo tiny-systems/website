@@ -72,6 +72,22 @@ Replace the token with `tiny setup`, cycle the session's pod
 (`kubectl delete pod -l tinysystems.io/session=<name>`), and the
 transcript resumes where it stopped.
 
+## Keeping it current
+
+```
+tiny upgrade
+```
+
+Fetches the latest release for your platform, checks it against the
+release's published checksums, and replaces the running binary. It will
+not move you to an older version, and it refuses to install a download
+whose checksum does not match. Homebrew installs are swapped in place.
+
+The cluster side follows the binary: a released `tiny` starts sessions
+from the agent image built from the same tag, so runtime and CLI do not
+drift. Re-run `tiny setup` (or `tiny init --yes` in CI) to apply a newer
+runtime.
+
 ## Uninstall
 
 Delete the sessions, then the two CRDs and the ServiceAccount. Nothing
