@@ -35,9 +35,15 @@ drops you back into the same conversation from any machine.
 
 - Stop the local claude before handing off. The command warns if the
   transcript was written seconds ago, but it can't see your terminal.
-- The tree ships whole. A 10GB repo ships 10GB — check the size before
-  handing off a monorepo with models in it.
-- One direction for now: laptop → cluster. The reverse (`tiny pull`) is
-  an open issue.
+- Claude Code only. The command reads the local Claude Code transcript,
+  so a Codex session cannot be moved this way. Everything after the move
+  works for either agent.
+- The tree ships whole, with no `.gitignore` filter and no exclude list.
+  A 10GB repo ships 10GB, and `node_modules`, build output and any
+  `.env` travel with it — tidy the directory before handing off a
+  monorepo with models in it.
+- The return leg is [`tiny pull`](/docs/commands/): it brings the
+  workspace back to a new local directory, and refuses to write into one
+  that already has files in it.
 - No local conversation to carry? [`tiny new --dir .`](/docs/first-session/)
   ships just the folder — same transfer, no transcript.
