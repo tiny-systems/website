@@ -57,8 +57,25 @@ tiny handoff [--name <name>]
 ```
 
 Moves the local Claude Code session you are *in* — working tree,
-uncommitted changes **and the conversation** — into the cluster. See
+uncommitted changes **and the conversation** — into the cluster. Claude
+Code only, since it reads that CLI's transcript. See
 [handoff](/docs/handoff/).
+
+```
+tiny pull <session> [directory]
+```
+
+The return leg: copies a session's working tree — committed work,
+uncommitted changes and `.git` — back to this machine, by default into
+`./<session>`.
+
+| flag | what |
+|---|---|
+| `--from <path>` | directory inside the session to pull (default `/workspace/repo`) |
+
+The destination must be empty or absent; nothing local is ever
+overwritten. To carry the work into an existing clone, pull to a scratch
+directory and fetch from it: `git fetch ./<session> <branch>`.
 
 ## Reaching into a session
 
