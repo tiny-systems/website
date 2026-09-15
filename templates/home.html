@@ -1,8 +1,8 @@
-{{define "home"}}{{template "head" (dict_ "title" "tiny systems — your Claude Code on your own Kubernetes" "desc" "Run the real Claude Code and Codex CLIs as pods on your own Kubernetes. Close the laptop and the session keeps working; hand off the one you are in. MIT licensed." "path" "/")}}
+{{define "home"}}{{template "head" (dict_ "title" "tiny systems — a coding agent with no keys and no open ports" "desc" "Run the real Claude Code and Codex CLIs as pods on your own Kubernetes. The agent holds no git or cloud credentials, nothing listens on the pod, and egress is default-deny. MIT licensed." "path" "/")}}
 {{template "mast"}}
 
 <header class="hero"><div class="wrap" style="position:relative">
-  <p class="name"><b>NAME</b> — tiny · Claude Code &amp; Codex sessions on your own Kubernetes</p>
+  <p class="name"><b>NAME</b> — tiny · credential-less Claude Code &amp; Codex sessions on your own Kubernetes</p>
   <div class="dial">
     <svg width="74" height="40" viewBox="0 0 74 40" aria-hidden="true">
       <path d="M6 36 A32 32 0 0 1 68 36" fill="none" stroke="#20281F" stroke-width="1.6" stroke-dasharray="3 4"/>
@@ -10,11 +10,11 @@
       <g stroke="#B4770F" stroke-width="1.4"><line x1="14" y1="12" x2="14" y2="9"/><line x1="6" y1="16" x2="4" y2="14"/><line x1="22" y1="16" x2="24" y2="14"/></g>
       <path d="M62 17 a6.5 6.5 0 1 0 0 11 a5.4 5.4 0 0 1 0 -11 Z" fill="#20281F"/>
     </svg>
-    WORKS DAY &amp; NIGHT
+    HOLDS NO KEYS
   </div>
-  <h1>Close the laptop. <span class="g">Your Claude Code keeps&nbsp;working.</span></h1>
+  <h1>No keys. No open ports. <span class="g">Your&nbsp;cluster.</span></h1>
   <div class="herogrid"><div>
-  <p class="sub" style="margin-top:0">tiny runs the <b>real Claude Code and Codex CLIs</b> as pods on your own Kubernetes — the tools you already use, not a copy of them. Close the lid and the session keeps working. Already mid-conversation on your laptop? <b>tiny handoff</b> moves that session into the cluster. Attach from any terminal; and when you want the team flow, a labeled GitHub issue comes back as a pull request.</p>
+  <p class="sub" style="margin-top:0">An agent that reads issues and pulls dependencies will eventually be told what to do by someone who is not you. tiny runs the <b>real Claude Code and Codex CLIs</b> as pods on your own Kubernetes, holding <b>nothing worth stealing</b>: no git credentials, no cloud credentials, nothing listening on the pod, egress denied by default. Work leaves as a signed-off bundle a courier pushes. When it asks to do something risky, <b>your answer runs as you</b> &#8212; not as the agent. And the session keeps working after you close the lid.</p>
 
   <div class="packet">
     <div class="ptop"><span>SEED PACKET Nº 1</span><span>GERMINATES IN SECONDS</span></div>
@@ -48,6 +48,27 @@
     <div class="step"><span class="no">⏸</span><span><h3>Rate limits become naps</h3><p>When a session hits your plan's usage limit, its fleet row shows <span class="k">⏸ resuming 5:20am</span>, and it resumes then on its own.</p></span></div>
     <div class="step"><span class="no">✳</span><span><h3>It asks before it leaps</h3><p>The fleet screen shows who is waiting on you. You can answer inline, message a session without attaching, or drop a file onto its row.</p></span></div>
   </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="man"><span>CONTAINMENT</span><span class="pg">both halves &#183; a claim is worth what its exceptions are worth</span></div>
+  <div class="addons">
+    <div class="addon">
+      <div class="atop"><span class="on">CLOSED</span><span class="what">NOT NEGOTIABLE</span></div>
+      <div class="abody"><p><b>Repo credentials.</b> The agent has none. Work leaves as a <code>git bundle</code>; a courier pushes it with a short-lived token the agent never sees. It cannot push, force-push or reach your other repos &#8212; the capability is absent, not restricted.</p>
+      <p><b>Cloud credentials.</b> None in the pod, and <code>169.254.169.254</code> &#8212; the endpoint that hands out an instance&#8217;s IAM role &#8212; is blocked.</p>
+      <p><b>Inbound network.</b> Nothing listens. No container port; the MCP sidecar binds <code>127.0.0.1</code>. You reach a session through the Kubernetes API under your own RBAC, never through an open port.</p>
+      <p><b>Acting as the agent.</b> Approving a question runs in <i>your</i> client with <i>your</i> credentials. That is why the web page can only read.</p></div>
+    </div>
+    <div class="addon">
+      <div class="atop"><span class="on">OPEN</span><span class="what">SAID OUT LOUD</span></div>
+      <div class="abody"><p><b>The model credential</b> lives in the agent pod. Running the real vendor CLI requires it. Inherent, not an oversight.</p>
+      <p><b>HTTPS out.</b> A NetworkPolicy matches addresses, not hostnames, and the agent must reach its model API &#8212; so data can still be POSTed out. Cutting that needs an egress proxy with a hostname allow-list, which does not exist yet.</p>
+      <p><b>DNS.</b> Port 53 is unrestricted so node-local cache clusters resolve; queries are an exfiltration channel.</p>
+      <p><b>The agent&#8217;s own tool calls.</b> It runs with <code>bypassPermissions</code>. Asking is cooperative &#8212; nothing intercepts it. The boundary is the pod, the missing keys and the policy.</p></div>
+    </div>
+  </div>
+  <p class="sub" style="margin-top:18px">Detail: <a href="/docs/threat-model/">threat model</a> &#183; <a href="/docs/egress/">egress policy</a> &#183; <a href="/docs/gate/">the gate</a></p>
 </div></section>
 
 <section><div class="wrap">
