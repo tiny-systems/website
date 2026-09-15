@@ -11,12 +11,25 @@ second-guessed on every call stops being the real CLI. The consequence is
 that containment cannot come from asking the agent nicely. It has to be
 network-shaped.
 
-Switch it on in `tiny` → `☰ namespace settings` → **egress policy**.
+**New namespaces come up with it on.** A namespace whose switchboard
+already exists but predates the add-on keeps its egress untouched, since
+cutting a session off from something it reached yesterday is a surprise
+rather than a default. Either way it stays a checkbox: `tiny` → `☰
+namespace settings` → **egress policy**.
+
+Turn it off if your model API sits behind a private endpoint, or a
+session needs an internal registry, database or SSH host on the private
+network — see [what it allows](#what-it-allows) below.
 
 ## What it allows
 
-A default-deny egress `NetworkPolicy` lands on every session pod, and
-three things are allowed back:
+The add-on is one `NetworkPolicy` object — no pod, no Deployment, nothing
+running and nothing to pay for. The CNI already on every node does the
+enforcing; the policy just tells it what to permit. It also applies to
+sessions that are already running, with no restart.
+
+A default-deny egress policy lands on every session pod, and three things
+are allowed back:
 
 | allowed | why |
 |---|---|
