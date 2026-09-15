@@ -48,6 +48,13 @@ internet stays open, and anything that can be POSTed can still leave.
 Closing that needs an egress proxy with a hostname allow-list for the
 policy to point at, which does not exist yet.
 
+**DNS tunnelling.** Port 53 is allowed to any destination, so data can be
+encoded into queries against a nameserver the attacker controls. It is
+open that wide on purpose: clusters running NodeLocal DNSCache resolve
+via `169.254.20.10`, and the link-local exclusion that closes the
+metadata endpoint would otherwise break resolution entirely. If your
+cluster has no node-local cache you can narrow this rule to kube-dns.
+
 If you are thinking in terms of the [lethal
 trifecta](https://simonwillison.net/tags/prompt-injection/) — private
 data, untrusted content, a way out — this narrows the third leg
