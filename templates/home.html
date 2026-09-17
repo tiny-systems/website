@@ -63,8 +63,7 @@
     <div class="addon">
       <div class="atop"><span class="on">OPEN</span><span class="what">SAID OUT LOUD</span></div>
       <div class="abody"><p><b>The model credential</b> lives in the agent pod. Running the real vendor CLI requires it. Inherent, not an oversight.</p>
-      <p><b>HTTPS out.</b> A NetworkPolicy matches addresses, not hostnames, and the agent must reach its model API &#8212; so data can still be POSTed out. Cutting that needs an egress proxy with a hostname allow-list, which does not exist yet.</p>
-      <p><b>DNS.</b> Port 53 is unrestricted so node-local cache clusters resolve; queries are an exfiltration channel.</p>
+      <p><b>HTTPS out, unless you narrow it.</b> A NetworkPolicy matches addresses, not hostnames, so by default any host on 443 is reachable. Switch on the <a href="/docs/egress/">hostname allow-list</a> and only named hosts are &#8212; though allow-listing <code>github.com</code> still means an agent can write to a gist.</p>
       <p><b>The agent&#8217;s own tool calls.</b> It runs with <code>bypassPermissions</code>. Asking is cooperative &#8212; nothing intercepts it. The boundary is the pod, the missing keys and the policy.</p></div>
     </div>
   </div>
@@ -91,7 +90,7 @@
 </div></section>
 
 <section><div class="wrap">
-  <div class="man"><span>ADD-ONS</span><span class="pg">one checkbox each · five today, and counting</span></div>
+  <div class="man"><span>ADD-ONS</span><span class="pg">one checkbox each · six today, and counting</span></div>
   <div class="addons">
     <div class="addon">
       <div class="atop"><span class="on">[✓] registry-cache</span><span class="what">ZOT</span></div>
@@ -112,6 +111,10 @@
     <div class="addon">
       <div class="atop"><span class="on">[&#10003;] egress-policy</span><span class="what">NETWORK</span></div>
       <div class="abody"><p>Default-deny networking for sessions: this namespace and http/https out, nothing else. Closes the cloud metadata endpoint and every other port. It does not stop exfiltration over 443 &#8212; and it only bites if your CNI enforces NetworkPolicy, which the screen tells you.</p></div>
+    </div>
+    <div class="addon">
+      <div class="atop"><span class="on">[&#10003;] hostname allow-list</span><span class="what">EGRESS PROXY</span></div>
+      <div class="abody"><p>All outbound traffic through a CONNECT proxy that filters by name, not address &#8212; the thing a NetworkPolicy cannot do. TLS is never terminated; the hostname is read before the tunnel opens. Closes the DNS channel too. Refusals name the host and get logged.</p></div>
     </div>
     <div class="addon ghost">
       <span>[ ] your-next-one<br>each add-on is a single toggle<br>in <b>tiny settings</b></span>

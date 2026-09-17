@@ -65,13 +65,74 @@ policy to point at, which does not exist yet.
 encoded into queries against a nameserver the attacker controls. It is
 open that wide on purpose: clusters running NodeLocal DNSCache resolve
 via `169.254.20.10`, and the link-local exclusion that closes the
-metadata endpoint would otherwise break resolution entirely. If your
-cluster has no node-local cache you can narrow this rule to kube-dns.
+metadata endpoint would otherwise break resolution entirely.
+
+**Both of those close with the allow-list below.**
 
 If you are thinking in terms of the [lethal
 trifecta](https://simonwillison.net/tags/prompt-injection/) — private
-data, untrusted content, a way out — this narrows the third leg
-considerably but does not remove it.
+data, untrusted content, a way out — the policy alone narrows the third
+leg. The allow-list is what cuts it.
+
+## The hostname allow-list
+
+Tick **hostname allow-list** under the egress policy and the shape
+changes: the internet rule disappears entirely, and everything outbound
+goes through a small proxy in the namespace that filters by *name*.
+
+A `NetworkPolicy` cannot do this. It selects addresses, and
+`api.anthropic.com` is a CDN on addresses that rotate. Filtering by
+hostname needs something that speaks the protocol, so the policy points
+at a proxy and the proxy holds the list.
+
+It is a `CONNECT` proxy, which matters for what it does **not** do. The
+hostname arrives in plaintext on the request line, before the tunnel
+opens. The proxy checks it, then copies bytes without understanding
+them. No certificate is minted, no CA is installed in your image, and
+TLS between the agent and its model is never broken.
+
+With it on, DNS narrows too — to kube-system and to link-local on port
+53 only, which keeps NodeLocal DNSCache working without reopening the
+metadata endpoint. Sessions get `HTTPS_PROXY` as an address rather than
+a name, so they need no external DNS at all.
+
+### Editing the list
+
+```sh
+kubectl edit configmap tiny-egress-allow
+```
+
+One host per line; a leading dot matches subdomains, so `.npmjs.org`
+admits `registry.npmjs.org` without admitting `npmjs.org.evil.com`. The
+proxy re-reads the file, so widening the list does not restart anything.
+The default is short on purpose: the agent APIs, GitHub, and the main
+package registries.
+
+A refusal says what to do about it, and is logged:
+
+```
+tiny egress proxy: "exfil.example.com" is not in this namespace's allow-list.
+Ask a human to add it: kubectl edit configmap tiny-egress-allow
+```
+
+```sh
+kubectl logs deploy/tiny-egress | grep DENIED
+```
+
+That log is worth watching. An agent reaching for a host nobody
+allow-listed is a thing you want to know about.
+
+### What it still does not fix
+
+Allow-listing `github.com` means an agent can write to a gist.
+Allow-listing the model API means it can put your source in a prompt. An
+allow-list shrinks the exit to a few doors you chose to trust; it does
+not seal the building. And the model credential stays in the pod either
+way.
+
+In-namespace traffic bypasses the proxy through `NO_PROXY`, so the
+artifact store and another session's exposed port keep working without
+being listed.
 
 **The model credential still lives in the agent pod.** That is inherent
 to running the vendor CLI; see the [threat model](/docs/threat-model/).
