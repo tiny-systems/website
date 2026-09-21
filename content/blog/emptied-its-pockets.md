@@ -59,9 +59,12 @@ has to come from somewhere structural.
 
 ## What it's carrying: nothing much
 
-No git credentials. The agent commits locally and drops a `git bundle`
-in an outbox; a separate courier job rebases and pushes with a
-short-lived token that never enters the agent's pod. A compromised
+No git credentials, unless you hand it some. The agent commits locally
+and drops a `git bundle` in an outbox; a separate courier job rebases and
+pushes with a short-lived token that never enters the agent's pod. (There
+is a deploy-key path for repos you would rather it pushed to directly.
+Take it and the agent holds a real write credential — which is exactly
+what the outbox exists to avoid.) A compromised
 session can't push, can't force-push, can't reach your other
 repositories. Not because it's forbidden. Because there's no key in
 there.

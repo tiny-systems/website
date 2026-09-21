@@ -14,7 +14,7 @@
   </div>
   <h1>No keys. No open ports. <span class="g">Your&nbsp;cluster.</span></h1>
   <div class="herogrid"><div>
-  <p class="sub" style="margin-top:0">An agent that reads issues and pulls dependencies will eventually be told what to do by someone who is not you. tiny runs the <b>real Claude Code and Codex CLIs</b> as pods on your own Kubernetes, holding <b>nothing worth stealing</b>: no git credentials, no cloud credentials, nothing listening on the pod, egress denied by default. Work leaves as a signed-off bundle a courier pushes. When it asks to do something risky, <b>your answer runs as you</b> &#8212; not as the agent. And the session keeps working after you close the lid.</p>
+  <p class="sub" style="margin-top:0">An agent that reads issues and pulls dependencies will eventually be told what to do by someone who is not you. tiny runs the <b>real Claude Code and Codex CLIs</b> as pods on your own Kubernetes, holding <b>nothing worth stealing</b>: no git credentials by default, no cloud credentials, nothing listening on the pod, egress denied by default. Work leaves as a signed-off bundle a courier pushes. When it asks to do something risky, <b>your answer runs as you</b> &#8212; not as the agent. And the session keeps working after you close the lid.</p>
 
   <div class="packet">
     <div class="ptop"><span>SEED PACKET Nº 1</span><span>GERMINATES IN SECONDS</span></div>
@@ -55,7 +55,7 @@
   <div class="contain">
     <div class="addon">
       <div class="atop"><span class="on">CLOSED</span><span class="what">NOT NEGOTIABLE</span></div>
-      <div class="abody"><p><b>Repo credentials.</b> The agent has none. Work leaves as a <code>git bundle</code>; a courier pushes it with a short-lived token the agent never sees. It cannot push, force-push or reach your other repos &#8212; the capability is absent, not restricted.</p>
+      <div class="abody"><p><b>Repo credentials.</b> None in the pod by default. Work leaves as a <code>git bundle</code>; a courier pushes it with a short-lived token the agent never sees. With no key there it cannot push, force-push or reach your other repos &#8212; the capability is absent, not restricted. (<code>tiny setup</code> can mint a deploy key if you want direct pushes; that one does live in the pod.)</p>
       <p><b>Cloud credentials.</b> None in the pod, and <code>169.254.169.254</code> &#8212; the endpoint that hands out an instance&#8217;s IAM role &#8212; is blocked.</p>
       <p><b>Inbound network.</b> Nothing listens. No container port; the MCP sidecar binds <code>127.0.0.1</code>. You reach a session through the Kubernetes API under your own RBAC, never through an open port.</p>
       <p><b>Acting as the agent.</b> Approving a question runs in <i>your</i> client with <i>your</i> credentials. That is why the web page can only read.</p></div>
@@ -64,7 +64,8 @@
       <div class="atop"><span class="on">OPEN</span><span class="what">SAID OUT LOUD</span></div>
       <div class="abody"><p><b>The model credential</b> lives in the agent pod. Running the real vendor CLI requires it. Inherent, not an oversight.</p>
       <p><b>HTTPS out, unless you narrow it.</b> A NetworkPolicy matches addresses, not hostnames, so by default any host on 443 is reachable. Switch on the <a href="/docs/egress/">hostname allow-list</a> and only named hosts are &#8212; though allow-listing <code>github.com</code> still means an agent can write to a gist.</p>
-      <p><b>The agent&#8217;s own tool calls.</b> It runs with <code>bypassPermissions</code>. Asking is cooperative &#8212; nothing intercepts it. The boundary is the pod, the missing keys and the policy.</p></div>
+      <p><b>The agent&#8217;s own tool calls.</b> It runs with <code>bypassPermissions</code>. Asking is cooperative &#8212; nothing intercepts it. The boundary is the pod, the missing keys and the policy.</p>
+      <p><b>A deploy key, if you add one.</b> <code>tiny setup</code> offers to mint one and the agent gets it in <code>~/.ssh</code>. Handy for private repos, but it is a long-lived write credential sitting in the pod. The outbox exists so you never have to.</p></div>
     </div>
   </div>
   <p class="sub" style="margin-top:18px">Detail: <a href="/docs/threat-model/">threat model</a> &#183; <a href="/docs/egress/">egress policy</a> &#183; <a href="/docs/gate/">the gate</a></p>
