@@ -132,6 +132,50 @@ same channel as the untrusted input the [gate](/docs/gate/) exists to
 guard against. The courier's own RBAC enforces this: it can read
 questions, never answer them.
 
-A bundle is only retired after its work arrived. For a real end-to-end
-run, see [seedling PR #2](https://github.com/tiny-systems/seedling/pull/2),
-which started as a labeled issue.
+A bundle is only retired after its work arrived.
+
+## A walkthrough
+
+This is a real run on the [seedling](https://github.com/tiny-systems/seedling)
+demo repo, start to finish.
+
+1. **Label an issue `tiny`.** A "trim whitespace from submitted URLs"
+   issue gets the label.
+2. **Delivery.** The `issues` job fires in about five seconds: it pipes
+   the issue into the root session's inbox with
+   `--origin github:tiny-systems/seedling#7`, and comments on the issue
+   that tiny picked it up.
+3. **The session works.** A pod comes up, clones the repo over HTTPS (no
+   key — it is public), and the agent makes the change. It commits to
+   `tiny/issue-7` and writes `/workspace/outbox/tiny-issue-7.bundle`. No
+   human touched anything.
+4. **The courier.** `tiny export` lifts the bundle out, rebases it onto
+   `main`, pushes `tiny/issue-7`, and opens the pull request. Done.
+
+### When it needs to ask
+
+Some tasks need a person. Label an issue whose body says *"before
+implementing, use `ask_human` to confirm which database backend to use:
+sqlite, postgres, or redis."*
+
+The agent calls `ask_human` and blocks. The next courier run finds the
+question and posts it on the issue:
+
+```
+🌱 root is waiting on a decision.
+
+  Which persistence backend should I implement?
+  - sqlite: single file, zero infra
+  - postgres: real dependency, needs a running server
+  - redis: fast, but another service to operate
+
+Options: sqlite · postgres · redis
+
+Answer it:
+  tiny answer q-tq5zm <your answer>
+```
+
+You answer from a terminal — `tiny answer q-tq5zm sqlite` — and the agent
+builds that backend and opens the PR. The answer never travels as a
+comment, because it runs a gated action with your credentials; the
+comment only tells you a decision is waiting and how to make it.
