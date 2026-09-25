@@ -117,6 +117,21 @@ open the PR, comment, ack.
 - **Runner down:** events queue in GitHub and the jobs run once the
   runner add-on is back.
 
+## When the agent gets stuck
+
+A session mid-task may need a decision — approval to spawn a helper, a
+choice only a person can make. The courier reports these back: it runs
+`tiny questions --json`, and any question whose session carries a
+matching `--origin` gets posted as a comment on the issue that started
+the work, with the `tiny answer` command that resolves it.
+
+Notification only, on purpose. Answering performs the gated action with
+the answerer's own credentials, so it needs a terminal with cluster
+access — an approval arriving as issue text would put decisions in the
+same channel as the untrusted input the [gate](/docs/gate/) exists to
+guard against. The courier's own RBAC enforces this: it can read
+questions, never answer them.
+
 A bundle is only retired after its work arrived. For a real end-to-end
 run, see [seedling PR #2](https://github.com/tiny-systems/seedling/pull/2),
 which started as a labeled issue.

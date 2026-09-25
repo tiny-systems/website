@@ -83,6 +83,7 @@ directory and fetch from it: `git fetch ./<session> <branch>`.
 |---|---|
 | `tiny attach <session>` | join its terminal (detach: `ctrl-q d`) |
 | `tiny shell <session>` | a shell on its workspace, without disturbing the agent — finished sessions too |
+| `tiny questions` | every decision waiting on a human, with the command that answers it. `--json` emits a stable array an event source can post somewhere people look; `--all` includes idle "waiting for input" nudges, which attaching clears |
 | `tiny answer <question> <text>` | answer a ✳ card, and [perform its action with your credentials](/docs/gate/) |
 
 ## Talking to sessions
@@ -99,6 +100,7 @@ directory and fetch from it: `git fetch ./<session> <branch>`.
 | `--ensure` | create the session if it does not exist |
 | `--repo <git URL>` | seed the workspace when `--ensure` creates it |
 | `--env KEY=VALUE` | deliver a credential as a refreshing file at `/tiny-env/KEY` (repeatable) |
+| `--origin <ref>` | record where the work came from (e.g. `github:owner/repo#3`) — opaque to tiny; the event source that wrote it reads it back from `tiny questions --json` to report a blocked session on the right thread |
 
 Both read stdin when given no argument, so any event source that can pipe
 text can drive a session — see [messages](/docs/messages-uploads/).
