@@ -260,3 +260,13 @@ footer a:hover{color:var(--green-deep)}
   .rail li{opacity:1;color:var(--green-deep)}.rail li::before{background:var(--green-deep)}
   .rail li.active::before{animation:none}.frame .cur::after{animation:none}
 }
+
+.rail .rnode{font:inherit;color:inherit;letter-spacing:inherit;text-transform:inherit;
+  background:none;border:0;padding:0;cursor:pointer;position:relative;z-index:2}
+.rail .rnode:hover{color:var(--green)}
+.rail .rnode:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+.loop2.manual .rail li.active::before{animation:none}
+.loop2.manual .frame::after{content:'paused · click a step';position:absolute;top:9px;right:34px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--ink);opacity:.4;
+  text-transform:uppercase;pointer-events:none}
+.loop2.manual .frame .lstep.win::after{color:var(--paper);opacity:.55}

@@ -42,12 +42,12 @@
 <section><div class="wrap">
   <div class="man"><span>THE LOOP</span><span class="pg">label an issue · the rest runs itself</span></div>
   <div class="loop2" id="loop">
-    <ol class="rail" aria-hidden="true">
-      <li data-r="0">issue</li>
-      <li data-r="1">deliver</li>
-      <li data-r="2">work</li>
-      <li data-r="3">bundle</li>
-      <li data-r="4">PR</li>
+    <ol class="rail" role="tablist" aria-label="loop steps — click to step through">
+      <li data-r="0"><button type="button" class="rnode" data-r="0">issue</button></li>
+      <li data-r="1"><button type="button" class="rnode" data-r="1">deliver</button></li>
+      <li data-r="2"><button type="button" class="rnode" data-r="2">work</button></li>
+      <li data-r="3"><button type="button" class="rnode" data-r="3">bundle</button></li>
+      <li data-r="4"><button type="button" class="rnode" data-r="4">PR</button></li>
     </ol>
     <div class="frame">
       <div class="lstep" data-step="0" data-rail="0">
@@ -109,26 +109,38 @@
     var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
     var steps=[].slice.call(loop.querySelectorAll('.lstep'));
     var rail=[].slice.call(loop.querySelectorAll('.rail li'));
-    var n=steps.length, i=0, paused=false;
-    // longer beat on the payoff so it lands
+    var nodes=[].slice.call(loop.querySelectorAll('.rnode'));
+    var n=steps.length, i=0, paused=false, stopped=false;
     var holds=[1500,1600,1500,1500,1600,1600,2600];
+    // the frame each rail stage jumps to when clicked (its most telling one)
+    var railToStep=[0,1,3,4,6];
     function render(){
       steps.forEach(function(st,idx){ st.classList.toggle('on', idx===i); });
       var r=+steps[i].getAttribute('data-rail');
       var last=(i===n-1);
       rail.forEach(function(li,idx){
         li.classList.toggle('done', idx<r || (last&&idx<=r));
-        li.classList.toggle('active', !last && idx===r);
+        li.classList.toggle('active', idx===r);
       });
+      nodes.forEach(function(b,idx){ b.setAttribute('aria-selected', idx===r ? 'true':'false'); });
     }
     render();
-    if(reduce){ return; }
-    function schedule(){ if(paused){ setTimeout(schedule,400); return; }
-      setTimeout(function(){ i=(i+1)%n; render(); schedule(); }, holds[i]); }
-    schedule();
-    loop.addEventListener('mouseenter',function(){paused=true;});
-    loop.addEventListener('mouseleave',function(){paused=false;});
-    document.addEventListener('visibilitychange',function(){paused=document.hidden;});
+    function schedule(){ if(stopped) return; if(paused){ setTimeout(schedule,400); return; }
+      setTimeout(function(){ if(stopped) return; i=(i+1)%n; render(); schedule(); }, holds[i]); }
+    if(!reduce){
+      schedule();
+      loop.addEventListener('mouseenter',function(){ if(!stopped) paused=true; });
+      loop.addEventListener('mouseleave',function(){ if(!stopped) paused=false; });
+      document.addEventListener('visibilitychange',function(){ if(!stopped) paused=document.hidden; });
+    }
+    // Click a rail node: jump there and stop autoplaying. Clicking is a
+    // deliberate "let me read this one", so we do not resume on our own.
+    nodes.forEach(function(b){
+      b.addEventListener('click',function(){
+        stopped=true; loop.classList.add('manual');
+        i=railToStep[+b.getAttribute('data-r')]; render();
+      });
+    });
   })();
   </script>
 </div></section>
