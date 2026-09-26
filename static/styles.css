@@ -210,32 +210,53 @@ footer a:hover{color:var(--green-deep)}
 #tb-notice button{font-family:var(--mono);font-size:12px;border:1.5px solid var(--ink);background:var(--paper);padding:4px 10px;cursor:pointer;border-radius:0}
 #tb-notice button:hover{background:var(--green-deep);color:var(--paper)}
 
-/* ── the loop: a stepped facsimile of issue → session → PR ────────────── */
-.loop{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;align-items:stretch;
-  border:2px solid var(--ink);box-shadow:6px 6px 0 var(--faint);background:var(--paper-2);
-  font-family:var(--mono);font-size:13px;line-height:1.5}
-@media(max-width:760px){.loop{grid-template-columns:1fr}}
-.loop .pane{padding:0;border-right:2px solid var(--ink);position:relative;min-height:230px;
-  transition:background .3s}
-.loop .pane:last-child{border-right:0}
-@media(max-width:760px){.loop .pane{border-right:0;border-bottom:2px solid var(--ink)}
-  .loop .pane:last-child{border-bottom:0}}
-.loop .pane.hot{background:var(--paper)}
-.loop .ph{display:flex;justify-content:space-between;align-items:center;
-  padding:7px 11px;border-bottom:1px solid var(--faint);font-size:11px;letter-spacing:.08em;
-  color:var(--green-deep);font-weight:600;background:#00000008}
-.loop .ph .dot{width:8px;height:8px;border-radius:50%;background:var(--faint);flex:none}
-.loop .pane.hot .ph .dot{background:var(--amber)}
-.loop .pane.done .ph .dot{background:var(--green)}
-.loop .body{padding:11px;white-space:pre-wrap;word-break:break-word}
-.loop .ln{opacity:0;transition:opacity .25s}
-.loop .ln.show{opacity:1}
-.loop .amb{color:var(--amber);font-weight:600}
-.loop .grn{color:var(--green-deep);font-weight:600}
-.loop .dim{opacity:.5}
-.loop .cur::after{content:'▋';animation:loopblink 1s steps(2) infinite}
+/* ── the loop: spotlight frame + progress rail ───────────────────────── */
+.loop2{--loopclr:var(--ink)}
+.rail{display:flex;list-style:none;margin:0 0 22px;padding:0 4px;
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase}
+.rail li{flex:1;position:relative;text-align:center;padding-top:22px;color:var(--ink);opacity:.38;
+  transition:opacity .35s,color .35s}
+.rail li::before{content:'';position:absolute;top:2px;left:50%;width:12px;height:12px;margin-left:-6px;
+  border-radius:50%;background:var(--paper);border:2px solid currentColor;box-sizing:border-box;
+  transition:background .35s,box-shadow .35s;z-index:1}
+.rail li::after{content:'';position:absolute;top:7px;left:50%;width:100%;height:2px;
+  background:currentColor;opacity:.35;z-index:0}
+.rail li:last-child::after{display:none}
+.rail li.done{opacity:1;color:var(--green-deep)}
+.rail li.done::before{background:var(--green-deep)}
+.rail li.active{opacity:1;color:var(--amber)}
+.rail li.active::before{background:var(--amber);box-shadow:0 0 0 5px #B4770F26;
+  animation:railpulse 1.4s ease-in-out infinite}
+@keyframes railpulse{50%{box-shadow:0 0 0 9px #B4770F14}}
+.frame{position:relative;border:2px solid var(--ink);box-shadow:6px 6px 0 var(--faint);
+  background:var(--paper-2);min-height:196px}
+.frame .lstep{position:absolute;inset:0;opacity:0;transform:translateY(6px);
+  transition:opacity .4s,transform .4s;pointer-events:none}
+.frame .lstep.on{opacity:1;transform:none;pointer-events:auto}
+.frame .fh{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;
+  border-bottom:1px solid var(--faint);font-family:var(--mono);font-size:12px;font-weight:600;
+  color:var(--green-deep);background:#00000008}
+.frame .fh .dot{width:9px;height:9px;border-radius:50%;background:var(--amber);flex:none}
+.frame .fb{padding:17px 18px;font-family:var(--mono);font-size:14px;line-height:1.7;
+  white-space:pre-wrap;word-break:break-word}
+.frame .amb{color:var(--amber);font-weight:600}
+.frame .grn{color:var(--green-deep);font-weight:600}
+.frame .dim{opacity:.5}
+.frame .cur::after{content:'▋';animation:loopblink 1s steps(2) infinite}
 @keyframes loopblink{50%{opacity:0}}
-.loopcap{font-family:var(--mono);font-size:12.5px;color:var(--ink);opacity:.55;
-  margin:12px 0 0;text-align:center}
+.frame .lstep.win{background:var(--green-deep);color:var(--paper)}
+.frame .lstep.win .fh{color:var(--paper);border-color:#ffffff22;background:#ffffff12}
+.frame .lstep.win .fh .dot{background:var(--paper)}
+.frame .lstep.win .dim{opacity:.72}
+.frame .big{font-family:var(--disp);font-weight:800;font-size:21px;letter-spacing:-.01em;
+  display:inline-block;margin-bottom:2px}
+.loopcap{font-family:var(--mono);font-size:12.5px;color:var(--ink);opacity:.55;margin:14px 0 0;text-align:center}
 .loopcap b{opacity:1;color:var(--green-deep)}
-@media(prefers-reduced-motion:reduce){.loop .ln{opacity:1}.loop .cur::after{animation:none}}
+@media(max-width:640px){.rail{font-size:10px;letter-spacing:.04em}.frame .fb{font-size:12.5px}}
+@media(prefers-reduced-motion:reduce){
+  .frame .lstep{position:relative;opacity:1;transform:none;border-top:1px solid var(--faint)}
+  .frame .lstep:first-child{border-top:0}
+  .frame{min-height:0}
+  .rail li{opacity:1;color:var(--green-deep)}.rail li::before{background:var(--green-deep)}
+  .rail li.active::before{animation:none}.frame .cur::after{animation:none}
+}
