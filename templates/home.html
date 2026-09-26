@@ -40,6 +40,75 @@
 </div></header>
 
 <section><div class="wrap">
+  <div class="man"><span>THE LOOP</span><span class="pg">label an issue · the rest runs itself</span></div>
+  <div class="loop" id="loop" aria-label="animated walkthrough: a labeled issue becomes a pull request">
+    <div class="pane" data-pane="0">
+      <div class="ph"><span>github · seedling</span><span class="dot"></span></div>
+      <div class="body"><span class="ln" data-s="0">issue #7 opened
+<span class="dim">"trim whitespace from
+submitted URLs"</span></span>
+<span class="ln" data-s="1">
+<span class="grn">● label:</span> <span class="amb">tiny</span></span>
+<span class="ln" data-s="2">
+<span class="dim">↳ github-actions:</span>
+<span class="dim">tiny picked this up</span></span>
+<span class="ln" data-s="7">
+<span class="grn">✔ pull request #8</span>
+<span class="dim">tiny/issue-7 → main</span></span></div>
+    </div>
+    <div class="pane" data-pane="1">
+      <div class="ph"><span>tiny · fleet</span><span class="dot"></span></div>
+      <div class="body"><span class="ln" data-s="3">$ tiny
+<span class="dim">NAME   STATE     WHAT</span>
+<span class="grn">● root</span>  starting  <span class="dim">…</span></span>
+<span class="ln" data-s="4">
+<span class="grn">● root</span>  running   <span class="dim">editing store.go</span></span>
+<span class="ln" data-s="5">
+<span class="grn">● root</span>  running   <span class="dim">committing tiny/issue-7</span></span>
+<span class="ln" data-s="6">
+<span class="grn">● root</span>  <span class="grn">bundled</span>   <span class="dim">→ outbox</span></span></div>
+    </div>
+    <div class="pane" data-pane="2">
+      <div class="ph"><span>courier · tiny export</span><span class="dot"></span></div>
+      <div class="body"><span class="ln" data-s="6">$ tiny export
+<span class="dim">outbox/tiny-issue-7.bundle</span>
+<span class="dim">rebase onto main…</span></span>
+<span class="ln" data-s="7">
+<span class="dim">push tiny/issue-7 ✔</span>
+<span class="grn">open PR #8 ✔</span>
+<span class="dim">no key ever left the pod</span></span></div>
+    </div>
+  </div>
+  <p class="loopcap">A real run on <b>seedling</b>. The agent holds no git credentials — work leaves as a bundle a courier pushes.</p>
+  <script>
+  (function(){
+    var loop=document.getElementById('loop'); if(!loop) return;
+    var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+    var lines=[].slice.call(loop.querySelectorAll('.ln'));
+    var panes=[].slice.call(loop.querySelectorAll('.pane'));
+    // which pane is hot at each step, and which panes are "done"
+    var hot=[0,0,0,1,1,1,2,0];
+    var steps=8, i=0, timer=null, paused=false;
+    function render(){
+      lines.forEach(function(l){ l.classList.toggle('show', (+l.getAttribute('data-s'))<=i); });
+      panes.forEach(function(p,idx){
+        var pn=+p.getAttribute('data-pane');
+        p.classList.toggle('hot', !reduce && pn===hot[i]);
+        p.classList.remove('done');
+      });
+    }
+    function tick(){ if(paused) return; i=(i+1)%steps; if(i===0){ lines.forEach(function(l){l.classList.remove('show');}); } render(); }
+    render();
+    if(!reduce){ timer=setInterval(tick, 1400);
+      loop.addEventListener('mouseenter',function(){paused=true;});
+      loop.addEventListener('mouseleave',function(){paused=false;});
+      document.addEventListener('visibilitychange',function(){paused=document.hidden;});
+    } else { lines.forEach(function(l){l.classList.add('show');}); }
+  })();
+  </script>
+</div></section>
+
+<section><div class="wrap">
   <div class="man aud"><span>FOR ONE HUMAN</span><span class="pg">no team required</span></div>
   <h2 class="audh">Give your laptop a rest — <span class="g">run your Claude Code on your own cluster.</span></h2>
   <div class="steps">

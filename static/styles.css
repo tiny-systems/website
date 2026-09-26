@@ -209,3 +209,33 @@ footer a:hover{color:var(--green-deep)}
 #tb-notice .tb-actions{display:flex;gap:10px;margin-top:8px}
 #tb-notice button{font-family:var(--mono);font-size:12px;border:1.5px solid var(--ink);background:var(--paper);padding:4px 10px;cursor:pointer;border-radius:0}
 #tb-notice button:hover{background:var(--green-deep);color:var(--paper)}
+
+/* ── the loop: a stepped facsimile of issue → session → PR ────────────── */
+.loop{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;align-items:stretch;
+  border:2px solid var(--ink);box-shadow:6px 6px 0 var(--faint);background:var(--paper-2);
+  font-family:var(--mono);font-size:13px;line-height:1.5}
+@media(max-width:760px){.loop{grid-template-columns:1fr}}
+.loop .pane{padding:0;border-right:2px solid var(--ink);position:relative;min-height:230px;
+  transition:background .3s}
+.loop .pane:last-child{border-right:0}
+@media(max-width:760px){.loop .pane{border-right:0;border-bottom:2px solid var(--ink)}
+  .loop .pane:last-child{border-bottom:0}}
+.loop .pane.hot{background:var(--paper)}
+.loop .ph{display:flex;justify-content:space-between;align-items:center;
+  padding:7px 11px;border-bottom:1px solid var(--faint);font-size:11px;letter-spacing:.08em;
+  color:var(--green-deep);font-weight:600;background:#00000008}
+.loop .ph .dot{width:8px;height:8px;border-radius:50%;background:var(--faint);flex:none}
+.loop .pane.hot .ph .dot{background:var(--amber)}
+.loop .pane.done .ph .dot{background:var(--green)}
+.loop .body{padding:11px;white-space:pre-wrap;word-break:break-word}
+.loop .ln{opacity:0;transition:opacity .25s}
+.loop .ln.show{opacity:1}
+.loop .amb{color:var(--amber);font-weight:600}
+.loop .grn{color:var(--green-deep);font-weight:600}
+.loop .dim{opacity:.5}
+.loop .cur::after{content:'▋';animation:loopblink 1s steps(2) infinite}
+@keyframes loopblink{50%{opacity:0}}
+.loopcap{font-family:var(--mono);font-size:12.5px;color:var(--ink);opacity:.55;
+  margin:12px 0 0;text-align:center}
+.loopcap b{opacity:1;color:var(--green-deep)}
+@media(prefers-reduced-motion:reduce){.loop .ln{opacity:1}.loop .cur::after{animation:none}}
