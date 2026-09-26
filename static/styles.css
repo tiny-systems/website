@@ -214,7 +214,7 @@ footer a:hover{color:var(--green-deep)}
 .loop2{--loopclr:var(--ink)}
 .rail{display:flex;list-style:none;margin:0 0 22px;padding:0 4px;
   font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase}
-.rail li{flex:1;position:relative;text-align:center;padding-top:22px;color:var(--ink);opacity:.38;
+.rail li{flex:1;position:relative;text-align:center;padding-top:22px;color:var(--ink);opacity:.38;cursor:pointer;
   transition:opacity .35s,color .35s}
 .rail li::before{content:'';position:absolute;top:2px;left:50%;width:12px;height:12px;margin-left:-6px;
   border-radius:50%;background:var(--paper);border:2px solid currentColor;box-sizing:border-box;
@@ -263,7 +263,8 @@ footer a:hover{color:var(--green-deep)}
 
 .rail .rnode{font:inherit;color:inherit;letter-spacing:inherit;text-transform:inherit;
   background:none;border:0;padding:0;cursor:pointer;position:relative;z-index:2}
-.rail .rnode:hover{color:var(--green)}
+.rail li:hover{color:var(--green)}
+.rail li:hover::before{border-color:var(--green)}
 .rail .rnode:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
 .loop2.manual .rail li.active::before{animation:none}
 .loop2.manual .frame::after{content:'paused · click a step';position:absolute;top:9px;right:34px;

@@ -135,11 +135,10 @@
     }
     // Click a rail node: jump there and stop autoplaying. Clicking is a
     // deliberate "let me read this one", so we do not resume on our own.
-    nodes.forEach(function(b){
-      b.addEventListener('click',function(){
-        stopped=true; loop.classList.add('manual');
-        i=railToStep[+b.getAttribute('data-r')]; render();
-      });
+    function jump(r){ stopped=true; loop.classList.add('manual'); i=railToStep[r]; render(); }
+    rail.forEach(function(li){
+      var r=+li.querySelector('.rnode').getAttribute('data-r');
+      li.addEventListener('click',function(){ jump(r); });
     });
   })();
   </script>
