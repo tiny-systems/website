@@ -31,13 +31,21 @@ into its own outbox.
 
 ## Is this safer than just running the agent on my laptop?
 
-For autonomous work, yes, and here is the honest comparison. Overnight
-work needs permissions bypassed somewhere. On your laptop, an agent
-running that way has everything you have: SSH keys, gh token, browser
-sessions, cloud credentials, every repo you've cloned. In tiny the same
-agent has a workspace volume and a model token. No git credentials,
-non-root, resource-limited, and anything dangerous parks at the
-[gate](/docs/gate/) until a human's own credentials perform it.
+For autonomous work, yes, and the reason is simple: **in tiny the agent
+is not running as you, on your machine.**
+
+Overnight work needs permissions bypassed somewhere. On your laptop, an
+agent running that way *is* you: it has your SSH keys, your `gh` token,
+your `~/.aws` and `~/.kube` (prod contexts included), browser sessions,
+every repo you've cloned, and it sits on your LAN and VPN. Prompt-inject
+it and it can steal your credentials or pivot into your network with your
+identity. In tiny the same agent has a workspace volume and a model
+token, and nothing else. No git or cloud credentials, non-root,
+resource-limited, egress cut off from private networks, and anything
+dangerous parks at the [gate](/docs/gate/) until a human's own
+credentials perform it. A fully compromised session gets an attacker a
+scratch directory and your model quota, not your laptop and not your
+network.
 
 For supervised work the comparison is different: local Claude Code in
 default mode asks before each command, which is its own kind of safe.
