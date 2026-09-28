@@ -75,3 +75,39 @@ It's early. The pieces described in these docs are real and tested (we
 kill pods on camera), but the project is weeks old, the fleet screen is
 a TUI not a web app, and you are trusting a young codebase with cluster
 access scoped by your own RBAC. Read the code; it's small on purpose.
+
+## How is this different from Anthropic's self-hosted Claude Code?
+
+Anthropic now offers self-hosted environments — Claude Code cloud sessions
+routed to runners you deploy — for Team and Enterprise plans. If you are an
+enterprise already on those plans and want the first-party, supported path,
+use it.
+
+tiny is the open-source take, for a different person. It is MIT and runs on
+any Kubernetes cluster you already have, not a plan tier. It runs Codex the
+same way it runs Claude Code, so you are not tied to one vendor. And its
+whole design is the credential posture: the agent holds no git or cloud
+keys, nothing listens on the pod, and finished work leaves as a bundle a
+courier pushes — the agent never holds a token that could push. That is the
+part a hosted or first-party runner does not give you.
+
+## How is this different from hosted sandboxes like E2B, Modal, or Daytona?
+
+Those run isolated machines that execute code — a sandbox per run, usually
+their cloud, billed by usage. They are built for products that *ship an
+agent* and need somewhere safe to run its code.
+
+tiny is not a code sandbox. It runs the real Claude Code and Codex CLIs as
+long-lived sessions on a cluster you own, with no per-run cloud bill and no
+code leaving your infrastructure. If you were looking for a self-hosted
+sandbox SDK, those tools fit better. If you want your own machines running
+the actual CLI you already use, with no keys in the pod, that is this.
+
+## Can I run this without giving the agent my credentials?
+
+Yes — that is the default, not a mode you switch on. A session clones over
+HTTPS (or a deploy key you choose to add), and finished work leaves as a
+git bundle that a separate courier job pushes with a short-lived token the
+agent never sees. Nothing about the session holds a credential that can
+push to your repos or reach your cloud. See [the outbox](/docs/outbox/) and
+[the threat model](/docs/threat-model/).
