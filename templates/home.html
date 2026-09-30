@@ -163,6 +163,7 @@
       <div class="abody"><p><b>Repo credentials.</b> None in the pod by default. Work leaves as a <code>git bundle</code>; a courier pushes it with a short-lived token the agent never sees. With no key there it cannot push, force-push or reach your other repos &#8212; the capability is absent, not restricted. (<code>tiny setup</code> can mint a deploy key if you want direct pushes; that one does live in the pod.)</p>
       <p><b>Cloud credentials.</b> None in the pod, and <code>169.254.169.254</code> &#8212; the endpoint that hands out an instance&#8217;s IAM role &#8212; is blocked.</p>
       <p><b>Inbound network.</b> Nothing listens. No container port; the MCP sidecar binds <code>127.0.0.1</code>. You reach a session through the Kubernetes API under your own RBAC, never through an open port.</p>
+      <p><b>The container.</b> Restricted profile: runtime seccomp, every capability dropped, no privilege escalation, non-root. What keeps &#8220;owns the agent&#8217;s uid&#8221; from becoming &#8220;owns the node&#8221;. (<code>--unconfined</code> lifts it per session, for rootless buildah.)</p>
       <p><b>Acting as the agent.</b> Approving a question runs in <i>your</i> client with <i>your</i> credentials. That is why the web page can only read.</p></div>
     </div>
     <div class="addon">

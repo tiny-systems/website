@@ -21,8 +21,13 @@ agent *can* do, not whether it might try.
 - The agent credential (Claude or OpenAI token) — needed to run at all.
 - Its own workspace volume.
 - A localhost MCP sidecar whose Kubernetes permissions are: create
-  Question objects, update its own Session's status. The sidecar's
-  ServiceAccount can't read secrets, list pods, or touch other sessions.
+  Question objects, read Sessions and pods in the namespace, update its
+  own Session's status. The ServiceAccount cannot read secrets or
+  ConfigMaps (so it cannot widen its own egress allow-list), and cannot
+  exec, delete, or create anything else.
+- A restricted container: runtime seccomp profile, every capability
+  dropped, no privilege escalation, non-root. `--unconfined` lifts the
+  first two for rootless buildah, per session, and nothing else.
 
 ## What a session pod does not hold
 
@@ -39,12 +44,20 @@ agent *can* do, not whether it might try.
 ## Known holes, honestly
 
 - **The agent credential is in the pod.** An injected agent could burn
-  your Claude/OpenAI quota or exfiltrate the token if it has network
-  egress. Scope it: use a dedicated account, and restrict egress with a
-  NetworkPolicy if your CNI supports it.
-- **The pod has whatever network access your namespace allows.** tiny
-  does not install a NetworkPolicy for you. If the namespace can reach
-  your internal services, so can the agent.
+  your Claude/OpenAI quota, or send the token to any host the
+  [egress policy](/docs/egress/) lets it reach. Scope it: use a
+  dedicated account, and switch on the hostname allow-list so "any
+  host" becomes a short list.
+- **HTTPS out is open until you narrow it.** The default policy closes
+  the metadata endpoint, private address space and every port but 80
+  and 443, but a `NetworkPolicy` matches addresses, and the agent must
+  reach its model API. The allow-list closes this, and DNS with it, by
+  making the proxy the session's only resolver. Allow-listing
+  `github.com` still means an agent can write to a gist.
+- **The agent's own tool calls are not intercepted.** It runs with
+  `bypassPermissions`; asking is cooperative. The boundary is the pod,
+  the missing keys, the restricted container and the policy — not the
+  gate.
 - **`kubectl exec` into the pod is your cluster's RBAC, not ours.**
   Anyone who can exec into pods in the namespace can read the workspace.
 - **The gate is only as careful as its humans.** Approving a spawn you

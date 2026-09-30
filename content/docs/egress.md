@@ -65,7 +65,10 @@ policy to point at, which does not exist yet.
 encoded into queries against a nameserver the attacker controls. It is
 open that wide on purpose: clusters running NodeLocal DNSCache resolve
 via `169.254.20.10`, and the link-local exclusion that closes the
-metadata endpoint would otherwise break resolution entirely.
+metadata endpoint would otherwise break resolution entirely. Narrowing
+it to the cluster resolver would not help either: the cluster resolver
+forwards names it does not know upstream, and the attacker's nameserver
+is upstream.
 
 **Both of those close with the allow-list below.**
 
@@ -91,10 +94,24 @@ opens. The proxy checks it, then copies bytes without understanding
 them. No certificate is minted, no CA is installed in your image, and
 TLS between the agent and its model is never broken.
 
-With it on, DNS narrows too — to kube-system and to link-local on port
-53 only, which keeps NodeLocal DNSCache working without reopening the
-metadata endpoint. Sessions get `HTTPS_PROXY` as an address rather than
-a name, so they need no external DNS at all.
+With it on, sessions lose DNS as a way out too. The proxy pod becomes
+the **only nameserver** a session is given (`dnsPolicy: None`, pointing
+at the proxy's ClusterIP), and it answers two ways: names inside the
+cluster — `tiny-minio`, another session's exposed Service, the API
+server — are forwarded to the real cluster resolver; every other name is
+`NXDOMAIN`. External hosts never need resolving from inside the session,
+because a `CONNECT` proxy resolves them itself, on the far side of the
+policy. So a query can no longer carry data to an attacker's nameserver,
+directly or through the cluster resolver's upstream. Sessions get
+`HTTPS_PROXY` as an address rather than a name for the same reason.
+
+A refused lookup is logged like a refused connect, and `tiny egress
+denied` marks it: a tool resolving a name itself is a tool ignoring
+`HTTPS_PROXY`, and allow-listing the host will not help it.
+
+Both changes reach **sessions started after the switch**. A session
+already running keeps the resolver and the direct route it was born
+with until its pod is replaced.
 
 ### Seeing what was refused, and widening the list
 

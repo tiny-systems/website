@@ -36,6 +36,26 @@ build OOMs its own session, not the node). `--user` overrides the uid for
 images whose tooling is wired to one — buildah's rootless machinery needs
 its `build` user (1000), or subuid lookups fail.
 
+## Confinement, and `--unconfined`
+
+Every container in a session pod runs under the "restricted" Pod
+Security Standard: the runtime's default seccomp profile, every Linux
+capability dropped, no privilege escalation (so a setuid binary in the
+image gains nothing), non-root. Claude Code, Codex, tmux, git and the
+package managers need none of what that removes. It is what stands
+between "an attacker owns the agent's uid" and "an attacker owns the
+node".
+
+Rootless buildah and podman are the exception: user namespaces and the
+`newuidmap` setuid helper are exactly what the profile forbids.
+`--unconfined` lifts the seccomp profile and the capability drop for
+that session — and only that. The uid stays non-root, the network
+policy still applies, and the pod still holds no keys.
+
+```sh
+tiny new --image quay.io/buildah/stable --user 1000 --unconfined "…"
+```
+
 ## Builders: images made inside the namespace
 
 With the [registry cache](/docs/registry-cache/) on, `$TINY_REGISTRY` is
