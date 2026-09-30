@@ -111,7 +111,7 @@ denied` marks it: a tool resolving a name itself is a tool ignoring
 
 Both changes reach **sessions started after the switch**. A session
 already running keeps the resolver and the direct route it was born
-with until its pod is replaced.
+with until it is recreated: a pod restart reuses the same template.
 
 ### Seeing what was refused, and widening the list
 
