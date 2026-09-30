@@ -105,6 +105,16 @@ directory and fetch from it: `git fetch ./<session> <branch>`.
 Both read stdin when given no argument, so any event source that can pipe
 text can drive a session — see [messages](/docs/messages-uploads/).
 
+## Egress
+
+| command | what |
+|---|---|
+| `tiny egress` | the hostname allow-list the proxy enforces |
+| `tiny egress denied` | hosts agents tried to reach and were refused, most frequent first — read from the proxy log |
+| `tiny egress allow <host>` | widen the list; a leading dot matches subdomains. Live in a minute or two |
+
+Needs the [hostname allow-list](/docs/egress/) add-on on.
+
 ## Targets and setup
 
 | command | what |

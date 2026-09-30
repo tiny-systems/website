@@ -96,31 +96,32 @@ With it on, DNS narrows too — to kube-system and to link-local on port
 metadata endpoint. Sessions get `HTTPS_PROXY` as an address rather than
 a name, so they need no external DNS at all.
 
-### Editing the list
+### Seeing what was refused, and widening the list
+
+The refusals are the most useful security signal the system produces —
+an agent reaching for a host nobody allow-listed is a thing you want to
+know about — so they have their own command:
 
 ```sh
-kubectl edit configmap tiny-egress-allow
+tiny egress           # the current allow-list
+tiny egress denied    # hosts agents tried and were refused, most frequent first
+tiny egress allow <host>
 ```
 
-One host per line; a leading dot matches subdomains, so `.npmjs.org`
-admits `registry.npmjs.org` without admitting `npmjs.org.evil.com`. The
-proxy re-reads the file, so widening the list does not restart anything.
-The default is short on purpose: the agent APIs, GitHub, and the main
-package registries.
+`denied` reads the proxy's log, so it shows every refusal since the proxy
+last restarted, with a count and the time of the latest one. `allow`
+appends to the list without touching kubectl; a leading dot matches
+subdomains, so `.npmjs.org` admits `registry.npmjs.org` without admitting
+`npmjs.org.evil.com`. Adding a host is idempotent and keeps whatever
+comments and order you have in the list.
 
-A refusal says what to do about it, and is logged:
+An allowed host goes live in about a minute or two: kubelet syncs the
+ConfigMap into the proxy's volume on its own cycle, and the proxy re-reads
+the file when it changes. Nothing restarts.
 
-```
-tiny egress proxy: "exfil.example.com" is not in this namespace's allow-list.
-Ask a human to add it: kubectl edit configmap tiny-egress-allow
-```
-
-```sh
-kubectl logs deploy/tiny-egress | grep DENIED
-```
-
-That log is worth watching. An agent reaching for a host nobody
-allow-listed is a thing you want to know about.
+The list itself is a ConfigMap (`tiny-egress-allow`) if you prefer to edit
+it directly. The default is short on purpose: the agent APIs, GitHub, and
+the main package registries.
 
 ### What it still does not fix
 
