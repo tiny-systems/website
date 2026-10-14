@@ -111,6 +111,28 @@ code leaving your infrastructure. If you were looking for a self-hosted
 sandbox SDK, those tools fit better. If you want your own machines running
 the actual CLI you already use, with no keys in the pod, that is this.
 
+## How is this different from Google's AX?
+
+[AX](https://github.com/google/ax) is an orchestration platform for agent
+workloads at very large scale: tasks run on a sandbox runtime (Agent
+Substrate) under a control plane of their own, driven by AX's runner and a
+model you configure. It suspends a task by snapshotting it, and it is
+built for running agents in volume.
+
+tiny is narrower. It runs the actual Claude Code and Codex CLIs, unmodified,
+as a few long-lived sessions you attach to. It installs CRDs and a CLI, with
+no control plane, nothing to keep running between sessions, and no router:
+nothing in a session listens, and you reach it through the Kubernetes API
+under your own RBAC. The pod holds no git or cloud credentials; finished
+work leaves through the [outbox](/docs/outbox/). And a human stays in the
+loop: questions park until someone answers them with their own credentials,
+and a labelled GitHub issue comes back as a pull request.
+
+Both put the model credential in the agent's sandbox, so neither removes
+that. If you are building a platform that runs agents for many users, AX
+fits better. If you want your own coding agent on your own cluster with
+nothing in its pockets, that is this.
+
 ## Can I run this without giving the agent my credentials?
 
 Yes — that is the default, not a mode you switch on. A session clones over
