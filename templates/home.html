@@ -25,7 +25,7 @@
   </div>
   <div class="plate">
     <div class="platetop"><span>THE FLEET SCREEN</span><span>prod/team-a</span></div>
-    <div class="platebody">
+    <div class="platebody" tabindex="0" role="region" aria-label="fleet screen example">
 <div><span class="p">$</span> tiny<span class="cursor"></span></div>
 <div class="row dim">    NAME            STATE        AGE    CPU     MEM   WHAT</div>
 <div class="row"><span class="amb">  ✳ checkout-bug</span>    <span>needs you</span><span class="dim">    2h    112m  840Mi</span>   May I force-push the fix? [y/N]</div>
@@ -42,7 +42,7 @@
 <section><div class="wrap">
   <div class="man"><span>THE LOOP</span><span class="pg">label an issue · the rest runs itself</span></div>
   <div class="loop2" id="loop">
-    <ol class="rail" role="tablist" aria-label="loop steps — click to step through">
+    <ol class="rail" aria-label="loop steps — click to step through">
       <li data-r="0"><button type="button" class="rnode" data-r="0">issue</button></li>
       <li data-r="1"><button type="button" class="rnode" data-r="1">deliver</button></li>
       <li data-r="2"><button type="button" class="rnode" data-r="2">work</button></li>
@@ -122,7 +122,7 @@
         li.classList.toggle('done', idx<r || (last&&idx<=r));
         li.classList.toggle('active', idx===r);
       });
-      nodes.forEach(function(b,idx){ b.setAttribute('aria-selected', idx===r ? 'true':'false'); });
+      nodes.forEach(function(b,idx){ if(idx===r) b.setAttribute('aria-current','step'); else b.removeAttribute('aria-current'); });
     }
     render();
     function schedule(){ if(stopped) return; if(paused){ setTimeout(schedule,400); return; }
@@ -237,11 +237,11 @@
         <source src="{{asset "/static/demo.mp4"}}" type="video/mp4">
       </video>
     </div>
-    <div class="demotabs" role="tablist">
-      <button class="dt on" data-src="{{asset "/static/demo.mp4"}}">survive a pod kill</button>
-      <button class="dt" data-src="{{asset "/static/codex.mp4"}}">codex in the fleet</button>
-      <button class="dt" data-src="{{asset "/static/broadcast.mp4"}}">broadcast to all</button>
-      <button class="dt" data-src="{{asset "/static/options.mp4"}}">session options</button>
+    <div class="demotabs" role="group" aria-label="demo videos">
+      <button type="button" class="dt on" aria-pressed="true" data-src="{{asset "/static/demo.mp4"}}">survive a pod kill</button>
+      <button type="button" class="dt" aria-pressed="false" data-src="{{asset "/static/codex.mp4"}}">codex in the fleet</button>
+      <button type="button" class="dt" aria-pressed="false" data-src="{{asset "/static/broadcast.mp4"}}">broadcast to all</button>
+      <button type="button" class="dt" aria-pressed="false" data-src="{{asset "/static/options.mp4"}}">session options</button>
     </div>
   </div>
   <p class="proof">Recorded against a real cluster, including the <code style="font-family:var(--mono)">kubectl delete pod</code>. Tapes in <a href="https://github.com/tiny-systems/website/tree/main/demo">the repo</a>.</p>
@@ -252,8 +252,8 @@
     tabs.forEach(function(b){
       b.addEventListener('click', function(){
         if (b.classList.contains('on')) return;
-        tabs.forEach(function(x){ x.classList.remove('on'); });
-        b.classList.add('on');
+        tabs.forEach(function(x){ x.classList.remove('on'); x.setAttribute('aria-pressed','false'); });
+        b.classList.add('on'); b.setAttribute('aria-pressed','true');
         vid.src = b.getAttribute('data-src');
         vid.load();
         vid.play().catch(function(){});
@@ -274,7 +274,7 @@
   </div>
   <div class="plate" style="margin-top:34px;box-shadow:5px 5px 0 var(--green)">
     <div class="platetop"><span>THE ENTIRE INTEGRATION</span><span>.github/workflows/tiny.yml</span></div>
-    <div class="platebody" style="font-size:13px;line-height:1.8">
+    <div class="platebody" tabindex="0" role="region" aria-label="workflow file" style="font-size:13px;line-height:1.8">
 <div class="row"><span class="dim">on:</span></div>
 <div class="row"><span class="dim">  issues: { types: [labeled] }</span></div>
 <div class="row"><span class="dim">jobs:</span></div>

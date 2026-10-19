@@ -52,11 +52,13 @@
   function show() {
     var el = document.createElement('div');
     el.id = 'tb-notice';
+    el.setAttribute('role', 'region');
+    el.setAttribute('aria-label', 'Analytics notice');
     el.innerHTML =
       '<b>Just so you know</b><br>' +
       'We count visits with self-hosted GoatCounter. No personal data, no ads. ' +
       '<a href="/privacy/">Details</a>' +
-      '<span class="tb-actions"><button id="tb-off">turn it off</button><button id="tb-ok">ok</button></span>';
+      '<span class="tb-actions"><button type="button" id="tb-off">Reject</button><button type="button" id="tb-ok">Accept</button></span>';
     document.body.appendChild(el);
     document.getElementById('tb-ok').onclick = function () { setAnalytics(true, true); el.remove(); };
     document.getElementById('tb-off').onclick = function () { setAnalytics(false, true); el.remove(); };
