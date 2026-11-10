@@ -32,6 +32,9 @@ courier outside it. That's the whole answer to the question in the title.
 
 **Attack it.** Pick one of ten moves a prompt-injected agent might
 plausibly try, and the diagram walks the path and marks where it stops.
+Click a part while you're in this mode and you get the attacker's view
+of it instead: what someone who owns the agent can do with that piece,
+and which of the moves hit it.
 
 | verdict | moves |
 |---|---|

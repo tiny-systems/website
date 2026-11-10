@@ -322,3 +322,9 @@ footer a:hover{color:var(--green-deep)}
 .kattacks[hidden],.kverdict[hidden]{display:none}
 .ktag{font-style:normal;font-size:10px;letter-spacing:.1em;border:1.5px solid #8A5A08;color:#8A5A08;padding:0 4px;margin-left:4px;vertical-align:1px}
 .kn.sel .ktag,.kn.stop .ktag,.kn.pass .ktag{border-color:var(--paper);color:var(--paper)}
+.kmoves{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;padding-top:12px;border-top:1.5px dashed var(--ink)}
+.kmoves[hidden]{display:none}
+.kmh{width:100%;font-family:var(--mono);font-size:12px;font-weight:600}
+.kmv{appearance:none;border-radius:0;cursor:pointer;font-family:var(--mono);font-size:12px;border:1.5px solid var(--ink);background:var(--paper);color:var(--ink);padding:4px 8px;text-align:left}
+.kmv:hover{background:var(--ink);color:var(--paper)}
+.kmv:focus-visible{outline:2px solid var(--amber);outline-offset:2px}

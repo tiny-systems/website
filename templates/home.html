@@ -156,7 +156,7 @@
 </div></section>
 
 <section id="keys"><div class="wrap">
-  <div class="man"><span>WHERE ARE THE KEYS?</span><span class="pg">click any part &#183; then try to break it</span></div>
+  <div class="man"><span>WHERE ARE THE KEYS?</span><span class="pg">click any part &#183; in both modes</span></div>
   <div class="kmodes" role="group" aria-label="explainer mode">
     <button type="button" class="kmode on" data-mode="how" aria-pressed="true">How it works</button>
     <button type="button" class="kmode" data-mode="attack" aria-pressed="false">Attack it</button>
@@ -207,6 +207,7 @@
       <div class="kcard">
         <div class="kch"><span class="kname"></span><span class="kverdict" hidden></span></div>
         <div class="kbody"></div>
+        <div class="kmoves" hidden><span class="kmh">Moves that hit this:</span></div>
       </div>
     </div>
   </div>
@@ -224,6 +225,20 @@
     <div data-k="github"><b>GitHub.</b> Receives branches and pull requests from the courier, never from the agent. When the agent needs a decision, the question appears as a comment on the issue with the exact <code>tiny answer</code> command, which you run with your own credentials.</div>
     <div data-k="internet"><b>The internet.</b> The agent has to reach its model API. With only the egress policy, any host on 443 is reachable. With the allow-list on, only the hosts you listed are.</div>
   </div>
+  <div class="ktext-attack" hidden>
+    <div data-k="you" data-moves="approve"><b>Out of reach.</b> Your kubeconfig never enters the pod, so the agent can&#8217;t attach to you or act as you. The only way it reaches you is by asking: a question parks until you answer, and only then runs, with your credentials. Read before you approve.</div>
+    <div data-k="init" data-moves="escape"><b>Gone before the agent starts.</b> It copies the CLIs into <code>/tiny</code> and exits, so nothing of it is left running to attack. Whatever the agent does to its own copy of the tools only affects its own session.</div>
+    <div data-k="agent" data-moves="steal,escape,quota"><b>What the attacker owns.</b> After a successful prompt injection: a shell as a non-root user, with the workspace, the model key and whatever network the policy allows. Everything else on this diagram is about what that shell can&#8217;t reach.</div>
+    <div data-k="sidecar" data-moves="approve,port"><b>Usable, not dangerous.</b> The attacker can call these tools just as the agent can. They&#8217;re the voice, not the hands: create a question, list sessions, update its own status. Anything that acts, like spawning a session or publishing a port, parks as a question for a human. It listens on loopback, so nothing outside the pod can call it.</div>
+    <div data-k="workspace" data-moves="push,exfil"><b>Fully in reach.</b> The repo, the transcript and the outbox are readable and writable. That&#8217;s the private data the agent works on, and the part you can&#8217;t take away. Work leaves only as a bundle the courier opens as a pull request for review, never as a push to main.</div>
+    <div data-k="secret" data-moves="quota"><b>The real prize, and it&#8217;s in reach.</b> The attacker can read the model credential, use it, or send it to any host the network allows. Use a dedicated account, keep the allow-list on, and rotate the token if a session misbehaves.</div>
+    <div data-k="policy" data-moves="metadata,exfil"><b>Can&#8217;t be changed from inside.</b> The session&#8217;s account has no access to NetworkPolicies. It blocks the metadata endpoint, private address space and every port but 80 and 443. It doesn&#8217;t stop HTTPS to arbitrary hosts, and it does nothing if your CNI doesn&#8217;t enforce it.</div>
+    <div data-k="proxy" data-moves="exfil,dns"><b>Usable, not editable.</b> The allow-list is a ConfigMap the session can neither read nor write. Unlisted hosts get a 403, outside DNS names get NXDOMAIN, and both are logged for <code>tiny egress denied</code>. A listed host is allowed for everything on it.</div>
+    <div data-k="api" data-moves="delete,approve"><b>Reachable, but RBAC holds.</b> The agent needs the API to read its own inbox. With the pod&#8217;s token it can&#8217;t delete anything, edit its spec, read secrets or ConfigMaps, exec into pods or answer questions.</div>
+    <div data-k="courier" data-moves="push"><b>Out of reach.</b> It runs on a separate runner pod with a short-lived token the session never sees. What the attacker controls is the bundle it picks up, so names are checked against a strict pattern, read over argv-only exec, and the change lands as a pull request, not on main.</div>
+    <div data-k="github" data-moves="push"><b>Only the courier writes here.</b> The attacker can&#8217;t push, comment or open pull requests directly. It can put text in a bundle or a question that a human then reads, so review the PR like any outside contribution.</div>
+    <div data-k="internet" data-moves="exfil,dns,quota"><b>Where stolen data would go.</b> With only the egress policy, any host on 443. With the allow-list on, only the hosts you listed, and listing <code>github.com</code> still permits a gist.</div>
+  </div>
   <p class="sub" style="margin-top:22px">The full list of what&#8217;s closed and what&#8217;s open: <a href="/docs/threat-model/">threat model</a> &#183; <a href="/docs/egress/">egress</a> &#183; <a href="/docs/outbox/">outbox</a> &#183; <a href="/docs/gate/">the gate</a></p>
   <script>
   (function(){
@@ -233,7 +248,7 @@
     var modes=[].slice.call(root.querySelectorAll('.kmode'));
     var attacksBox=root.querySelector('.kattacks');
     var atks=[].slice.call(root.querySelectorAll('.ka'));
-    var nameEl=root.querySelector('.kname'), verdictEl=root.querySelector('.kverdict'), bodyEl=root.querySelector('.kbody');
+    var nameEl=root.querySelector('.kname'), verdictEl=root.querySelector('.kverdict'), bodyEl=root.querySelector('.kbody'), movesEl=root.querySelector('.kmoves');
     var names={you:'you',init:'init container',agent:'agent',sidecar:'MCP sidecar',workspace:'workspace volume',secret:'model key secret',policy:'egress policy',proxy:'egress proxy',api:'Kubernetes API',courier:'courier job',github:'GitHub',internet:'internet'};
     var A={
       steal:{n:'Steal SSH keys and cloud credentials',p:['agent'],m:[['agent','stop','nothing to steal']],v:'blocked',t:'<b>Nothing to steal.</b> There is no <code>~/.ssh</code>, no <code>gh</code> token and no <code>~/.aws</code> in the pod. The only secret mounted is the model credential, which has its own entry at the bottom of this list.'},
@@ -251,14 +266,27 @@
     var timers=[];
     function clearMarks(){ timers.forEach(clearTimeout); timers=[]; nodes.forEach(function(n){ n.classList.remove('hit','stop','pass','sel'); n.removeAttribute('data-mark'); n.setAttribute('aria-pressed','false'); }); }
     function node(k){ return root.querySelector('.kn[data-k="'+k+'"]'); }
+    function clearMoves(){ movesEl.hidden=true; [].slice.call(movesEl.querySelectorAll('.kmv')).forEach(function(b){ b.remove(); }); }
     function showNode(k){
-      clearMarks(); var n=node(k); if(!n) return;
+      clearMarks(); clearMoves(); var n=node(k); if(!n) return;
       n.classList.add('sel'); n.setAttribute('aria-pressed','true');
       nameEl.textContent=names[k]; verdictEl.hidden=true;
-      bodyEl.innerHTML=root.querySelector('.ktext [data-k="'+k+'"]').innerHTML;
+      var attacking=root.classList.contains('attack');
+      var src=root.querySelector((attacking?'.ktext-attack':'.ktext')+' [data-k="'+k+'"]');
+      bodyEl.innerHTML=src.innerHTML;
+      if(attacking){
+        nameEl.textContent=names[k]+', from the attacker\u2019s side';
+        atks.forEach(function(b){ b.classList.remove('on'); b.setAttribute('aria-pressed','false'); });
+        (src.getAttribute('data-moves')||'').split(',').filter(Boolean).forEach(function(a){
+          var b=document.createElement('button'); b.type='button'; b.className='kmv'; b.textContent=A[a].n;
+          b.addEventListener('click', function(){ runAttack(a); });
+          movesEl.appendChild(b);
+        });
+        movesEl.hidden=false;
+      }
     }
     function runAttack(a){
-      var d=A[a]; clearMarks();
+      var d=A[a]; clearMarks(); clearMoves();
       atks.forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-a')===a); b.setAttribute('aria-pressed', b.getAttribute('data-a')===a?'true':'false'); });
       nameEl.textContent=d.n; verdictEl.hidden=true; bodyEl.innerHTML='';
       var step=reduce?0:380;
@@ -279,7 +307,7 @@
     // whole diagram, so bring it into view or the tap seems to do nothing.
     var panel=root.querySelector('.kpanel');
     function reveal(){ if(window.matchMedia('(max-width:1100px)').matches) panel.scrollIntoView({behavior:reduce?'auto':'smooth',block:'nearest'}); }
-    nodes.forEach(function(n){ n.addEventListener('click', function(){ if(root.classList.contains('attack')) setMode('how'); showNode(n.getAttribute('data-k')); reveal(); }); });
+    nodes.forEach(function(n){ n.addEventListener('click', function(){ showNode(n.getAttribute('data-k')); reveal(); }); });
     atks.forEach(function(b){ b.addEventListener('click', function(){ runAttack(b.getAttribute('data-a')); }); });
     showNode('agent');
   })();
