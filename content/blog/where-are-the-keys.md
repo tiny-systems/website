@@ -57,7 +57,8 @@ arrow to end in a wall, and the honest picture has a few arrows that
 don't. The fix was to give every attack its own labels for where it
 ends: "refused with the allow-list" on the proxy, "default: gets
 through" on the internet. The same treatment went to DNS, to escaping
-the container, where the shared kernel is still a path, and to the
+the container, where the shared kernel is still a path (since v0.13,
+`--runtime-class gvisor` closes it), and to the
 model key, which simply has to be in the pod for the real CLI to run.
 
 We'd rather show you the one ALLOWED verdict ourselves than have you

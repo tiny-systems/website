@@ -16,6 +16,7 @@ import (
 
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/extension"
+	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/renderer/html"
 	"gopkg.in/yaml.v3"
 )
@@ -45,6 +46,8 @@ type SiteData struct {
 
 var md = goldmark.New(
 	goldmark.WithExtensions(extension.GFM),
+	// Headings get ids so docs can link to a section (/docs/images/#...).
+	goldmark.WithParserOptions(parser.WithAutoHeadingID()),
 	goldmark.WithRendererOptions(html.WithUnsafe()),
 )
 

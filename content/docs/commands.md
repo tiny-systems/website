@@ -48,6 +48,7 @@ tiny new [task]
 | `--model <name>` | model override (`claude --model` / `codex -m`) |
 | `--cpu`, `--memory` | per-session requests (memory is also the limit) |
 | `--user <uid>` | for images wired to a specific user (buildah: 1000) |
+| `--runtime-class <name>` | run under a sandboxed runtime the cluster provides, e.g. `gvisor` or `kata`; see [images](/docs/images/#sandboxed-runtimes-gvisor-and-kata) |
 | `--unconfined` | lift the seccomp and capability hardening — rootless buildah/podman need user namespaces; see [images](/docs/images/#confinement-and---unconfined) |
 | `--quiet` | skip the follow-up hint |
 
