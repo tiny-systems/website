@@ -155,26 +155,135 @@
   </div>
 </div></section>
 
-<section><div class="wrap">
-  <div class="man"><span>CONTAINMENT</span><span class="pg">both halves &#183; a claim is worth what its exceptions are worth</span></div>
-  <div class="contain">
-    <div class="addon">
-      <div class="atop"><span class="on">CLOSED</span><span class="what">NOT NEGOTIABLE</span></div>
-      <div class="abody"><p><b>Repo credentials.</b> None in the pod by default. Work leaves as a <code>git bundle</code>; a courier pushes it with a short-lived token the agent never sees. With no key there it cannot push, force-push or reach your other repos &#8212; the capability is absent, not restricted. (<code>tiny setup</code> can mint a deploy key if you want direct pushes; that one does live in the pod.)</p>
-      <p><b>Cloud credentials.</b> None in the pod, and <code>169.254.169.254</code> &#8212; the endpoint that hands out an instance&#8217;s IAM role &#8212; is blocked.</p>
-      <p><b>Inbound network.</b> Nothing listens. No container port; the MCP sidecar binds <code>127.0.0.1</code>. You reach a session through the Kubernetes API under your own RBAC, never through an open port.</p>
-      <p><b>The container.</b> Restricted profile: runtime seccomp, every capability dropped, no privilege escalation, non-root. What keeps &#8220;owns the agent&#8217;s uid&#8221; from becoming &#8220;owns the node&#8221;. (<code>--unconfined</code> lifts it per session, for rootless buildah.)</p>
-      <p><b>Acting as the agent.</b> Approving a question runs in <i>your</i> client with <i>your</i> credentials. That is why the web page can only read.</p></div>
+<section id="keys"><div class="wrap">
+  <div class="man"><span>WHERE ARE THE KEYS?</span><span class="pg">click any part &#183; then try to break it</span></div>
+  <div class="kmodes" role="group" aria-label="explainer mode">
+    <button type="button" class="kmode on" data-mode="how" aria-pressed="true">How it works</button>
+    <button type="button" class="kmode" data-mode="attack" aria-pressed="false">Attack it</button>
+  </div>
+  <div class="kx">
+    <div class="kmap" aria-label="anatomy of a tiny session">
+      <div class="kside">
+        <button type="button" class="kn" data-k="you"><span class="kt">you</span><span class="ks">kubeconfig &#183; your RBAC</span></button>
+      </div>
+      <div class="kcluster">
+        <div class="klabel">your cluster</div>
+        <div class="kring">
+          <button type="button" class="kn kpolicy" data-k="policy"><span class="kt">egress policy</span><span class="ks">NetworkPolicy, default deny</span></button>
+          <div class="kpod">
+            <div class="klabel">session pod</div>
+            <button type="button" class="kn" data-k="init"><span class="kt">init: inject-agent</span><span class="ks">copies the CLIs into /tiny</span></button>
+            <button type="button" class="kn kagent" data-k="agent"><span class="kt">agent</span><span class="ks">claude / codex in tmux &#183; any image</span></button>
+            <button type="button" class="kn" data-k="sidecar"><span class="kt">MCP sidecar</span><span class="ks">127.0.0.1:8080 only</span></button>
+            <button type="button" class="kn" data-k="workspace"><span class="kt">workspace volume</span><span class="ks">repo &#183; transcript &#183; outbox/*.bundle</span></button>
+            <button type="button" class="kn kkey" data-k="secret"><span class="kt">secret: model key <i class="ktag">KEY</i></span><span class="ks">the only credential inside</span></button>
+          </div>
+        </div>
+        <div class="ksvc">
+          <button type="button" class="kn" data-k="api"><span class="kt">Kubernetes API</span><span class="ks">RBAC decides</span></button>
+          <button type="button" class="kn" data-k="proxy"><span class="kt">egress proxy</span><span class="ks">optional &#183; hostname allow-list</span></button>
+          <button type="button" class="kn kkey" data-k="courier"><span class="kt">courier job <i class="ktag">KEY</i></span><span class="ks">GitHub token lives here</span></button>
+        </div>
+      </div>
+      <div class="kside">
+        <button type="button" class="kn" data-k="internet"><span class="kt">internet</span><span class="ks">model API &#183; everything else</span></button>
+        <button type="button" class="kn" data-k="github"><span class="kt">GitHub</span><span class="ks">branches &#183; PRs &#183; comments</span></button>
+      </div>
     </div>
-    <div class="addon">
-      <div class="atop"><span class="on">OPEN</span><span class="what">SAID OUT LOUD</span></div>
-      <div class="abody"><p><b>The model credential</b> lives in the agent pod. Running the real vendor CLI requires it. Inherent, not an oversight.</p>
-      <p><b>HTTPS out, unless you narrow it.</b> A NetworkPolicy matches addresses, not hostnames, so by default any host on 443 is reachable. Switch on the <a href="/docs/egress/">hostname allow-list</a> and only named hosts are &#8212; though allow-listing <code>github.com</code> still means an agent can write to a gist.</p>
-      <p><b>The agent&#8217;s own tool calls.</b> It runs with <code>bypassPermissions</code>. Asking is cooperative &#8212; nothing intercepts it. The boundary is the pod, the missing keys and the policy.</p>
-      <p><b>A deploy key, if you add one.</b> <code>tiny setup</code> offers to mint one and the agent gets it in <code>~/.ssh</code>. Handy for private repos, but it is a long-lived write credential sitting in the pod. The outbox exists so you never have to.</p></div>
+    <div class="kpanel" aria-live="polite">
+      <div class="kattacks" hidden>
+        <div class="kah">Pick a move a prompt-injected agent might try:</div>
+        <button type="button" class="ka" data-a="steal">Steal SSH keys and cloud credentials</button>
+        <button type="button" class="ka" data-a="push">Push to the repo, force-push main</button>
+        <button type="button" class="ka" data-a="metadata">Read the cloud&#8217;s instance credentials</button>
+        <button type="button" class="ka" data-a="exfil">Send the repo to evil.example</button>
+        <button type="button" class="ka" data-a="dns">Smuggle data out through DNS</button>
+        <button type="button" class="ka" data-a="delete">Delete itself, rewrite its own task</button>
+        <button type="button" class="ka" data-a="approve">Approve its own risky request</button>
+        <button type="button" class="ka" data-a="port">Open a port for someone to connect in</button>
+        <button type="button" class="ka" data-a="escape">Break out to the node</button>
+        <button type="button" class="ka" data-a="quota">Spend your model quota, leak the model key</button>
+      </div>
+      <div class="kcard">
+        <div class="kch"><span class="kname"></span><span class="kverdict" hidden></span></div>
+        <div class="kbody"></div>
+      </div>
     </div>
   </div>
-  <p class="sub" style="margin-top:18px">Detail: <a href="/docs/threat-model/">threat model</a> &#183; <a href="/docs/egress/">egress policy</a> &#183; <a href="/docs/gate/">the gate</a></p>
+  <div class="ktext" hidden>
+    <div data-k="you"><b>You.</b> Your laptop or CI runs <code>tiny</code>, which talks to the Kubernetes API with your own kubeconfig. Attaching is an exec into tmux under your RBAC. When a session asks a question, answering runs the action in your client with your credentials, so the audit log names you, not a service account.</div>
+    <div data-k="init"><b>Init container.</b> Copies Claude Code, Codex, a static tmux and the entrypoint into a shared <code>/tiny</code> volume, then exits. The session runs from <code>/tiny</code>, which is why <code>--image</code> can be <code>golang:1.26</code> or your own dev image. There&#8217;s no special image to maintain and nothing baked in.</div>
+    <div data-k="agent"><b>The agent.</b> The real, unmodified Claude Code or Codex CLI in tmux, as a non-root user, under the restricted profile: the runtime&#8217;s seccomp filter, every Linux capability dropped, no privilege escalation. It runs with permissions bypassed on purpose, so nothing intercepts its tool calls. The boundary is everything drawn around it.</div>
+    <div data-k="sidecar"><b>MCP sidecar.</b> tiny&#8217;s own tools (ask a human, list or spawn sessions, publish a port) on <code>127.0.0.1:8080</code>, reachable only from inside the pod. It runs as the session&#8217;s service account, which may create questions, read sessions and pods, and update its own status. Nothing else: no delete, no exec, no secrets, no ConfigMaps.</div>
+    <div data-k="workspace"><b>Workspace volume.</b> A persistent volume at <code>/workspace</code> holding the repo, the transcript and <code>outbox/</code>. The pod is disposable and the volume isn&#8217;t, so a replaced pod resumes the conversation. Finished work is written as <code>git bundle create outbox/&lt;branch&gt;.bundle main..&lt;branch&gt;</code>: a file, not a push.</div>
+    <div data-k="secret"><b>The one secret.</b> <code>tiny-agent-env</code> holds the model credential, a Claude token or an API key, because the real vendor CLI can&#8217;t run without it. No git token, no cloud keys, no SSH key, unless you opt into a deploy key in <code>tiny setup</code>, which then does live in the pod.</div>
+    <div data-k="policy"><b>Egress policy.</b> One NetworkPolicy on every session pod, on by default. Allowed out: DNS, this namespace, the Kubernetes API, and ports 80 and 443 to the internet minus private address space, so <code>169.254.169.254</code> and your internal network are unreachable. Every other port is closed. It only bites if your CNI enforces NetworkPolicy, and the fleet screen tells you whether it does.</div>
+    <div data-k="proxy"><b>Egress proxy, optional.</b> Switch on the hostname allow-list and the internet rule disappears. Every connection goes through a <code>CONNECT</code> proxy that checks the hostname and tunnels TLS without breaking it. It&#8217;s also the session&#8217;s only DNS resolver: cluster names are answered, everything else is refused. Refusals show up in <code>tiny egress denied</code>.</div>
+    <div data-k="api"><b>Kubernetes API.</b> Anything the agent might want to change goes through here, and RBAC answers. With the session&#8217;s own token, deleting itself, rewriting its task, editing the allow-list, reading secrets and approving its own question all come back 403. We tested exactly that from inside a live pod.</div>
+    <div data-k="courier"><b>Courier.</b> A GitHub Actions job on the in-cluster runner, holding the job&#8217;s short-lived <code>GITHUB_TOKEN</code>. It reads each workspace&#8217;s outbox through the exec API, argv only, with bundle names checked against a strict pattern. Then it rebases, pushes, opens the pull request, and only after that marks the bundle done. The token never enters the session pod.</div>
+    <div data-k="github"><b>GitHub.</b> Receives branches and pull requests from the courier, never from the agent. When the agent needs a decision, the question appears as a comment on the issue with the exact <code>tiny answer</code> command, which you run with your own credentials.</div>
+    <div data-k="internet"><b>The internet.</b> The agent has to reach its model API. With only the egress policy, any host on 443 is reachable. With the allow-list on, only the hosts you listed are.</div>
+  </div>
+  <p class="sub" style="margin-top:22px">The full list of what&#8217;s closed and what&#8217;s open: <a href="/docs/threat-model/">threat model</a> &#183; <a href="/docs/egress/">egress</a> &#183; <a href="/docs/outbox/">outbox</a> &#183; <a href="/docs/gate/">the gate</a></p>
+  <script>
+  (function(){
+    var root=document.getElementById('keys'); if(!root) return;
+    var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+    var nodes=[].slice.call(root.querySelectorAll('.kn'));
+    var modes=[].slice.call(root.querySelectorAll('.kmode'));
+    var attacksBox=root.querySelector('.kattacks');
+    var atks=[].slice.call(root.querySelectorAll('.ka'));
+    var nameEl=root.querySelector('.kname'), verdictEl=root.querySelector('.kverdict'), bodyEl=root.querySelector('.kbody');
+    var names={you:'you',init:'init container',agent:'agent',sidecar:'MCP sidecar',workspace:'workspace volume',secret:'model key secret',policy:'egress policy',proxy:'egress proxy',api:'Kubernetes API',courier:'courier job',github:'GitHub',internet:'internet'};
+    var A={
+      steal:{n:'Steal SSH keys and cloud credentials',p:['agent'],m:[['agent','stop','nothing to steal']],v:'blocked',t:'<b>Nothing to steal.</b> There is no <code>~/.ssh</code>, no <code>gh</code> token and no <code>~/.aws</code> in the pod. The only secret mounted is the model credential, which has its own entry at the bottom of this list.'},
+      push:{n:'Push to the repo',p:['agent','policy','github'],m:[['github','stop','rejected: no credentials']],v:'blocked',t:'<b>Rejected by GitHub.</b> The agent has no git credentials, so the push fails authentication. The only way out for code is a bundle in the outbox. The courier rebases it onto main and opens it as a pull request that someone reviews.'},
+      metadata:{n:'Read instance credentials',p:['agent','policy'],m:[['policy','stop','blocked here']],v:'blocked',t:'<b>Never answers.</b> <code>169.254.169.254</code> hands out a cloud instance&#8217;s IAM role. The egress policy excludes link-local space on every port, so the request goes nowhere. This one needs a CNI that enforces NetworkPolicy.'},
+      exfil:{n:'Send the repo to evil.example',p:['agent','policy','proxy','internet'],m:[['proxy','stop','refused with the allow-list'],['internet','pass','default: gets through']],v:'depends',t:'<b>Default: it gets through.</b> A NetworkPolicy matches addresses, and evil.example on 443 looks like any other site. <b>With the hostname allow-list on:</b> the proxy refuses it with a 403 and logs the host. Allow-listing a host still allows everything on it, so <code>github.com</code> means a gist is possible.'},
+      dns:{n:'Smuggle data out through DNS',p:['agent','proxy','internet'],m:[['proxy','stop','NXDOMAIN with the allow-list'],['internet','pass','default: gets through']],v:'depends',t:'<b>Default: possible.</b> The cluster resolver forwards names it doesn&#8217;t know to the internet, so data can ride inside a lookup. <b>With the allow-list on:</b> the proxy is the session&#8217;s only resolver and returns NXDOMAIN for anything outside the cluster.'},
+      delete:{n:'Delete itself, rewrite its task',p:['agent','api'],m:[['api','stop','403']],v:'blocked',t:'<b>403.</b> The session&#8217;s account can read sessions and update its own status, and nothing that acts. We ran these from inside a live pod with its own token: delete the session, the Deployment, the pod, the volume, rewrite the task. Every one refused.'},
+      approve:{n:'Approve its own request',p:['sidecar','api'],m:[['api','stop','403']],v:'blocked',t:'<b>403.</b> It can create a question but not answer one. The answer runs in a human&#8217;s client with that human&#8217;s credentials, which is the whole point of the gate.'},
+      port:{n:'Open a port inbound',p:['internet','sidecar'],m:[['sidecar','stop','loopback only']],v:'blocked',t:'<b>Nothing listens.</b> The pod declares no container port and the sidecar binds <code>127.0.0.1</code>. Publishing a dev server is a tool call that parks as a question until a human approves it, and then it runs with that human&#8217;s credentials.'},
+      escape:{n:'Break out to the node',p:['agent','init'],m:[['agent','stop','restricted profile']],v:'hardened',t:'<b>Harder, not impossible.</b> The restricted profile removes what most container escapes rely on: capabilities, privilege escalation, unusual syscalls. Containers still share the node&#8217;s kernel, so a kernel exploit is the path that remains. A microVM runtime class would close it, and we haven&#8217;t wired one up yet.'},
+      quota:{n:'Spend quota, leak the model key',p:['secret','agent','internet'],m:[['internet','pass','gets through']],v:'allowed',t:'<b>This one works.</b> The model credential has to be in the pod for the real CLI to run. A compromised session can spend your quota while it lives, and send the key to any host it can reach. Use a dedicated account, and the allow-list limits where the key can go.'}
+    };
+    var vlabel={blocked:'BLOCKED',depends:'DEPENDS ON THE ALLOW-LIST',hardened:'HARDENED',allowed:'ALLOWED'};
+    var timers=[];
+    function clearMarks(){ timers.forEach(clearTimeout); timers=[]; nodes.forEach(function(n){ n.classList.remove('hit','stop','pass','sel'); n.removeAttribute('data-mark'); n.setAttribute('aria-pressed','false'); }); }
+    function node(k){ return root.querySelector('.kn[data-k="'+k+'"]'); }
+    function showNode(k){
+      clearMarks(); var n=node(k); if(!n) return;
+      n.classList.add('sel'); n.setAttribute('aria-pressed','true');
+      nameEl.textContent=names[k]; verdictEl.hidden=true;
+      bodyEl.innerHTML=root.querySelector('.ktext [data-k="'+k+'"]').innerHTML;
+    }
+    function runAttack(a){
+      var d=A[a]; clearMarks();
+      atks.forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-a')===a); b.setAttribute('aria-pressed', b.getAttribute('data-a')===a?'true':'false'); });
+      nameEl.textContent=d.n; verdictEl.hidden=true; bodyEl.innerHTML='';
+      var step=reduce?0:380;
+      d.p.forEach(function(k,i){ timers.push(setTimeout(function(){ var n=node(k); if(n) n.classList.add('hit'); }, i*step)); });
+      timers.push(setTimeout(function(){
+        d.m.forEach(function(x){ var n=node(x[0]); if(n){ n.classList.add(x[1]); n.setAttribute('data-mark', x[2]); } });
+        verdictEl.textContent=vlabel[d.v]; verdictEl.className='kverdict v-'+d.v; verdictEl.hidden=false;
+        bodyEl.innerHTML=d.t;
+      }, d.p.length*step));
+    }
+    function setMode(m){
+      modes.forEach(function(b){ var on=b.getAttribute('data-mode')===m; b.classList.toggle('on',on); b.setAttribute('aria-pressed',on?'true':'false'); });
+      root.classList.toggle('attack', m==='attack'); attacksBox.hidden=(m!=='attack');
+      if(m==='attack'){ runAttack('steal'); } else { atks.forEach(function(b){ b.classList.remove('on'); }); showNode('agent'); }
+    }
+    modes.forEach(function(b){ b.addEventListener('click', function(){ setMode(b.getAttribute('data-mode')); }); });
+    // Stacked layout (phones, narrow windows): the panel sits under the
+    // whole diagram, so bring it into view or the tap seems to do nothing.
+    var panel=root.querySelector('.kpanel');
+    function reveal(){ if(window.matchMedia('(max-width:1100px)').matches) panel.scrollIntoView({behavior:reduce?'auto':'smooth',block:'nearest'}); }
+    nodes.forEach(function(n){ n.addEventListener('click', function(){ if(root.classList.contains('attack')) setMode('how'); showNode(n.getAttribute('data-k')); reveal(); }); });
+    atks.forEach(function(b){ b.addEventListener('click', function(){ runAttack(b.getAttribute('data-a')); }); });
+    showNode('agent');
+  })();
+  </script>
 </div></section>
 
 <section><div class="wrap">
