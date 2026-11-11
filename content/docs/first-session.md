@@ -1,6 +1,6 @@
 ---
 title: Your first session
-description: Start a task, close the laptop, come back to finished work.
+description: "Start a Claude Code or Codex session on your cluster, close the laptop, and come back to finished work, a transcript and a branch."
 weight: 20
 section: START
 ---

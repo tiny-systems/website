@@ -1,6 +1,6 @@
 ---
 title: Artifact store
-description: An S3-compatible store beside the sessions, one checkbox away.
+description: "An S3-compatible MinIO store beside the sessions, one checkbox away, for builds, screenshots and datasets too big for git."
 weight: 110
 section: ADD-ONS
 ---

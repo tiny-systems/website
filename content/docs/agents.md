@@ -1,5 +1,6 @@
 ---
 title: Claude & Codex
+seotitle: "Claude Code and Codex on Kubernetes — tiny docs"
 description: Claude Code and Codex, picked per session, signed in with the plan you already pay for.
 weight: 65
 section: SESSIONS
@@ -59,3 +60,5 @@ Claude reads `CLAUDE.md` and Codex reads `AGENTS.md`. tiny seeds both
 with the same rules: keep the title current, ask before doing anything
 hard to undo, use the outbox, spawn specialists for missing toolchains.
 Edit either file in the workspace and your version stays.
+
+Running Codex on your own cluster instead of OpenAI's: [tiny vs Codex cloud](/compare/codex-cloud/).

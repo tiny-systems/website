@@ -1,6 +1,7 @@
 ---
 title: Install
-description: One binary, one wizard, no pods until your first session.
+seotitle: "Install tiny: self-hosted Claude Code on Kubernetes"
+description: "Install the tiny CLI with Homebrew or a release binary, then one wizard sets up the cluster, the runtime and the agent token. No pods until your first session."
 weight: 10
 section: START
 ---

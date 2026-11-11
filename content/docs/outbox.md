@@ -1,6 +1,6 @@
 ---
 title: The outbox
-description: How work leaves the cluster when agents hold zero credentials.
+description: "How finished work leaves the cluster when agents hold no credentials: a git bundle in the outbox, pushed by a separate short-lived job."
 weight: 50
 section: THE LOOP
 ---

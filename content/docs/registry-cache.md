@@ -1,6 +1,6 @@
 ---
 title: Registry cache
-description: "One Docker Hub pull per image per namespace: 191s cold, 9s warm."
+description: "A pull-through image cache in your namespace: one Docker Hub pull per image per namespace, 191 seconds cold and 9 seconds warm."
 weight: 100
 section: ADD-ONS
 ---

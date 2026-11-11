@@ -5,11 +5,13 @@ package main
 import (
 	"bytes"
 	"crypto/sha256"
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"io"
 	"os"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strings"
 	"time"
@@ -30,6 +32,11 @@ type Meta struct {
 	Section     string `yaml:"section"`
 	Date        string `yaml:"date"`
 	Author      string `yaml:"author"`
+	// SEOTitle replaces the <title> when set: the visible heading can stay
+	// short while the search title carries the words people type.
+	SEOTitle string `yaml:"seotitle"`
+	// Updated is when a page's facts were last checked (compare pages).
+	Updated string `yaml:"updated"`
 }
 
 type Page struct {
@@ -37,11 +44,13 @@ type Page struct {
 	Slug    string
 	Path    string // URL path, e.g. /docs/install/
 	Content template.HTML
+	Raw     string // the markdown body, for structured data built from it
 }
 
 type SiteData struct {
-	Docs  []*Page
-	Posts []*Page
+	Docs    []*Page
+	Posts   []*Page
+	Compare []*Page
 }
 
 var md = goldmark.New(
@@ -76,7 +85,13 @@ func run() error {
 	}
 	sort.Slice(posts, func(i, j int) bool { return posts[i].Date > posts[j].Date })
 
-	data := &SiteData{Docs: docs, Posts: posts}
+	compare, err := loadDir("content/compare", "/compare/")
+	if err != nil {
+		return err
+	}
+	sort.Slice(compare, func(i, j int) bool { return compare[i].Weight < compare[j].Weight })
+
+	data := &SiteData{Docs: docs, Posts: posts, Compare: compare}
 
 	// asset stamps a content-hash version onto a /static path so a changed
 	// file always gets a fresh URL past the day-long edge cache.
@@ -89,8 +104,11 @@ func run() error {
 	}
 
 	tpl, err := template.New("").Funcs(template.FuncMap{
-		"nicedate": niceDate,
-		"asset":    asset,
+		"nicedate":  niceDate,
+		"asset":     asset,
+		"ldhome":    ldHome,
+		"ldarticle": ldArticle,
+		"ldfaq":     ldFAQ,
 		"dict_": func(kv ...any) (map[string]any, error) {
 			if len(kv)%2 != 0 {
 				return nil, fmt.Errorf("dict_ needs key/value pairs")
@@ -121,6 +139,10 @@ func run() error {
 		{"privacy", "privacy/index.html", nil},
 		{"docindex", "docs/index.html", nil},
 		{"blogindex", "blog/index.html", nil},
+		{"compareindex", "compare/index.html", nil},
+	}
+	for _, c := range compare {
+		jobs = append(jobs, job{"compare", filepath.Join("compare", c.Slug, "index.html"), c})
 	}
 	for _, d := range docs {
 		jobs = append(jobs, job{"doc", filepath.Join("docs", d.Slug, "index.html"), d})
@@ -158,6 +180,9 @@ func run() error {
 	}
 
 	if err := writeSitemap(dist, data); err != nil {
+		return err
+	}
+	if err := writeLLMs(dist, data); err != nil {
 		return err
 	}
 
@@ -211,6 +236,7 @@ func parsePage(raw []byte) (*Page, error) {
 		return nil, err
 	}
 	p.Content = template.HTML(buf.String())
+	p.Raw = string(body)
 	return &p, nil
 }
 
@@ -226,18 +252,26 @@ func writeSitemap(dist string, data *SiteData) error {
 	var b strings.Builder
 	b.WriteString(`<?xml version="1.0" encoding="UTF-8"?>` + "\n")
 	b.WriteString(`<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">` + "\n")
-	add := func(path string) {
+	add := func(path, lastmod string) {
+		if lastmod != "" {
+			fmt.Fprintf(&b, "  <url><loc>%s%s</loc><lastmod>%s</lastmod></url>\n", site, path, lastmod)
+			return
+		}
 		fmt.Fprintf(&b, "  <url><loc>%s%s</loc></url>\n", site, path)
 	}
-	add("/")
-	add("/docs/")
-	add("/blog/")
-	add("/privacy/")
+	add("/", "")
+	add("/docs/", "")
+	add("/blog/", "")
+	add("/compare/", "")
+	add("/privacy/", "")
 	for _, d := range data.Docs {
-		add(d.Path)
+		add(d.Path, "")
 	}
 	for _, p := range data.Posts {
-		add(p.Path)
+		add(p.Path, p.Date)
+	}
+	for _, c := range data.Compare {
+		add(c.Path, c.Updated)
 	}
 	b.WriteString("</urlset>\n")
 	return os.WriteFile(filepath.Join(dist, "sitemap.xml"), []byte(b.String()), 0o644)
@@ -273,4 +307,113 @@ func copyFile(src, dst string) error {
 	defer out.Close()
 	_, err = io.Copy(out, in)
 	return err
+}
+
+// ---- structured data (schema.org JSON-LD) ----
+
+func jsonLD(v any) (template.JS, error) {
+	b, err := json.Marshal(v) // escapes <, > and & so it can't close the script tag
+	if err != nil {
+		return "", err
+	}
+	return template.JS(b), nil
+}
+
+var org = map[string]any{"@type": "Organization", "name": "tiny systems", "url": site}
+
+func ldHome() (template.JS, error) {
+	return jsonLD(map[string]any{
+		"@context":            "https://schema.org",
+		"@type":               "SoftwareApplication",
+		"name":                "tiny",
+		"description":         "Open-source runtime that runs the real Claude Code and Codex CLIs as pods on your own Kubernetes cluster, with no git or cloud credentials in the pod.",
+		"url":                 site + "/",
+		"applicationCategory": "DeveloperApplication",
+		"operatingSystem":     "macOS, Linux; Kubernetes",
+		"license":             "https://opensource.org/licenses/MIT",
+		"codeRepository":      "https://github.com/tiny-systems/tiny",
+		"sameAs":              []string{"https://github.com/tiny-systems/tiny"},
+		"offers":              map[string]any{"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+		"publisher":           org,
+	})
+}
+
+// ldArticle describes a blog post or a compare page.
+func ldArticle(p *Page) (template.JS, error) {
+	m := map[string]any{
+		"@context":         "https://schema.org",
+		"@type":            "BlogPosting",
+		"headline":         p.Title,
+		"description":      p.Description,
+		"url":              site + p.Path,
+		"mainEntityOfPage": site + p.Path,
+		"image":            site + "/static/og.jpg",
+		"author":           org,
+		"publisher":        org,
+	}
+	if p.Date != "" {
+		m["datePublished"] = p.Date
+		m["dateModified"] = p.Date
+	}
+	if p.Updated != "" {
+		m["@type"] = "TechArticle"
+		m["dateModified"] = p.Updated
+		if p.Date == "" {
+			m["datePublished"] = p.Updated
+		}
+	}
+	return jsonLD(m)
+}
+
+var (
+	mdLink   = regexp.MustCompile(`\[([^\]]+)\]\([^)]+\)`)
+	mdMarkup = regexp.MustCompile("[*`_]")
+	spaces   = regexp.MustCompile(`\s+`)
+)
+
+func plain(md string) string {
+	s := mdLink.ReplaceAllString(md, "$1")
+	s = mdMarkup.ReplaceAllString(s, "")
+	return strings.TrimSpace(spaces.ReplaceAllString(s, " "))
+}
+
+// ldFAQ turns a page made of "## Question" sections into FAQPage data.
+func ldFAQ(p *Page) (template.JS, error) {
+	var items []map[string]any
+	for _, sec := range strings.Split("\n"+p.Raw, "\n## ")[1:] {
+		q, a, _ := strings.Cut(sec, "\n")
+		q, a = strings.TrimSpace(q), plain(a)
+		if q == "" || a == "" {
+			continue
+		}
+		items = append(items, map[string]any{
+			"@type":          "Question",
+			"name":           q,
+			"acceptedAnswer": map[string]any{"@type": "Answer", "text": a},
+		})
+	}
+	return jsonLD(map[string]any{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": items})
+}
+
+// writeLLMs publishes /llms.txt: what the project is, and where to read more,
+// in the format AI tools look for.
+func writeLLMs(dist string, data *SiteData) error {
+	var b strings.Builder
+	b.WriteString("# tiny\n\n")
+	b.WriteString("> Open-source runtime that runs the real Claude Code and Codex CLIs as pods on your own Kubernetes cluster. ")
+	b.WriteString("The pod holds no git or cloud credentials (finished work leaves as a git bundle that a separate job pushes), nothing in it listens, ")
+	b.WriteString("egress is default-deny with an optional hostname allow-list, and risky actions wait for a human who answers with their own credentials. MIT licensed.\n\n")
+	b.WriteString("Source: https://github.com/tiny-systems/tiny\n\n## Docs\n\n")
+	for _, d := range data.Docs {
+		fmt.Fprintf(&b, "- [%s](%s%s): %s\n", d.Title, site, d.Path, d.Description)
+	}
+	b.WriteString("\n## Comparisons\n\n")
+	for _, c := range data.Compare {
+		fmt.Fprintf(&b, "- [%s](%s%s): %s\n", c.Title, site, c.Path, c.Description)
+	}
+	b.WriteString("\n## Blog\n\n")
+	for _, p := range data.Posts {
+		fmt.Fprintf(&b, "- [%s](%s%s): %s\n", p.Title, site, p.Path, p.Description)
+	}
+	return os.WriteFile(filepath.Join(dist, "llms.txt"), []byte(b.String()), 0o644)
 }

@@ -1,6 +1,6 @@
 ---
 title: "Where are the keys? A diagram you can attack"
-description: "We replaced a wall of claims on our home page with an interactive anatomy of a session. Click a part to see what it holds, or pick an attack and watch where it stops. Including the one that doesn't."
+description: "We replaced a wall of claims with an interactive anatomy of a session. Click a part to see what it holds, or attack it and watch where it stops."
 date: "2026-11-10"
 author: tiny systems
 ---

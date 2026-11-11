@@ -1,5 +1,6 @@
 ---
 title: Issues to PRs
+seotitle: "GitHub issue to pull request with self-hosted Claude Code"
 description: "The GitHub wiring, copy-paste ready: label an issue, get back a pull request."
 weight: 40
 section: THE LOOP
@@ -179,3 +180,5 @@ You answer from a terminal — `tiny answer q-tq5zm sqlite` — and the agent
 builds that backend and opens the PR. The answer never travels as a
 comment, because it runs a gated action with your credentials; the
 comment only tells you a decision is waiting and how to make it.
+
+How this compares with the Claude Code GitHub Action, row by row: [tiny vs the Claude Code GitHub Action](/compare/claude-code-github-action/).

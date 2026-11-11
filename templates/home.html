@@ -1,4 +1,4 @@
-{{define "home"}}{{template "head" (dict_ "title" "tiny — self-hosted Claude Code & Codex on your own Kubernetes" "desc" "Open-source, self-hosted runtime for the real Claude Code and Codex CLIs on your own Kubernetes cluster. No git or cloud credentials in the pod, nothing listening, egress default-deny. Close the laptop; the session keeps working. MIT licensed." "path" "/")}}
+{{define "home"}}{{template "head" (dict_ "title" "tiny: self-hosted Claude Code & Codex on Kubernetes" "desc" "Open-source runtime for the real Claude Code and Codex CLIs on your own Kubernetes. No git or cloud keys in the pod, nothing listening, egress default-deny. MIT." "path" "/" "ld" ldhome)}}
 {{template "mast"}}
 
 <header class="hero"><div class="wrap" style="position:relative">
@@ -470,7 +470,7 @@
   <div class="docwrap" style="margin-top:0">
     {{template "docnav" (dict_ "site" .Site "cur" "install")}}
     <div class="docmain prose">
-      <h1>Install</h1>
+      <h2 class="h1like">Install</h2>
       <p>One binary, one wizard, no pods until your first session.</p>
       <pre>$ brew install tiny-systems/tap/tiny
 $ tiny setup     # cluster · runtime · claude token

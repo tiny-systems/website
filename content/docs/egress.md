@@ -1,5 +1,6 @@
 ---
 title: Egress policy
+seotitle: "Egress allow-list for AI coding agents on Kubernetes"
 description: Default-deny networking for session pods, and an honest account of what it does not stop.
 weight: 128
 section: ADD-ONS

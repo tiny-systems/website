@@ -16,7 +16,8 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://tinysystems.io/static/og.jpg">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+{{if .ld}}<script type="application/ld+json">{{.ld}}</script>
+{{end}}<link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400&display=swap">
@@ -39,7 +40,7 @@
   <div class="mastin">
     <a href="/" style="display:flex;align-items:center" aria-label="tiny systems home">{{template "sprout"}}</a>
     <a class="wordmark" href="/">tiny systems</a>
-    <span class="links"><a href="/docs/">docs</a><a href="/blog/">blog</a><a class="starbtn" href="https://github.com/tiny-systems/tiny">★ <span class="count" id="starcount">star</span></a></span>
+    <span class="links"><a href="/docs/">docs</a><a href="/compare/">compare</a><a href="/blog/">blog</a><a class="starbtn" href="https://github.com/tiny-systems/tiny">★ <span class="count" id="starcount">star</span></a></span>
   </div>
   <div class="manbar"><span>TINY(1)</span><span>General Commands Manual</span><span>TINY(1)</span></div>
 </div></div>{{end}}
@@ -49,6 +50,7 @@
   <a href="https://github.com/tiny-systems/tiny">github</a>
   <a href="https://github.com/tiny-systems/homebrew-tap">brew tap</a>
   <a href="https://github.com/tiny-systems/seedling">seedling — the demo garden</a>
+  <a href="/compare/">compare</a>
   <a href="/privacy/">privacy</a>
   <span style="margin-left:auto;opacity:.74">TINY(1)</span>
 </div></footer>

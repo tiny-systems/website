@@ -1,6 +1,7 @@
 ---
 title: FAQ
-description: The questions we'd ask, answered without spin.
+seotitle: "FAQ: self-hosted Claude Code and Codex on Kubernetes"
+description: "How tiny compares with hosted sandboxes, Anthropic's own options and Google AX, what it costs, which plans work, and what it does not protect against."
 weight: 140
 section: SECURITY
 ---
@@ -86,18 +87,23 @@ access scoped by your own RBAC. Read the code; it's small on purpose.
 
 ## How is this different from Anthropic's self-hosted Claude Code?
 
-Anthropic now offers self-hosted environments — Claude Code cloud sessions
-routed to runners you deploy — for Team and Enterprise plans. If you are an
-enterprise already on those plans and want the first-party, supported path,
-use it.
+Anthropic now offers self-hosted environments, in public beta: Claude Code
+cloud sessions routed to runners you deploy, for Team and Enterprise plans,
+with Anthropic's control plane (the queue, the claude.ai interface and the
+session transcript) on top. If you're already on those plans and want the
+first-party, supported path, use it.
 
 tiny is the open-source take, for a different person. It is MIT and runs on
 any Kubernetes cluster you already have, not a plan tier. It runs Codex the
 same way it runs Claude Code, so you are not tied to one vendor. And its
 whole design is the credential posture: the agent holds no git or cloud
 keys, nothing listens on the pod, and finished work leaves as a bundle a
-courier pushes — the agent never holds a token that could push. That is the
-part a hosted or first-party runner does not give you.
+courier pushes, so the agent never holds a token that could push.
+Anthropic-hosted sessions keep git credentials out of the VM too, through a
+server-side proxy; with self-hosted runners that's up to your deployment.
+What only tiny gives you is no vendor control plane at all, the transcript
+on your own volume, and any plan. The full side-by-side is on
+[tiny vs Claude Code cloud sessions](/compare/claude-code-cloud/).
 
 ## How is this different from hosted sandboxes like E2B, Modal, or Daytona?
 

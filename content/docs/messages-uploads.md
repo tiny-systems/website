@@ -1,6 +1,6 @@
 ---
 title: Messages, broadcast & uploads
-description: The durable inbox, broadcast, and drag-and-drop uploads.
+description: "Send messages into a session's durable inbox, broadcast to the whole fleet, and drag files into a workspace from your terminal."
 weight: 90
 section: SESSIONS
 ---

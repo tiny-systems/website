@@ -1,6 +1,6 @@
 ---
 title: All commands
-description: Every tiny command and flag, with the one-line reason each exists.
+description: "Every tiny command and flag: starting, pausing and deleting sessions, attaching, the GitHub loop, egress, profiles and upgrades."
 weight: 150
 section: REFERENCE
 ---

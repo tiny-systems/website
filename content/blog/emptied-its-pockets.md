@@ -1,6 +1,6 @@
 ---
 title: "We can't stop the agent, so we emptied its pockets"
-description: "A coding agent reads untrusted text for a living. Ours runs with permissions bypassed and holds no credentials at all. The reasoning, and the part we haven't solved."
+description: "A coding agent reads untrusted text for a living. Ours runs with permissions bypassed and holds no credentials. The reasoning, and what's unsolved."
 date: "2026-09-16"
 author: tiny systems
 ---

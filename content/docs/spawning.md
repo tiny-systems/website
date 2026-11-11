@@ -1,6 +1,6 @@
 ---
 title: Spawning sessions
-description: Sessions spawn specialist sessions, each approved through the gate.
+description: "Sessions can start specialist sessions of their own. Each spawn parks as a question and only happens when a human approves it."
 weight: 80
 section: SESSIONS
 ---

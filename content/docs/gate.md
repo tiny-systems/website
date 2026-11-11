@@ -1,6 +1,6 @@
 ---
 title: The gate
-description: Dangerous decisions park as Kubernetes objects until a human answers.
+description: "Risky actions park as Kubernetes objects until a human answers, and the answer runs with that human's credentials, not the agent's."
 weight: 60
 section: THE LOOP
 ---

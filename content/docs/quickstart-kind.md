@@ -1,6 +1,7 @@
 ---
 title: Try it in 5 minutes
-description: A full run on a throwaway kind cluster, no real cluster needed.
+seotitle: "Run Claude Code on Kubernetes in 5 minutes"
+description: "A full run on a throwaway kind cluster: install tiny, start a Claude Code session, kill its pod and watch it resume. No real cluster needed."
 weight: 15
 section: START
 ---

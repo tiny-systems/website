@@ -1,6 +1,7 @@
 ---
 title: Threat model
-description: What a hostile agent can and cannot do, stated plainly.
+seotitle: "Threat model: coding agents with no credentials"
+description: "What a prompt-injected coding agent can and cannot do inside a tiny session, the credentials it never holds, and the holes we haven't closed."
 weight: 130
 section: SECURITY
 ---

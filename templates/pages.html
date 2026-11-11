@@ -1,4 +1,4 @@
-{{define "doc"}}{{template "head" (dict_ "title" (printf "%s — tiny docs" .Page.Title) "desc" .Page.Description "path" .Page.Path)}}
+{{define "doc"}}{{template "head" (dict_ "title" (or .Page.SEOTitle (printf "%s — tiny docs" .Page.Title)) "desc" .Page.Description "path" .Page.Path "ld" (and (eq .Page.Slug "faq") (ldfaq .Page)))}}
 {{template "mast"}}
 <div class="wrap">
   <div class="docwrap">
@@ -28,9 +28,10 @@
 </div>
 {{template "foot"}}{{end}}
 
-{{define "blogindex"}}{{template "head" (dict_ "title" "Field notes — the tiny blog" "desc" "Notes from building tiny: design decisions and what broke along the way." "path" "/blog/")}}
+{{define "blogindex"}}{{template "head" (dict_ "title" "Field notes — the tiny blog" "desc" "Notes from building tiny, a self-hosted runtime for Claude Code and Codex: design decisions, security findings, and what broke along the way." "path" "/blog/")}}
 {{template "mast"}}
 <section style="padding-top:50px"><div class="wrap">
+  <h1 class="sr-only">Field notes from building tiny</h1>
   <div class="man"><span>FIELD NOTES</span><span class="pg">the blog</span></div>
   <div class="cat">
     {{range .Site.Posts}}<div class="entry"><a href="{{.Path}}">{{.Title}}</a><span class="lead"></span><span class="date">{{.Date}}</span></div>
@@ -40,7 +41,7 @@
 </div></section>
 {{template "foot"}}{{end}}
 
-{{define "post"}}{{template "head" (dict_ "title" (printf "%s — tiny field notes" .Page.Title) "desc" .Page.Description "path" .Page.Path "article" true)}}
+{{define "post"}}{{template "head" (dict_ "title" (or .Page.SEOTitle (printf "%s — tiny" .Page.Title)) "desc" .Page.Description "path" .Page.Path "article" true "ld" (ldarticle .Page))}}
 {{template "mast"}}
 <div class="wrap">
   <article class="article prose">
@@ -102,4 +103,30 @@
   wait();
 })();
 </script>
+{{template "foot"}}{{end}}
+
+{{define "compareindex"}}{{template "head" (dict_ "title" "Self-hosted Claude Code and Codex: how tiny compares" "desc" "Honest comparisons of tiny with Claude Code cloud sessions, the Claude Code GitHub Action and Codex cloud, including where each of them is the better choice." "path" "/compare/")}}
+{{template "mast"}}
+<div class="wrap">
+  <article class="article prose">
+    <h1>How tiny compares</h1>
+    <p>tiny runs the real Claude Code and Codex CLIs as pods on your own Kubernetes cluster, with no credentials in the pod and no control plane. These pages put it next to the tools people usually weigh it against, row by row, and say plainly where the other tool is the better choice.</p>
+    {{range .Site.Compare}}<h2><a href="{{.Path}}">{{.Title}}</a></h2>
+    <p>{{.Description}}</p>
+    {{end}}
+    <h2>Also asked</h2>
+    <p>How tiny differs from hosted sandboxes such as E2B, Modal or Daytona, and from Google's AX, is answered in the <a href="/docs/faq/">FAQ</a>. The full list of what tiny closes and what it leaves open is in the <a href="/docs/threat-model/">threat model</a>.</p>
+  </article>
+</div>
+{{template "foot"}}{{end}}
+
+{{define "compare"}}{{template "head" (dict_ "title" (or .Page.SEOTitle (printf "%s" .Page.Title)) "desc" .Page.Description "path" .Page.Path "article" true "ld" (ldarticle .Page))}}
+{{template "mast"}}
+<div class="wrap">
+  <article class="article prose">
+    <p class="adate">Facts checked {{nicedate .Page.Updated}} · <a href="/compare/">all comparisons</a></p>
+    <h1>{{.Page.Title}}</h1>
+    {{.Page.Content}}
+  </article>
+</div>
 {{template "foot"}}{{end}}

@@ -1,6 +1,7 @@
 ---
 title: Custom images
-description: An init container injects the agent into any glibc image you name.
+seotitle: "Custom images and gVisor sandboxing for coding agents"
+description: "Run sessions in any glibc image you name, under a restricted container profile, or sandboxed with gVisor or Kata on GKE, AKS, k3s and more."
 weight: 70
 section: SESSIONS
 ---

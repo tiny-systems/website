@@ -342,3 +342,6 @@ footer a:hover{color:var(--green-deep)}
 .kwhatif{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:12px;padding-top:12px;border-top:1.5px dashed var(--ink)}
 .kwhatif[hidden]{display:none}
 .kwhatif .kah{margin:0 4px 0 0}
+
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.prose h2.h1like{font-family:var(--disp);font-weight:900;font-size:34px;margin:0 0 14px;line-height:1.1}
