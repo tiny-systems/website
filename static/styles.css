@@ -339,3 +339,6 @@ footer a:hover{color:var(--green-deep)}
 .khint{width:100%;font-family:var(--mono);font-size:11.5px;color:#4E5449;margin-top:2px}
 .kdep{font-style:normal;font-size:10.5px;letter-spacing:.04em;border:1px solid #4E5449;color:#4E5449;padding:0 5px;margin-left:6px;white-space:nowrap}
 .ka.on .kdep{border-color:var(--paper);color:var(--paper)}
+.kwhatif{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:12px;padding-top:12px;border-top:1.5px dashed var(--ink)}
+.kwhatif[hidden]{display:none}
+.kwhatif .kah{margin:0 4px 0 0}

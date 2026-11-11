@@ -192,12 +192,6 @@
     </div>
     <div class="kpanel" aria-live="polite">
       <div class="kattacks" hidden>
-        <div class="kctl" role="group" aria-label="what your cluster has switched on">
-          <span class="kah">Your cluster has:</span>
-          <button type="button" class="ksw" data-sw="allow" aria-pressed="false">hostname allow-list</button>
-          <button type="button" class="ksw" data-sw="gvisor" aria-pressed="false">gVisor runtime</button>
-          <span class="khint">Switch on what your cluster runs. The moves tagged below change their verdict.</span>
-        </div>
         <div class="kah">Pick a move a prompt-injected agent might try:</div>
         <button type="button" class="ka" data-a="steal">Steal SSH keys and cloud credentials</button>
         <button type="button" class="ka" data-a="push">Push to the repo, force-push main</button>
@@ -213,6 +207,7 @@
       <div class="kcard">
         <div class="kch"><span class="kname"></span><span class="kverdict" hidden></span></div>
         <div class="kbody"></div>
+        <div class="kwhatif" hidden></div>
         <div class="kmoves" hidden><span class="kmh">Moves that hit this:</span></div>
       </div>
     </div>
@@ -254,7 +249,7 @@
     var modes=[].slice.call(root.querySelectorAll('.kmode'));
     var attacksBox=root.querySelector('.kattacks');
     var atks=[].slice.call(root.querySelectorAll('.ka'));
-    var nameEl=root.querySelector('.kname'), verdictEl=root.querySelector('.kverdict'), bodyEl=root.querySelector('.kbody'), movesEl=root.querySelector('.kmoves');
+    var whatifEl=root.querySelector('.kwhatif'), nameEl=root.querySelector('.kname'), verdictEl=root.querySelector('.kverdict'), bodyEl=root.querySelector('.kbody'), movesEl=root.querySelector('.kmoves');
     var names={you:'you',init:'init container',agent:'agent',sidecar:'MCP sidecar',workspace:'workspace volume',secret:'model key secret',policy:'egress policy',proxy:'egress proxy',api:'Kubernetes API',courier:'courier job',github:'GitHub',internet:'internet'};
     var A={
       steal:{n:'Steal SSH keys and cloud credentials',p:['agent'],m:[['agent','stop','nothing to steal']],v:'blocked',t:'<b>Nothing to steal.</b> There is no <code>~/.ssh</code>, no <code>gh</code> token and no <code>~/.aws</code> in the pod. The only secret mounted is the model credential, which has its own entry at the bottom of this list.'},
@@ -262,29 +257,45 @@
       metadata:{n:'Read instance credentials',p:['agent','policy'],m:[['policy','stop','blocked here']],v:'blocked',t:'<b>Never answers.</b> <code>169.254.169.254</code> hands out a cloud instance&#8217;s IAM role. The egress policy excludes link-local space on every port, so the request goes nowhere. This one needs a CNI that enforces NetworkPolicy.'},
       exfil:function(S){ return S.allow
         ? {n:'Send the repo to evil.example',p:['agent','proxy'],m:[['proxy','stop','403, logged']],v:'blocked',t:'<b>Refused by the proxy.</b> With the allow-list on, every connection goes through a proxy that checks the hostname. evil.example isn&#8217;t listed, so it gets a 403 and shows up in <code>tiny egress denied</code>. A listed host is allowed for everything on it, so listing <code>github.com</code> still permits a gist.'}
-        : {n:'Send the repo to evil.example',p:['agent','policy','internet'],m:[['internet','pass','gets through']],v:'allowed',t:'<b>Gets through.</b> With only the egress policy, evil.example on 443 looks like any other website: a NetworkPolicy matches addresses, not names. Switch on the hostname allow-list above to watch it close.'}; },
+        : {n:'Send the repo to evil.example',p:['agent','policy','internet'],m:[['internet','pass','gets through']],v:'allowed',t:'<b>Gets through.</b> With only the egress policy, evil.example on 443 looks like any other website: a NetworkPolicy matches addresses, not names. Switch on the allow-list below to watch it close.'}; },
       dns:function(S){ return S.allow
         ? {n:'Smuggle data out through DNS',p:['agent','proxy'],m:[['proxy','stop','NXDOMAIN']],v:'blocked',t:'<b>NXDOMAIN.</b> With the allow-list on, the proxy is the session&#8217;s only DNS resolver. It answers names inside the cluster, refuses everything else and logs the refusal, so a lookup can&#8217;t carry data out.'}
-        : {n:'Smuggle data out through DNS',p:['agent','policy','internet'],m:[['internet','pass','via the cluster resolver']],v:'allowed',t:'<b>Possible.</b> The cluster resolver forwards names it doesn&#8217;t know to the internet, so data can ride inside a lookup for <code>secret-data.attacker.example</code>. Switch on the allow-list above to watch it close.'}; },
+        : {n:'Smuggle data out through DNS',p:['agent','policy','internet'],m:[['internet','pass','via the cluster resolver']],v:'allowed',t:'<b>Possible.</b> The cluster resolver forwards names it doesn&#8217;t know to the internet, so data can ride inside a lookup for <code>secret-data.attacker.example</code>. Switch on the allow-list below to watch it close.'}; },
       delete:{n:'Delete itself, rewrite its task',p:['agent','api'],m:[['api','stop','403']],v:'blocked',t:'<b>403.</b> The session&#8217;s account can read sessions and update its own status, and nothing that acts. We ran these from inside a live pod with its own token: delete the session, the Deployment, the pod, the volume, rewrite the task. Every one refused.'},
       approve:{n:'Approve its own request',p:['sidecar','api'],m:[['api','stop','403']],v:'blocked',t:'<b>403.</b> It can create a question but not answer one. The answer runs in a human&#8217;s client with that human&#8217;s credentials, which is the whole point of the gate.'},
       port:{n:'Open a port inbound',p:['internet','sidecar'],m:[['sidecar','stop','loopback only']],v:'blocked',t:'<b>Nothing listens.</b> The pod declares no container port and the sidecar binds <code>127.0.0.1</code>. Publishing a dev server is a tool call that parks as a question until a human approves it, and then it runs with that human&#8217;s credentials.'},
       escape:function(S){ return S.gvisor
         ? {n:'Break out to the node',p:['agent'],m:[['agent','stop','gVisor kernel']],v:'blocked',t:'<b>Blocked by gVisor.</b> Started with <code>--runtime-class gvisor</code>, the agent&#8217;s system calls reach gVisor&#8217;s user-space kernel instead of the node&#8217;s, so a kernel exploit lands inside the sandbox. It costs speed on system-call-heavy work like builds, and gVisor has to be installed on the cluster.'}
-        : {n:'Break out to the node',p:['agent'],m:[['agent','stop','restricted profile']],v:'hardened',t:'<b>Hardened, not closed.</b> The restricted profile removes what most container escapes rely on: capabilities, privilege escalation, unusual syscalls. The node&#8217;s kernel is still shared, so a kernel exploit remains a way out. Switch on gVisor above to watch it close.'}; },
-      quota:function(S){ return {n:'Spend quota, leak the model key',p:['secret','agent','internet'],m:[['internet','pass',S.allow?'to listed hosts':'gets through']],v:'allowed',t:'<b>This one works, whatever you switch on.</b> The model credential has to be in the pod for the real CLI to run. A compromised session can spend your quota while it lives and send the key '+(S.allow?'to any host on your allow-list':'to any host on 443')+'. Neither switch above changes that. Use a dedicated account, and rotate the token if a session misbehaves.'}; }
+        : {n:'Break out to the node',p:['agent'],m:[['agent','stop','restricted profile']],v:'hardened',t:'<b>Hardened, not closed.</b> The restricted profile removes what most container escapes rely on: capabilities, privilege escalation, unusual syscalls. The node&#8217;s kernel is still shared, so a kernel exploit remains a way out. Switch on gVisor below to watch it close.'}; },
+      quota:function(S){ return {n:'Spend quota, leak the model key',p:['secret','agent','internet'],m:[['internet','pass',S.allow?'to listed hosts':'gets through']],v:'allowed',t:'<b>This one works, whatever you switch on.</b> The model credential has to be in the pod for the real CLI to run. A compromised session can spend your quota while it lives and send the key '+(S.allow?'to any host on your allow-list':'to any host on 443')+'. Neither switch below changes that. Use a dedicated account, and rotate the token if a session misbehaves.'}; }
     };
     var vlabel={blocked:'BLOCKED',hardened:'HARDENED',allowed:'ALLOWED'};
     // What the visitor says their cluster has switched on. Verdicts that
     // depend on it are computed from it, so the answer is never "it depends".
     var S={allow:false,gvisor:false}, cur=null;
     function resolve(a){ var d=A[a]; return typeof d==='function' ? d(S) : d; }
+    // Switches live in the result card, and only for attacks they change:
+    // a toggle that changes nothing on screen reads as broken.
+    var AFFECTS={exfil:['allow'],dns:['allow'],escape:['gvisor'],quota:['allow','gvisor']};
+    var SWLABEL={allow:'hostname allow-list',gvisor:'gVisor runtime'};
+    function renderWhatIf(a){
+      whatifEl.innerHTML=''; var sws=AFFECTS[a];
+      if(!sws){ whatifEl.hidden=true; return; }
+      var lead=document.createElement('span'); lead.className='kah'; lead.textContent='What if your cluster has:'; whatifEl.appendChild(lead);
+      sws.forEach(function(k){
+        var b=document.createElement('button'); b.type='button'; b.className='ksw'+(S[k]?' on':'');
+        b.setAttribute('aria-pressed', S[k]?'true':'false'); b.textContent=SWLABEL[k];
+        b.addEventListener('click', function(){ S[k]=!S[k]; runAttack(a); });
+        whatifEl.appendChild(b);
+      });
+      whatifEl.hidden=false;
+    }
     var timers=[];
     function clearMarks(){ timers.forEach(clearTimeout); timers=[]; nodes.forEach(function(n){ n.classList.remove('hit','stop','pass','sel'); n.removeAttribute('data-mark'); n.setAttribute('aria-pressed','false'); }); }
     function node(k){ return root.querySelector('.kn[data-k="'+k+'"]'); }
     function clearMoves(){ movesEl.hidden=true; [].slice.call(movesEl.querySelectorAll('.kmv')).forEach(function(b){ b.remove(); }); }
     function showNode(k){
-      clearMarks(); clearMoves(); var n=node(k); if(!n) return;
+      clearMarks(); clearMoves(); whatifEl.hidden=true; var n=node(k); if(!n) return;
       n.classList.add('sel'); n.setAttribute('aria-pressed','true');
       nameEl.textContent=names[k]; verdictEl.hidden=true;
       var attacking=root.classList.contains('attack');
@@ -302,7 +313,7 @@
       }
     }
     function runAttack(a){
-      var d=resolve(a); cur=a; clearMarks(); clearMoves();
+      var d=resolve(a); cur=a; clearMarks(); clearMoves(); whatifEl.hidden=true;
       atks.forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-a')===a); b.setAttribute('aria-pressed', b.getAttribute('data-a')===a?'true':'false'); });
       nameEl.textContent=d.n; verdictEl.hidden=true; bodyEl.innerHTML='';
       var step=reduce?0:380;
@@ -310,7 +321,7 @@
       timers.push(setTimeout(function(){
         d.m.forEach(function(x){ var n=node(x[0]); if(n){ n.classList.add(x[1]); n.setAttribute('data-mark', x[2]); } });
         verdictEl.textContent=vlabel[d.v]; verdictEl.className='kverdict v-'+d.v; verdictEl.hidden=false;
-        bodyEl.innerHTML=d.t;
+        bodyEl.innerHTML=d.t; renderWhatIf(a);
       }, d.p.length*step));
     }
     function setMode(m){
@@ -325,16 +336,6 @@
     function reveal(){ if(window.matchMedia('(max-width:1100px)').matches) panel.scrollIntoView({behavior:reduce?'auto':'smooth',block:'nearest'}); }
     nodes.forEach(function(n){ n.addEventListener('click', function(){ showNode(n.getAttribute('data-k')); reveal(); }); });
     atks.forEach(function(b){ b.addEventListener('click', function(){ runAttack(b.getAttribute('data-a')); }); });
-    [].slice.call(root.querySelectorAll('.ksw')).forEach(function(b){
-      b.addEventListener('click', function(){
-        var k=b.getAttribute('data-sw'); S[k]=!S[k];
-        b.classList.toggle('on', S[k]); b.setAttribute('aria-pressed', S[k]?'true':'false');
-        // Show an attack this switch changes; rerunning one it doesn't
-        // touch would look like the switch did nothing.
-        var affects={allow:['exfil','dns'],gvisor:['escape']}[k];
-        runAttack(affects.indexOf(cur)>=0 ? cur : affects[0]);
-      });
-    });
     showNode('agent');
   })();
   </script>
