@@ -336,3 +336,6 @@ footer a:hover{color:var(--green-deep)}
 .ksw.on{background:var(--green-deep);border-color:var(--green-deep);color:var(--paper)}
 .ksw.on::before{content:'on \00b7  ';color:var(--paper)}
 .ksw:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.khint{width:100%;font-family:var(--mono);font-size:11.5px;color:#4E5449;margin-top:2px}
+.kdep{font-style:normal;font-size:10.5px;letter-spacing:.04em;border:1px solid #4E5449;color:#4E5449;padding:0 5px;margin-left:6px;white-space:nowrap}
+.ka.on .kdep{border-color:var(--paper);color:var(--paper)}
