@@ -164,7 +164,7 @@
   <div class="kx">
     <div class="kmap" aria-label="anatomy of a tiny session">
       <div class="kside">
-        <button type="button" class="kn" data-k="you"><span class="kt">you</span><span class="ks">kubeconfig &#183; your RBAC</span></button>
+        <button type="button" class="kn" data-k="you"><span class="kt">you</span><span class="ks">tiny CLI &#183; tmux over kubectl exec</span></button>
       </div>
       <div class="kcluster">
         <div class="klabel">your cluster</div>
@@ -213,7 +213,7 @@
     </div>
   </div>
   <div class="ktext" hidden>
-    <div data-k="you"><b>You.</b> Your laptop or CI runs <code>tiny</code>, which talks to the Kubernetes API with your own kubeconfig. Attaching is an exec into tmux under your RBAC. When a session asks a question, answering runs the action in your client with your credentials, so the audit log names you, not a service account.</div>
+    <div data-k="you"><b>You.</b> Your laptop or CI runs the <code>tiny</code> CLI with your own kubeconfig. <code>tiny attach</code> opens a Kubernetes exec stream into the agent container and runs <code>tmux attach</code> there, so your terminal shows the real Claude Code or Codex screen: same keys, same plan mode. Detach with <code>ctrl-q d</code> and the agent keeps working. Nothing in the pod listens for you to connect to; attach, shell, diff and pull are all exec calls under your RBAC. When a session asks a question, answering runs the action in your client with your credentials, so the audit log names you, not a service account.</div>
     <div data-k="init"><b>Init container.</b> Copies Claude Code, Codex, a static tmux and the entrypoint into a shared <code>/tiny</code> volume, then exits. The session runs from <code>/tiny</code>, which is why <code>--image</code> can be <code>golang:1.26</code> or your own dev image. There&#8217;s no special image to maintain and nothing baked in.</div>
     <div data-k="agent"><b>The agent.</b> The real, unmodified Claude Code or Codex CLI in tmux, as a non-root user, under the restricted profile: the runtime&#8217;s seccomp filter, every Linux capability dropped, no privilege escalation. It runs with permissions bypassed on purpose, so nothing intercepts its tool calls. The boundary is everything drawn around it. Started with <code>--runtime-class gvisor</code>, its system calls reach gVisor&#8217;s user-space kernel instead of the node&#8217;s.</div>
     <div data-k="sidecar"><b>MCP sidecar.</b> tiny&#8217;s own tools (ask a human, list or spawn sessions, publish a port) on <code>127.0.0.1:8080</code>, reachable only from inside the pod. It runs as the session&#8217;s service account, which may create questions, read sessions and pods, and update its own status. Nothing else: no delete, no exec, no secrets, no ConfigMaps.</div>
