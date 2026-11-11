@@ -99,10 +99,26 @@ through the egress proxy and the MCP sidecar all work. Expect slower
 system-call-heavy work such as large builds, and don't expect rootless
 buildah to run under it.
 
-**Managed clusters.** On GKE, use [GKE
-Sandbox](https://cloud.google.com/kubernetes-engine/docs/concepts/sandbox-pods).
-An existing node pool can't be switched over, so create one. This one is
-spot and scales to zero, so it costs nothing while no session uses it:
+### By provider
+
+Two of these we run ourselves; the rest come from each provider's own
+documentation and are marked as such. The runtime class name isn't the
+same everywhere, which is why `--runtime-class` takes any name.
+
+| platform | sandbox | `--runtime-class` | tested by us |
+|---|---|---|---|
+| GKE | gVisor (GKE Sandbox) | `gvisor` | yes |
+| k3s, your own nodes | gVisor, installed by you | `gvisor` | yes |
+| AKS | Kata VMs (Pod Sandboxing) | `kata-vm-isolation` | no |
+| minikube | gVisor addon | `gvisor` | no |
+| EKS | none managed | `gvisor`, if you install it | no |
+
+#### GKE
+
+An existing node pool can't be switched over, so create one with
+[GKE Sandbox](https://cloud.google.com/kubernetes-engine/docs/concepts/sandbox-pods).
+This one is spot and scales to zero, so it costs nothing while no session
+uses it:
 
 ```sh
 gcloud container node-pools create gvisor-spot \
@@ -110,6 +126,8 @@ gcloud container node-pools create gvisor-spot \
   --sandbox type=gvisor --spot --machine-type=e2-standard-2 \
   --image-type=COS_CONTAINERD \
   --enable-autoscaling --min-nodes=0 --max-nodes=1 --num-nodes=0
+
+tiny new --runtime-class gvisor "…"
 ```
 
 GKE creates the `gvisor` RuntimeClass and steers pods that use it onto
@@ -117,8 +135,52 @@ that pool. The cluster still needs one ordinary pool for system pods, and
 shared-core machine types (e2-micro, e2-small) aren't supported. With the
 pool at zero, the first gVisor session waits a minute or two for a node.
 
-**Your own nodes (k3s).** Install the release tarball next to the
-containerd shim, register the runtime, and create the RuntimeClass:
+#### AKS (not tested by us)
+
+[Pod Sandboxing](https://learn.microsoft.com/en-us/azure/aks/use-pod-sandboxing)
+runs each pod in a Kata VM with its own kernel. It needs Azure Linux nodes
+on a VM size with nested virtualization:
+
+```sh
+az aks nodepool add --cluster-name CLUSTER --resource-group RG --name kata \
+  --os-sku AzureLinux --workload-runtime KataVmIsolation \
+  --node-vm-size Standard_D4s_v3 --node-count 1
+az aks update --name CLUSTER --resource-group RG
+
+tiny new --runtime-class kata-vm-isolation --memory 4Gi "…"
+```
+
+Two things differ from gVisor. Each pod VM gets a fixed amount of memory
+equal to the pod's memory limit, and only 512 MiB without one, which is
+too little for a coding agent, so always pass `--memory`. And AKS doesn't
+steer these pods to the Kata pool by itself: put
+`nodeSelector: {kubernetes.azure.com/agentpool: kata}` in the Session's
+`spec.nodeSelector`, or have your cluster admin add it to the RuntimeClass
+under `scheduling.nodeSelector`.
+
+#### minikube (not tested by us)
+
+Handy for trying it locally:
+
+```sh
+minikube start --container-runtime=containerd
+minikube addons enable gvisor
+tiny new --runtime-class gvisor "…"
+```
+
+#### EKS (not tested by us)
+
+There's no managed gVisor or Kata option. You can install gVisor on your
+nodes with a launch template that runs the install step from the k3s
+recipe below and registers `runsc` with containerd. Kata on EC2 needs
+bare-metal instances. Fargate already gives every pod its own microVM,
+but it doesn't support the EBS volumes tiny uses for workspaces by
+default, so it isn't a drop-in.
+
+#### k3s and your own nodes
+
+Install the release tarball next to the containerd shim, register the
+runtime, and create the RuntimeClass:
 
 ```sh
 U=https://storage.googleapis.com/gvisor/releases/release/20261102.0/$(uname -m)
