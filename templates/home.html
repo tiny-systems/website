@@ -327,7 +327,7 @@
     function setMode(m){
       modes.forEach(function(b){ var on=b.getAttribute('data-mode')===m; b.classList.toggle('on',on); b.setAttribute('aria-pressed',on?'true':'false'); });
       root.classList.toggle('attack', m==='attack'); attacksBox.hidden=(m!=='attack');
-      if(m==='attack'){ runAttack('steal'); } else { atks.forEach(function(b){ b.classList.remove('on'); }); showNode('agent'); }
+      if(m==='attack'){ runAttack('exfil'); } else { atks.forEach(function(b){ b.classList.remove('on'); }); showNode('agent'); }
     }
     modes.forEach(function(b){ b.addEventListener('click', function(){ setMode(b.getAttribute('data-mode')); }); });
     // Stacked layout (phones, narrow windows): the panel sits under the
