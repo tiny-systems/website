@@ -18,6 +18,8 @@ Run `tiny` with no arguments:
   · ＋ new session
   · ⚙ new session with options…
   · ☰ namespace settings
+  · ⏸ pause all sessions
+  · ✕ delete ALL sessions…
   · ✕ quit
 ```
 
@@ -41,8 +43,14 @@ Run `tiny` with no arguments:
 | `m` | message the selected session (durable inbox) |
 | `b` | broadcast to every unfinished session |
 | `n` / `o` | new session — blank / the full options form |
-| `d`, then `y` | delete (two keystrokes on purpose: a session is a workspace and a transcript) |
+| `p` | pause the selected session, or resume it if it's paused (`tiny pause` / `tiny resume`) |
+| `d`, then `y` | delete (two keystrokes on purpose: a session is a workspace and a transcript; `tiny rm` from a shell) |
 | `r` | refresh |
+| `q` | quit |
+
+The menu rows under the sessions do the fleet-wide versions: **pause all
+sessions** (reversible, frees their cpu and memory) and **delete ALL
+sessions…**, which asks you to type `delete all`.
 
 **Drop a file onto the terminal** — fleet screen or attached — and it
 streams to `/workspace/uploads/` with live progress; the agent gets the
@@ -71,6 +79,8 @@ about.
 
 ## Namespace settings
 
-`☰` toggles the [add-ons](/docs/registry-cache/): registry cache,
-artifact store, GitHub runner. Your client applies each one with your
-credentials when you flip it.
+`☰` toggles the add-ons: [registry cache](/docs/registry-cache/) (and
+its node trust), [artifact store](/docs/artifact-store/), the read-only
+[web page](/docs/web/), the [egress policy](/docs/egress/) and its
+hostname allow-list, and the [GitHub runner](/docs/github-runner/). Your
+client applies each one with your credentials when you flip it.

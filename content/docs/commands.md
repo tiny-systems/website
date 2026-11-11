@@ -29,6 +29,9 @@ the bare `tiny` start asks which fleet.
 |---|---|
 | `tiny` | the fleet screen: who runs, who needs you, live titles, CPU/MEM |
 | `tiny diff [session]` | what a session changed — files, lines, branch, pending bundles. Bare: the whole fleet, plus files two sessions are both editing |
+| `tiny pause <session>` / `--all` | scale it to zero: frees its cpu and memory, keeps the workspace and transcript |
+| `tiny resume <session>` / `--all` | bring a paused session back; a fresh pod replays the transcript |
+| `tiny rm <session>...` / `--all` | delete sessions with their workspace and transcript. Asks y/N (`--all`: type "delete all"); without a terminal it refuses unless `-y`. Warns first about bundles still in a session's outbox |
 
 Fleet-screen keys are on the [fleet screen page](/docs/fleet-screen/).
 
@@ -112,7 +115,7 @@ text can drive a session — see [messages](/docs/messages-uploads/).
 | command | what |
 |---|---|
 | `tiny egress` | the hostname allow-list the proxy enforces |
-| `tiny egress denied` | hosts agents tried to reach and were refused, most frequent first — read from the proxy log |
+| `tiny egress denied [--tail N]` | hosts agents tried to reach and were refused, most frequent first — read from the last N proxy log lines (default 2000) |
 | `tiny egress allow <host>` | widen the list; a leading dot matches subdomains. Live in a minute or two |
 
 Needs the [hostname allow-list](/docs/egress/) add-on on.
@@ -122,11 +125,11 @@ Needs the [hostname allow-list](/docs/egress/) add-on on.
 | command | what |
 |---|---|
 | `tiny setup` | the interactive journey: pick a cluster, pick or create a namespace, name it as a profile, install the runtime, store agent credentials |
-| `tiny init` | the same runtime install, scriptable for CI: `tiny init --context X -n Y --yes` |
+| `tiny init` | install **or upgrade** the runtime on a cluster (its CRDs and the session account), scriptable for CI: `tiny init --context X -n Y --yes`. Run it after every `tiny upgrade` |
 | `tiny profile save <name>` | name the current (or `--context`/`-n` flagged) target |
 | `tiny profile list` | show saved profiles and the pinned default |
 | `tiny profile delete <name>` | forget one |
-| `tiny upgrade` | update the tiny binary to the latest release |
+| `tiny upgrade` | update the tiny binary to the latest release. The binary only: follow it with `tiny init` |
 
 `tiny upgrade` downloads the release for your platform, **verifies it
 against the release's `checksums.txt`**, and swaps it over the running
@@ -134,6 +137,13 @@ binary. It refuses to install anything that is not newer than what you
 are running, and refuses outright if the checksum is missing or does not
 match. Homebrew installs are updated in place (brew's recorded version
 goes stale; `brew upgrade tiny` reconciles it).
+
+`tiny upgrade` never touches a cluster. An older runtime there silently
+drops session fields it doesn't know (MCP servers, node placement, the
+runtime class), so after upgrading run `tiny init` against each cluster.
+tiny also checks: `tiny new` and the fleet screen warn when the cluster's
+runtime is older than the CLI, and a create that would lose a field is
+refused instead of started without it.
 
 ## Plumbing
 

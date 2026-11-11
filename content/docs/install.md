@@ -83,10 +83,13 @@ release's published checksums, and replaces the running binary. It will
 not move you to an older version, and it refuses to install a download
 whose checksum does not match. Homebrew installs are swapped in place.
 
-The cluster side follows the binary: a released `tiny` starts sessions
-from the agent image built from the same tag, so runtime and CLI do not
-drift. Re-run `tiny setup` (or `tiny init --yes` in CI) to apply a newer
-runtime.
+The agent image follows the binary: a released `tiny` starts sessions
+from the image built from the same tag. The runtime installed on the
+cluster (the Session CRD and the session account) does not update itself,
+so after `tiny upgrade` run `tiny init` against each cluster you use, or
+`tiny init --yes` in CI. An outdated runtime silently drops newer session
+fields; tiny warns when it sees one and refuses a create that would lose a
+field.
 
 ## Uninstall
 

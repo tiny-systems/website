@@ -68,7 +68,31 @@ lightweight VM.
 tiny new --runtime-class gvisor "…"
 ```
 
-or `spec.runtimeClassName: gvisor` on the Session. tiny installs no runtime:
+or `spec.runtimeClassName: gvisor` on the Session.
+
+### What it changes, and what it doesn't
+
+gVisor closes one specific path. It's worth having where that path
+matters, and it's not a substitute for anything else on this page.
+
+| | default (restricted profile) | with `--runtime-class gvisor` |
+|---|---|---|
+| kernel exploit escapes to the node | possible: the kernel is shared | blocked: system calls hit gVisor's own kernel |
+| container-escape tricks (capabilities, setuid) | blocked | blocked |
+| steal the model key, spend quota | possible | **still possible** |
+| send data out over HTTPS | the [allow-list](/docs/egress/) decides | **unchanged**: the allow-list decides |
+| read and change the workspace | possible | **still possible** |
+| speed | native | slower on system-call-heavy work: builds, `npm install` |
+| setup | none | gVisor on the cluster; rootless buildah won't run |
+
+Use it for sessions that run code you trust least: dependencies pulled
+during a task, generated scripts, untrusted repos. The interactive
+diagram on the [home page](/#keys) lets you switch it on and watch which
+verdict changes.
+
+### Turning it on
+
+tiny installs no runtime:
 the RuntimeClass has to exist on the cluster, and `tiny new` refuses a name
 that doesn't. Tested with gVisor 20261102.0 on k3s: Claude Code, git, npm
 through the egress proxy and the MCP sidecar all work. Expect slower
@@ -76,9 +100,22 @@ system-call-heavy work such as large builds, and don't expect rootless
 buildah to run under it.
 
 **Managed clusters.** On GKE, use [GKE
-Sandbox](https://cloud.google.com/kubernetes-engine/docs/concepts/sandbox-pods):
-create a node pool with `--sandbox type=gvisor` (spot works). GKE provides
-the `gvisor` RuntimeClass and steers pods that use it onto that pool.
+Sandbox](https://cloud.google.com/kubernetes-engine/docs/concepts/sandbox-pods).
+An existing node pool can't be switched over, so create one. This one is
+spot and scales to zero, so it costs nothing while no session uses it:
+
+```sh
+gcloud container node-pools create gvisor-spot \
+  --cluster=CLUSTER --zone=ZONE \
+  --sandbox type=gvisor --spot --machine-type=e2-standard-2 \
+  --image-type=COS_CONTAINERD \
+  --enable-autoscaling --min-nodes=0 --max-nodes=1 --num-nodes=0
+```
+
+GKE creates the `gvisor` RuntimeClass and steers pods that use it onto
+that pool. The cluster still needs one ordinary pool for system pods, and
+shared-core machine types (e2-micro, e2-small) aren't supported. With the
+pool at zero, the first gVisor session waits a minute or two for a node.
 
 **Your own nodes (k3s).** Install the release tarball next to the
 containerd shim, register the runtime, and create the RuntimeClass:

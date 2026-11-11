@@ -192,6 +192,11 @@
     </div>
     <div class="kpanel" aria-live="polite">
       <div class="kattacks" hidden>
+        <div class="kctl" role="group" aria-label="what your cluster has switched on">
+          <span class="kah">Your cluster has:</span>
+          <button type="button" class="ksw" data-sw="allow" aria-pressed="false">hostname allow-list</button>
+          <button type="button" class="ksw" data-sw="gvisor" aria-pressed="false">gVisor runtime</button>
+        </div>
         <div class="kah">Pick a move a prompt-injected agent might try:</div>
         <button type="button" class="ka" data-a="steal">Steal SSH keys and cloud credentials</button>
         <button type="button" class="ka" data-a="push">Push to the repo, force-push main</button>
@@ -214,7 +219,7 @@
   <div class="ktext" hidden>
     <div data-k="you"><b>You.</b> Your laptop or CI runs <code>tiny</code>, which talks to the Kubernetes API with your own kubeconfig. Attaching is an exec into tmux under your RBAC. When a session asks a question, answering runs the action in your client with your credentials, so the audit log names you, not a service account.</div>
     <div data-k="init"><b>Init container.</b> Copies Claude Code, Codex, a static tmux and the entrypoint into a shared <code>/tiny</code> volume, then exits. The session runs from <code>/tiny</code>, which is why <code>--image</code> can be <code>golang:1.26</code> or your own dev image. There&#8217;s no special image to maintain and nothing baked in.</div>
-    <div data-k="agent"><b>The agent.</b> The real, unmodified Claude Code or Codex CLI in tmux, as a non-root user, under the restricted profile: the runtime&#8217;s seccomp filter, every Linux capability dropped, no privilege escalation. It runs with permissions bypassed on purpose, so nothing intercepts its tool calls. The boundary is everything drawn around it.</div>
+    <div data-k="agent"><b>The agent.</b> The real, unmodified Claude Code or Codex CLI in tmux, as a non-root user, under the restricted profile: the runtime&#8217;s seccomp filter, every Linux capability dropped, no privilege escalation. It runs with permissions bypassed on purpose, so nothing intercepts its tool calls. The boundary is everything drawn around it. Started with <code>--runtime-class gvisor</code>, its system calls reach gVisor&#8217;s user-space kernel instead of the node&#8217;s.</div>
     <div data-k="sidecar"><b>MCP sidecar.</b> tiny&#8217;s own tools (ask a human, list or spawn sessions, publish a port) on <code>127.0.0.1:8080</code>, reachable only from inside the pod. It runs as the session&#8217;s service account, which may create questions, read sessions and pods, and update its own status. Nothing else: no delete, no exec, no secrets, no ConfigMaps.</div>
     <div data-k="workspace"><b>Workspace volume.</b> A persistent volume at <code>/workspace</code> holding the repo, the transcript and <code>outbox/</code>. The pod is disposable and the volume isn&#8217;t, so a replaced pod resumes the conversation. Finished work is written as <code>git bundle create outbox/&lt;branch&gt;.bundle main..&lt;branch&gt;</code>: a file, not a push.</div>
     <div data-k="secret"><b>The one secret.</b> <code>tiny-agent-env</code> holds the model credential, a Claude token or an API key, because the real vendor CLI can&#8217;t run without it. No git token, no cloud keys, no SSH key, unless you opt into a deploy key in <code>tiny setup</code>, which then does live in the pod.</div>
@@ -228,7 +233,7 @@
   <div class="ktext-attack" hidden>
     <div data-k="you" data-moves="approve"><b>Out of reach.</b> Your kubeconfig never enters the pod, so the agent can&#8217;t attach to you or act as you. The only way it reaches you is by asking: a question parks until you answer, and only then runs, with your credentials. Read before you approve.</div>
     <div data-k="init" data-moves="escape"><b>Gone before the agent starts.</b> It copies the CLIs into <code>/tiny</code> and exits, so nothing of it is left running to attack. Whatever the agent does to its own copy of the tools only affects its own session.</div>
-    <div data-k="agent" data-moves="steal,escape,quota"><b>What the attacker owns.</b> After a successful prompt injection: a shell as a non-root user, with the workspace, the model key and whatever network the policy allows. Everything else on this diagram is about what that shell can&#8217;t reach.</div>
+    <div data-k="agent" data-moves="steal,escape,quota"><b>What the attacker owns.</b> After a successful prompt injection: a shell as a non-root user, with the workspace, the model key and whatever network the policy allows. Everything else on this diagram is about what that shell can&#8217;t reach. With gVisor on, that shell also can&#8217;t reach the node&#8217;s kernel.</div>
     <div data-k="sidecar" data-moves="approve,port"><b>Usable, not dangerous.</b> The attacker can call these tools just as the agent can. They&#8217;re the voice, not the hands: create a question, list sessions, update its own status. Anything that acts, like spawning a session or publishing a port, parks as a question for a human. It listens on loopback, so nothing outside the pod can call it.</div>
     <div data-k="workspace" data-moves="push,exfil"><b>Fully in reach.</b> The repo, the transcript and the outbox are readable and writable. That&#8217;s the private data the agent works on, and the part you can&#8217;t take away. Work leaves only as a bundle the courier opens as a pull request for review, never as a push to main.</div>
     <div data-k="secret" data-moves="quota"><b>The real prize, and it&#8217;s in reach.</b> The attacker can read the model credential, use it, or send it to any host the network allows. Use a dedicated account, keep the allow-list on, and rotate the token if a session misbehaves.</div>
@@ -254,15 +259,25 @@
       steal:{n:'Steal SSH keys and cloud credentials',p:['agent'],m:[['agent','stop','nothing to steal']],v:'blocked',t:'<b>Nothing to steal.</b> There is no <code>~/.ssh</code>, no <code>gh</code> token and no <code>~/.aws</code> in the pod. The only secret mounted is the model credential, which has its own entry at the bottom of this list.'},
       push:{n:'Push to the repo',p:['agent','policy','github'],m:[['github','stop','rejected: no credentials']],v:'blocked',t:'<b>Rejected by GitHub.</b> The agent has no git credentials, so the push fails authentication. The only way out for code is a bundle in the outbox. The courier rebases it onto main and opens it as a pull request that someone reviews.'},
       metadata:{n:'Read instance credentials',p:['agent','policy'],m:[['policy','stop','blocked here']],v:'blocked',t:'<b>Never answers.</b> <code>169.254.169.254</code> hands out a cloud instance&#8217;s IAM role. The egress policy excludes link-local space on every port, so the request goes nowhere. This one needs a CNI that enforces NetworkPolicy.'},
-      exfil:{n:'Send the repo to evil.example',p:['agent','policy','proxy','internet'],m:[['proxy','stop','refused with the allow-list'],['internet','pass','default: gets through']],v:'depends',t:'<b>Default: it gets through.</b> A NetworkPolicy matches addresses, and evil.example on 443 looks like any other site. <b>With the hostname allow-list on:</b> the proxy refuses it with a 403 and logs the host. Allow-listing a host still allows everything on it, so <code>github.com</code> means a gist is possible.'},
-      dns:{n:'Smuggle data out through DNS',p:['agent','proxy','internet'],m:[['proxy','stop','NXDOMAIN with the allow-list'],['internet','pass','default: gets through']],v:'depends',t:'<b>Default: possible.</b> The cluster resolver forwards names it doesn&#8217;t know to the internet, so data can ride inside a lookup. <b>With the allow-list on:</b> the proxy is the session&#8217;s only resolver and returns NXDOMAIN for anything outside the cluster.'},
+      exfil:function(S){ return S.allow
+        ? {n:'Send the repo to evil.example',p:['agent','proxy'],m:[['proxy','stop','403, logged']],v:'blocked',t:'<b>Refused by the proxy.</b> With the allow-list on, every connection goes through a proxy that checks the hostname. evil.example isn&#8217;t listed, so it gets a 403 and shows up in <code>tiny egress denied</code>. A listed host is allowed for everything on it, so listing <code>github.com</code> still permits a gist.'}
+        : {n:'Send the repo to evil.example',p:['agent','policy','internet'],m:[['internet','pass','gets through']],v:'allowed',t:'<b>Gets through.</b> With only the egress policy, evil.example on 443 looks like any other website: a NetworkPolicy matches addresses, not names. Switch on the hostname allow-list above and run this again.'}; },
+      dns:function(S){ return S.allow
+        ? {n:'Smuggle data out through DNS',p:['agent','proxy'],m:[['proxy','stop','NXDOMAIN']],v:'blocked',t:'<b>NXDOMAIN.</b> With the allow-list on, the proxy is the session&#8217;s only DNS resolver. It answers names inside the cluster, refuses everything else and logs the refusal, so a lookup can&#8217;t carry data out.'}
+        : {n:'Smuggle data out through DNS',p:['agent','policy','internet'],m:[['internet','pass','via the cluster resolver']],v:'allowed',t:'<b>Possible.</b> The cluster resolver forwards names it doesn&#8217;t know to the internet, so data can ride inside a lookup for <code>secret-data.attacker.example</code>. Switch on the allow-list above and run this again.'}; },
       delete:{n:'Delete itself, rewrite its task',p:['agent','api'],m:[['api','stop','403']],v:'blocked',t:'<b>403.</b> The session&#8217;s account can read sessions and update its own status, and nothing that acts. We ran these from inside a live pod with its own token: delete the session, the Deployment, the pod, the volume, rewrite the task. Every one refused.'},
       approve:{n:'Approve its own request',p:['sidecar','api'],m:[['api','stop','403']],v:'blocked',t:'<b>403.</b> It can create a question but not answer one. The answer runs in a human&#8217;s client with that human&#8217;s credentials, which is the whole point of the gate.'},
       port:{n:'Open a port inbound',p:['internet','sidecar'],m:[['sidecar','stop','loopback only']],v:'blocked',t:'<b>Nothing listens.</b> The pod declares no container port and the sidecar binds <code>127.0.0.1</code>. Publishing a dev server is a tool call that parks as a question until a human approves it, and then it runs with that human&#8217;s credentials.'},
-      escape:{n:'Break out to the node',p:['agent','init'],m:[['agent','stop','restricted profile, or gVisor']],v:'gvisor',t:'<b>Hardened by default, blocked with gVisor.</b> The restricted profile removes what most container escapes rely on: capabilities, privilege escalation, unusual syscalls. Containers still share the node&#8217;s kernel, so a kernel exploit is the path that remains. Start the session with <code>--runtime-class gvisor</code> and that path closes too: its system calls reach gVisor&#8217;s user-space kernel, not the node&#8217;s. It needs gVisor installed on the cluster, and builds run slower.'},
-      quota:{n:'Spend quota, leak the model key',p:['secret','agent','internet'],m:[['internet','pass','gets through']],v:'allowed',t:'<b>This one works.</b> The model credential has to be in the pod for the real CLI to run. A compromised session can spend your quota while it lives, and send the key to any host it can reach. Use a dedicated account, and the allow-list limits where the key can go.'}
+      escape:function(S){ return S.gvisor
+        ? {n:'Break out to the node',p:['agent'],m:[['agent','stop','gVisor kernel']],v:'blocked',t:'<b>Blocked by gVisor.</b> Started with <code>--runtime-class gvisor</code>, the agent&#8217;s system calls reach gVisor&#8217;s user-space kernel instead of the node&#8217;s, so a kernel exploit lands inside the sandbox. It costs speed on system-call-heavy work like builds, and gVisor has to be installed on the cluster.'}
+        : {n:'Break out to the node',p:['agent'],m:[['agent','stop','restricted profile']],v:'hardened',t:'<b>Hardened, not closed.</b> The restricted profile removes what most container escapes rely on: capabilities, privilege escalation, unusual syscalls. The node&#8217;s kernel is still shared, so a kernel exploit remains a way out. Switch on gVisor above and run this again.'}; },
+      quota:function(S){ return {n:'Spend quota, leak the model key',p:['secret','agent','internet'],m:[['internet','pass',S.allow?'to listed hosts':'gets through']],v:'allowed',t:'<b>This one works, whatever you switch on.</b> The model credential has to be in the pod for the real CLI to run. A compromised session can spend your quota while it lives and send the key '+(S.allow?'to any host on your allow-list':'to any host on 443')+'. Neither switch above changes that. Use a dedicated account, and rotate the token if a session misbehaves.'}; }
     };
-    var vlabel={blocked:'BLOCKED',depends:'DEPENDS ON THE ALLOW-LIST',hardened:'HARDENED',gvisor:'HARDENED · BLOCKED WITH GVISOR',allowed:'ALLOWED'};
+    var vlabel={blocked:'BLOCKED',hardened:'HARDENED',allowed:'ALLOWED'};
+    // What the visitor says their cluster has switched on. Verdicts that
+    // depend on it are computed from it, so the answer is never "it depends".
+    var S={allow:false,gvisor:false}, cur=null;
+    function resolve(a){ var d=A[a]; return typeof d==='function' ? d(S) : d; }
     var timers=[];
     function clearMarks(){ timers.forEach(clearTimeout); timers=[]; nodes.forEach(function(n){ n.classList.remove('hit','stop','pass','sel'); n.removeAttribute('data-mark'); n.setAttribute('aria-pressed','false'); }); }
     function node(k){ return root.querySelector('.kn[data-k="'+k+'"]'); }
@@ -278,7 +293,7 @@
         nameEl.textContent=names[k]+', from the attacker\u2019s side';
         atks.forEach(function(b){ b.classList.remove('on'); b.setAttribute('aria-pressed','false'); });
         (src.getAttribute('data-moves')||'').split(',').filter(Boolean).forEach(function(a){
-          var b=document.createElement('button'); b.type='button'; b.className='kmv'; b.textContent=A[a].n;
+          var b=document.createElement('button'); b.type='button'; b.className='kmv'; b.textContent=resolve(a).n;
           b.addEventListener('click', function(){ runAttack(a); });
           movesEl.appendChild(b);
         });
@@ -286,7 +301,7 @@
       }
     }
     function runAttack(a){
-      var d=A[a]; clearMarks(); clearMoves();
+      var d=resolve(a); cur=a; clearMarks(); clearMoves();
       atks.forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-a')===a); b.setAttribute('aria-pressed', b.getAttribute('data-a')===a?'true':'false'); });
       nameEl.textContent=d.n; verdictEl.hidden=true; bodyEl.innerHTML='';
       var step=reduce?0:380;
@@ -309,6 +324,13 @@
     function reveal(){ if(window.matchMedia('(max-width:1100px)').matches) panel.scrollIntoView({behavior:reduce?'auto':'smooth',block:'nearest'}); }
     nodes.forEach(function(n){ n.addEventListener('click', function(){ showNode(n.getAttribute('data-k')); reveal(); }); });
     atks.forEach(function(b){ b.addEventListener('click', function(){ runAttack(b.getAttribute('data-a')); }); });
+    [].slice.call(root.querySelectorAll('.ksw')).forEach(function(b){
+      b.addEventListener('click', function(){
+        var k=b.getAttribute('data-sw'); S[k]=!S[k];
+        b.classList.toggle('on', S[k]); b.setAttribute('aria-pressed', S[k]?'true':'false');
+        if(cur) runAttack(cur);
+      });
+    });
     showNode('agent');
   })();
   </script>

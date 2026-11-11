@@ -328,3 +328,11 @@ footer a:hover{color:var(--green-deep)}
 .kmv{appearance:none;border-radius:0;cursor:pointer;font-family:var(--mono);font-size:12px;border:1.5px solid var(--ink);background:var(--paper);color:var(--ink);padding:4px 8px;text-align:left}
 .kmv:hover{background:var(--ink);color:var(--paper)}
 .kmv:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+
+.kctl{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:12px;padding-bottom:12px;border-bottom:1.5px dashed var(--ink)}
+.kctl .kah{margin:0 4px 0 0}
+.ksw{appearance:none;border-radius:12px;cursor:pointer;font-family:var(--mono);font-size:12px;border:1.5px solid var(--ink);background:var(--paper);color:var(--ink);padding:3px 10px}
+.ksw::before{content:'off \00b7  ';color:#4E5449}
+.ksw.on{background:var(--green-deep);border-color:var(--green-deep);color:var(--paper)}
+.ksw.on::before{content:'on \00b7  ';color:var(--paper)}
+.ksw:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
