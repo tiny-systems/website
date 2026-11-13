@@ -54,6 +54,47 @@ When a session hits a plan limit it pauses itself. The fleet row shows
 `⏸ usage limit` with the resume time, and the agent picks the work back
 up on its own.
 
+## Command sessions: no agent at all
+
+A session can also run no coding agent. With `agent: command`, it runs
+`spec.command` once, as argv, in the session's image, and that's all: no
+model, no tmux, no resume. The exit code lands in
+`/workspace/.tiny/command-done`, so a container restart never runs the
+command a second time, and the pod then idles so its log stays readable
+until you delete the session.
+
+It's meant for code you trust least, such as a generated script or an
+untrusted repository's test suite, run in the same box your agents get.
+It keeps everything that confines a session: the restricted container
+profile, the egress policy and allow-list, node placement, the runtime
+class (so `gvisor` works) and resource limits. It holds even less than an
+agent session: no model credentials, no deploy key, no service-account
+token, and no MCP sidecar.
+
+There's no CLI flag for it yet; create it from Go with
+[`pkg/session`](https://pkg.go.dev/github.com/tiny-systems/tiny/pkg/session).
+Applying the Session with kubectl alone starts nothing, because tiny has
+no operator: whoever creates a session also creates its workload, and
+`session.Create` does both.
+
+```go
+s := &agentsv1.Session{
+	ObjectMeta: metav1.ObjectMeta{Namespace: "agents", Name: "run-untrusted"},
+	Spec: agentsv1.SessionSpec{
+		Agent:            "command",
+		Image:            "python:3.13-slim",
+		Command:          []string{"python3", "-c", "print('hello from a sandbox')"},
+		RuntimeClassName: "gvisor",
+	},
+}
+err := session.Create(ctx, c, s)
+```
+
+Two limits for now. `spec.repo` isn't cloned for a command session (the
+command runs before the clone step), so bring code in through the image.
+And the exit code isn't shown in the fleet screen: read it from the file
+above, or check the pod's log with `kubectl logs`.
+
 ## House rules
 
 Claude reads `CLAUDE.md` and Codex reads `AGENTS.md`. tiny seeds both

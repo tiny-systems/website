@@ -29,6 +29,9 @@ agent *can* do, not whether it might try.
 - A restricted container: runtime seccomp profile, every capability
   dropped, no privilege escalation, non-root. `--unconfined` lifts the
   first two for rootless buildah, per session, and nothing else.
+- A [command session](/docs/agents/#command-sessions-no-agent-at-all)
+  holds less still: no model credential, no deploy key, no
+  service-account token and no sidecar, only the command and its image.
 
 ## What a session pod does not hold
 
