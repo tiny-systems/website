@@ -18,23 +18,24 @@ $ tiny new "make the tests not lie"
 
 ## As a kubectl plugin, with krew
 
-If you use [krew](https://krew.sigs.k8s.io/), tiny installs as
-`kubectl tiny`. Every release carries a krew manifest:
+If you use [krew](https://krew.sigs.k8s.io/), tiny installs as a kubectl
+plugin named `tiny-agents`. Every release carries a krew manifest:
 
 ```
 kubectl krew install --manifest-url=https://github.com/tiny-systems/tiny/releases/latest/download/tiny-krew.yaml
-kubectl tiny setup
-kubectl tiny new "make the tests not lie"
+kubectl tiny-agents setup
+kubectl tiny-agents new "make the tests not lie"
 ```
 
 tiny isn't in the central krew index yet. Once it's listed, the install
-becomes `kubectl krew install tiny`.
+becomes `kubectl krew install tiny-agents`.
 
-It's the same binary, so everything on these pages works with `kubectl`
-in front: `kubectl tiny run …`, `kubectl tiny rm …`. Messages tiny prints
-still say `tiny <command>`. Upgrade with `kubectl krew upgrade tiny`;
-`kubectl tiny upgrade` only tells you to, because a copy that replaced
-itself would leave krew's records behind.
+It's the same binary, so everything on these pages works with `kubectl
+tiny-agents` in place of `tiny`: `kubectl tiny-agents run …`,
+`kubectl tiny-agents rm …`. Messages tiny prints still say
+`tiny <command>`. Upgrade with `kubectl krew upgrade tiny-agents`;
+`kubectl tiny-agents upgrade` only tells you to, because a copy that
+replaced itself would leave krew's records behind.
 
 ## What tiny setup actually does
 
