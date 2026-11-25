@@ -27,7 +27,7 @@ kubectl tiny setup
 kubectl tiny new "make the tests not lie"
 ```
 
-tiny has been submitted to the krew index. Once it's listed, the install
+tiny isn't in the central krew index yet. Once it's listed, the install
 becomes `kubectl krew install tiny`.
 
 It's the same binary, so everything on these pages works with `kubectl`
