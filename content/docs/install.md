@@ -1,7 +1,7 @@
 ---
 title: Install
 seotitle: "Install tiny: self-hosted Claude Code on Kubernetes"
-description: "Install the tiny CLI with Homebrew or a release binary, then one wizard sets up the cluster, the runtime and the agent token. No pods until your first session."
+description: "Install the tiny CLI with Homebrew, krew or a release binary, then one wizard sets up the cluster, the runtime and the agent token. No pods until your first session."
 weight: 10
 section: START
 ---
@@ -15,6 +15,26 @@ $ brew install tiny-systems/tap/tiny
 $ tiny setup
 $ tiny new "make the tests not lie"
 ```
+
+## As a kubectl plugin, with krew
+
+If you use [krew](https://krew.sigs.k8s.io/), tiny installs as
+`kubectl tiny`. Every release carries a krew manifest:
+
+```
+kubectl krew install --manifest-url=https://github.com/tiny-systems/tiny/releases/latest/download/tiny-krew.yaml
+kubectl tiny setup
+kubectl tiny new "make the tests not lie"
+```
+
+tiny has been submitted to the krew index. Once it's listed, the install
+becomes `kubectl krew install tiny`.
+
+It's the same binary, so everything on these pages works with `kubectl`
+in front: `kubectl tiny run …`, `kubectl tiny rm …`. Messages tiny prints
+still say `tiny <command>`. Upgrade with `kubectl krew upgrade tiny`;
+`kubectl tiny upgrade` only tells you to, because a copy that replaced
+itself would leave krew's records behind.
 
 ## What tiny setup actually does
 

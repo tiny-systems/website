@@ -33,6 +33,9 @@ Run `tiny` with no arguments:
 - **✳ means a question waits.** Rows keep creation order on purpose, so
   nothing jumps around when a question arrives.
 - **Children render under their parent** (`└`).
+- **Command sessions show their result.** A session started by
+  [`tiny run --keep`](/docs/run/) reads `running its command` until it
+  ends, then `✓ exited 0` or `✗ exited N`.
 
 ## Keys
 

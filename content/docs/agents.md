@@ -71,8 +71,14 @@ class (so `gvisor` works) and resource limits. It holds even less than an
 agent session: no model credentials, no deploy key, no service-account
 token, and no MCP sidecar.
 
-There's no CLI flag for it yet; create it from Go with
-[`pkg/session`](https://pkg.go.dev/github.com/tiny-systems/tiny/pkg/session).
+From the command line it's [`tiny run`](/docs/run/), which also streams
+the output and exits with the command's exit code:
+
+```
+tiny run --image python:3.13-slim --runtime-class gvisor -- python3 -c "print('hello from a sandbox')"
+```
+
+From Go, use [`pkg/session`](https://pkg.go.dev/github.com/tiny-systems/tiny/pkg/session).
 Applying the Session with kubectl alone starts nothing, because tiny has
 no operator: whoever creates a session also creates its workload, and
 `session.Create` does both.
@@ -90,10 +96,11 @@ s := &agentsv1.Session{
 err := session.Create(ctx, c, s)
 ```
 
-Two limits for now. `spec.repo` isn't cloned for a command session (the
-command runs before the clone step), so bring code in through the image.
-And the exit code isn't shown in the fleet screen: read it from the file
-above, or check the pod's log with `kubectl logs`.
+With `spec.repo` set, the repo is cloned before the command runs and the
+command runs inside it. The image needs `git`, and the URL has to work
+without credentials, since a command session has no deploy key. A failed
+clone records exit code 128 and runs nothing. The fleet screen shows a
+finished command session as `✓ exited 0` or `✗ exited N`.
 
 ## House rules
 

@@ -57,6 +57,29 @@ tiny new [task]
 
 With no task the session boots idle and attaches you straight in.
 
+## Running one command
+
+```
+tiny run [flags] [--] <command> [args...]
+```
+
+Runs a command once in a confined session with no agent and no
+credentials, streams its output, and exits with its exit code. Flags go
+before the command. The whole story is on [tiny run](/docs/run/).
+
+| flag | what |
+|---|---|
+| `--image <ref>` | the image to run in; it needs `sh` (default: the tiny agent image) |
+| `--repo <git URL>` | clone first and run inside the clone (the image needs git) |
+| `--dir <path>` | ship a local folder first and run inside it |
+| `--runtime-class <name>` | `gvisor`, `kata` or another RuntimeClass the cluster has |
+| `--cpu`, `--memory` | requests for this run |
+| `--user <uid>` | for images wired to a specific user |
+| `--unconfined` | lift the seccomp and capability hardening |
+| `--name <name>` | session name (generated when omitted) |
+| `--keep` | keep the session afterwards for `tiny shell` |
+| `-d, --detach` | start it and return at once; implies `--keep` |
+
 ```
 tiny handoff [--name <name>]
 ```
@@ -129,7 +152,7 @@ Needs the [hostname allow-list](/docs/egress/) add-on on.
 | `tiny profile save <name>` | name the current (or `--context`/`-n` flagged) target |
 | `tiny profile list` | show saved profiles and the pinned default |
 | `tiny profile delete <name>` | forget one |
-| `tiny upgrade` | update the tiny binary to the latest release. The binary only: follow it with `tiny init` |
+| `tiny upgrade` | update the tiny binary to the latest release. The binary only: follow it with `tiny init`. Installed with krew, it points you to `kubectl krew upgrade tiny` instead ([krew](/docs/install/#as-a-kubectl-plugin-with-krew)) |
 
 `tiny upgrade` downloads the release for your platform, **verifies it
 against the release's `checksums.txt`**, and swaps it over the running
