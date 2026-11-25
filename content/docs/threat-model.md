@@ -19,7 +19,12 @@ agent *can* do, not whether it might try.
 
 ## What a session pod holds
 
-- The agent credential (Claude or OpenAI token) — needed to run at all.
+- The agent credential (Claude or OpenAI token) — needed to run at all,
+  unless the namespace keeps it out. For Claude,
+  [`tiny gateway on`](/docs/model-credentials/) leaves a placeholder in
+  the pod and the real credential in the egress proxy, and
+  [federation](/docs/model-credentials/#federation) stores none: the pod
+  holds an identity token that lasts an hour at most.
 - Its own workspace volume.
 - A localhost MCP sidecar whose Kubernetes permissions are: create
   Question objects, read Sessions and pods in the namespace, update its

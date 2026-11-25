@@ -44,7 +44,9 @@ you already have:
   `OPENAI_API_KEY` works too.
 
 `tiny setup` writes the cluster Secret itself, and both credentials live
-side by side, so a mixed fleet works without extra setup. A session whose
+side by side, so a mixed fleet works without extra setup. To keep the
+Claude credential out of agent pods altogether, see
+[keeping the model key out of pods](/docs/model-credentials/). A session whose
 token expired says so on the fleet screen in the agent's own words;
 rotate with `tiny setup` and cycle the pod.
 

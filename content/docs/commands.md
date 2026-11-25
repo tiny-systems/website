@@ -57,6 +57,17 @@ tiny new [task]
 
 With no task the session boots idle and attaches you straight in.
 
+## Keeping the model key out of pods
+
+| command | what |
+|---|---|
+| `tiny gateway [on\|off]` | move the Claude credential into the egress proxy; agent pods hold a placeholder. Needs the allow-list. Bare: on or off |
+| `tiny federation` | print what the Claude Console needs for Workload Identity Federation: issuer, subject, audience, signing keys |
+| `tiny federation set --rule … --organization … [--service-account …] [--workspace …]` | sign Claude sessions in with federation; no stored credential. `--remove-stored-credential` deletes the old one without asking |
+| `tiny federation off` | back to the stored credential |
+
+Details on [keeping the model key out of pods](/docs/model-credentials/).
+
 ## Running one command
 
 ```

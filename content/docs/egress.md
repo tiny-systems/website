@@ -146,15 +146,16 @@ the main package registries.
 Allow-listing `github.com` means an agent can write to a gist.
 Allow-listing the model API means it can put your source in a prompt. An
 allow-list shrinks the exit to a few doors you chose to trust; it does
-not seal the building. And the model credential stays in the pod either
-way.
+not seal the building. And the model credential stays in the pod unless
+you take it out with the [model gateway or federation](/docs/model-credentials/).
 
 In-namespace traffic bypasses the proxy through `NO_PROXY`, so the
 artifact store and another session's exposed port keep working without
 being listed.
 
-**The model credential still lives in the agent pod.** That is inherent
-to running the vendor CLI; see the [threat model](/docs/threat-model/).
+**By default the model credential lives in the agent pod.** With the
+allow-list on, `tiny gateway on` moves a Claude credential into this
+proxy instead; see [keeping the model key out of pods](/docs/model-credentials/).
 
 ## It only works if your CNI enforces it
 
