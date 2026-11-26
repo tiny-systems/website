@@ -71,6 +71,24 @@ tiny new --runtime-class gvisor "…"
 
 or `spec.runtimeClassName: gvisor` on the Session.
 
+To sandbox every new session in the namespace, not one at a time:
+
+```sh
+tiny sandbox on          # gvisor; or name another class: tiny sandbox on kata
+tiny sandbox             # on or off
+tiny sandbox off
+```
+
+tiny refuses a class the cluster doesn't have, since every new session
+would then fail to start. The class is written into each new session's
+spec, so `kubectl get session -o yaml` shows what it runs under, and
+changing the setting never moves a session that's already running. A
+session can still name its own class, or opt out with
+`--runtime-class none` (for rootless buildah, which gVisor won't run).
+The setting covers sessions created any way, `kubectl` and the Go
+package included. The Tiny Systems app turns it on when it installs
+gVisor on a computer.
+
 ### What it changes, and what it doesn't
 
 gVisor closes one specific path. It's worth having where that path

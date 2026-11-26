@@ -51,7 +51,7 @@ tiny new [task]
 | `--model <name>` | model override (`claude --model` / `codex -m`) |
 | `--cpu`, `--memory` | per-session requests (memory is also the limit) |
 | `--user <uid>` | for images wired to a specific user (buildah: 1000) |
-| `--runtime-class <name>` | run under a sandboxed runtime the cluster provides, e.g. `gvisor` or `kata`; see [images](/docs/images/#sandboxed-runtimes-gvisor-and-kata) |
+| `--runtime-class <name>` | run under a sandboxed runtime the cluster provides, e.g. `gvisor` or `kata`, or `none` to skip the namespace sandbox; see [images](/docs/images/#sandboxed-runtimes-gvisor-and-kata) |
 | `--unconfined` | lift the seccomp and capability hardening — rootless buildah/podman need user namespaces; see [images](/docs/images/#confinement-and---unconfined) |
 | `--quiet` | skip the follow-up hint |
 
@@ -62,6 +62,7 @@ With no task the session boots idle and attaches you straight in.
 | command | what |
 |---|---|
 | `tiny gateway [on\|off]` | move the Claude credential into the egress proxy; agent pods hold a placeholder. Needs the allow-list. Bare: on or off |
+| `tiny sandbox [on [class]\|off]` | run every new session under gVisor (or the class named); refuses a class the cluster lacks. Per session: `--runtime-class <name>` or `none`. Bare: on or off |
 | `tiny federation` | print what the Claude Console needs for Workload Identity Federation: issuer, subject, audience, signing keys |
 | `tiny federation set --rule … --organization … [--service-account …] [--workspace …]` | sign Claude sessions in with federation; no stored credential. `--remove-stored-credential` deletes the old one without asking |
 | `tiny federation off` | back to the stored credential |
