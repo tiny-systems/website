@@ -134,7 +134,8 @@ func run() error {
 		page    *Page
 	}
 	jobs := []job{
-		{"home", "index.html", nil},
+		{"apphome", "index.html", nil},
+		{"home", "tiny/index.html", nil},
 		{"notfound", "404.html", nil},
 		{"privacy", "privacy/index.html", nil},
 		{"docindex", "docs/index.html", nil},
@@ -260,6 +261,7 @@ func writeSitemap(dist string, data *SiteData) error {
 		fmt.Fprintf(&b, "  <url><loc>%s%s</loc></url>\n", site, path)
 	}
 	add("/", "")
+	add("/tiny/", "")
 	add("/docs/", "")
 	add("/blog/", "")
 	add("/compare/", "")

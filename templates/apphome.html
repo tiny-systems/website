@@ -1,0 +1,178 @@
+{{define "apphome"}}<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tiny Systems: AI helpers on your own computers</title>
+<meta name="description" content="Tiny Systems runs AI coding helpers on your Mac or any computer you own. Give them a task, keep working, answer when they ask. Your keys never sit inside a helper.">
+<link rel="canonical" href="https://tinysystems.io/">
+<meta property="og:title" content="Tiny Systems">
+<meta property="og:description" content="AI helpers on your own computers. They work quietly and ask before they guess.">
+<meta property="og:url" content="https://tinysystems.io/">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://tinysystems.io/static/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="{{asset "/static/home.css"}}">
+<script data-goatcounter="https://ct.tinysystems.io/count" async src="https://ct.tinysystems.io/count.js"></script>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="g-grow" viewBox="0 0 24 24"><path d="M12 20 V11.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/><path d="M12 13.5 C8.5 13.6 6 11.4 5.6 7.6 C9.3 7.7 11.8 9.8 12 13.5 Z" fill="currentColor" opacity=".7"/><path d="M12 11 C12.2 7.2 14.8 4.6 18.6 4.4 C18.4 8.4 15.8 10.8 12 11 Z" fill="currentColor"/></symbol>
+    <symbol id="g-ask" viewBox="0 0 24 24"><path d="M12 20 V12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/><path d="M12 12.5 C8.6 11.8 8.4 6.6 12 3.8 C15.6 6.6 15.4 11.8 12 12.5 Z" fill="currentColor"/></symbol>
+    <symbol id="g-done" viewBox="0 0 24 24"><path d="M12 20 V13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/><g fill="currentColor"><circle cx="12" cy="5.6" r="2.7"/><circle cx="15.8" cy="8.4" r="2.7"/><circle cx="14.4" cy="12.6" r="2.7"/><circle cx="9.6" cy="12.6" r="2.7"/><circle cx="8.2" cy="8.4" r="2.7"/></g><circle cx="12" cy="9.4" r="2" fill="#111512"/></symbol>
+    <symbol id="g-seed" viewBox="0 0 24 24"><ellipse cx="12" cy="14.5" rx="4.2" ry="3.2" fill="currentColor"/><path d="M12 11.3 C12 9.5 13 8.2 14.6 7.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/></symbol>
+    <symbol id="g-rest" viewBox="0 0 24 24"><path d="M12 20 V13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/><path d="M12 13.4 C9.6 12.4 9.4 8.8 12 6.6 C14.6 8.8 14.4 12.4 12 13.4 Z" fill="currentColor"/></symbol>
+  </defs>
+</svg>
+
+<nav class="top"><div class="wrap navin">
+  <a class="brand" href="/"><svg width="22" height="22"><use href="#g-grow"/></svg>Tiny Systems</a>
+  <span class="navlinks">
+    <a href="#how">How it works</a>
+    <a href="#yours">Safety</a>
+    <a href="/tiny/">For developers</a>
+  </span>
+  <a class="btn small" href="#get">Get the app</a>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <div class="hero-copy">
+    <h1>Helpers that work on your computers, and ask before they guess.</h1>
+    <p class="lede">Tiny Systems runs AI coding helpers on your Mac, or on any computer at home or at work. Give one a task and get on with your day. It works quietly and checks in when it needs you.</p>
+    <div class="cta">
+      <a class="btn primary" href="#get">Get the app for macOS</a>
+      <a class="btn ghost" href="https://github.com/tiny-systems/tiny">See the code on GitHub</a>
+    </div>
+  </div>
+
+  <!-- A live, scripted copy of the app: one helper stops to ask, you answer. -->
+  <div class="window" id="demo" aria-label="The Tiny Systems app, showing helpers at work">
+    <div class="titlebar"><i></i><i></i><i></i><span>Tiny Systems</span></div>
+    <div class="win">
+      <aside class="wlist">
+        <div class="wsearch">Search</div>
+        <div class="wtabs"><b>All</b><span>Needs you <em id="d-count">0</em></span><span>Working</span></div>
+        <div class="wgroup">Home Mac</div>
+        <div class="wrow on" id="d-fern"><svg class="gl grow" id="d-fern-gl"><use href="#g-grow"/></svg><div><b>Fern</b><span id="d-fern-line">Fixing the flaky checkout test</span></div><time>now</time></div>
+        <div class="wrow"><svg class="gl grow"><use href="#g-grow"/></svg><div><b>Basil</b><span>Updating dependencies</span></div><time>2m</time></div>
+        <div class="wrow"><svg class="gl done"><use href="#g-done"/></svg><div><b>Clover</b><span>Opened a pull request</span></div><time>14m</time></div>
+        <div class="wgroup">Office server</div>
+        <div class="wrow"><svg class="gl grow"><use href="#g-grow"/></svg><div><b>Sage</b><span>Writing release notes</span></div><time>5m</time></div>
+        <div class="wrow"><svg class="gl rest"><use href="#g-rest"/></svg><div><b>Moss</b><span>Resting</span></div><time>1h</time></div>
+      </aside>
+      <div class="wpane">
+        <div class="wbar"><b>Fern</b><span>Home Mac</span><em class="pill" id="d-pill">Working</em></div>
+        <div class="chat" id="d-chat">
+          <div class="msg you">Fix the flaky checkout test and open a pull request.</div>
+          <div class="msg helper">Found it: the test waits a fixed 2 seconds for the payment form. On a slow run the form isn't there yet.</div>
+          <div class="msg helper q" id="d-q" hidden>
+            <p>Should I wait for the form to appear, or mock the payment service in this test?</p>
+            <div class="opts"><button type="button" data-a="Wait for the form">Wait for the form</button><button type="button" data-a="Mock the service">Mock the service</button></div>
+          </div>
+          <div class="msg you" id="d-a" hidden></div>
+          <div class="msg helper" id="d-after" hidden>On it. I'll run the test 50 times before opening the pull request.</div>
+        </div>
+        <div class="composer">Message Fern…</div>
+      </div>
+    </div>
+  </div>
+</div></header>
+
+<section class="how" id="how"><div class="wrap">
+  <h2>Three steps, then it mostly runs itself</h2>
+  <ol class="steps">
+    <li>
+      <svg class="gl seed"><use href="#g-seed"/></svg>
+      <h3>Add a computer</h3>
+      <p>This Mac, or any Mac or Linux machine on your network. The app sets it up for you over a normal login, no terminal needed.</p>
+    </li>
+    <li>
+      <svg class="gl grow"><use href="#g-grow"/></svg>
+      <h3>Give a helper a task</h3>
+      <p>Describe the job in a sentence and point it at a project. It runs Claude Code or Codex, the same tools developers use every day.</p>
+    </li>
+    <li>
+      <svg class="gl ask"><use href="#g-ask"/></svg>
+      <h3>Answer when it asks</h3>
+      <p>When a helper hits a real decision it stops and asks, with answers you can pick in one click. You get a notification, not a surprise.</p>
+    </li>
+  </ol>
+</div></section>
+
+<section class="yours" id="yours"><div class="wrap split">
+  <div>
+    <h2>It stays yours</h2>
+    <p class="sub">Helpers work on computers you own, sealed off from everything they don't need.</p>
+    <a class="more" href="/tiny/">How it works under the hood</a>
+  </div>
+  <dl class="facts">
+    <div><dt>On your machines</dt><dd>Your code and your helpers' work never leave computers you control.</dd></div>
+    <div><dt>No keys inside a helper</dt><dd>Passwords and sign-in tokens stay outside, so a helper has nothing to leak.</dd></div>
+    <div><dt>Nothing open to the internet</dt><dd>Helpers reach only the sites you allow, and nothing can reach in.</dd></div>
+    <div><dt>Each one sealed in a sandbox</dt><dd>A helper runs in its own box with its own kernel, apart from the computer it's on.</dd></div>
+  </dl>
+</div></section>
+
+<section class="gardens"><div class="wrap split rev">
+  <div class="gmock" aria-label="The Gardens screen">
+    <div class="grow-row"><svg class="gl grow"><use href="#g-grow"/></svg><div class="gn"><b>Home Mac</b><span>This Mac</span></div><div class="gs"><em class="pill">Awake</em><span class="sbx">Sandboxed</span></div><div class="gd"><span>212 GB free</span><i style="--u:38%"></i></div></div>
+    <div class="grow-row"><svg class="gl ask"><use href="#g-ask"/></svg><div class="gn"><b>Office server</b><span>192.168.1.40</span></div><div class="gs"><em class="pill warn">Awake</em><span class="sbx">Sandboxed</span></div><div class="gd"><span>48 GB free</span><i style="--u:82%" class="low"></i></div></div>
+    <div class="grow-row"><svg class="gl rest"><use href="#g-rest"/></svg><div class="gn"><b>Old laptop</b><span>This Mac · VM</span></div><div class="gs"><em class="pill off">Asleep</em></div><div class="gd"><button type="button" class="btn tiny">Wake</button></div></div>
+  </div>
+  <div>
+    <h2>Every computer, one screen</h2>
+    <p class="sub">See which computers are awake, how much room they have, and fix what needs fixing in a click: wake one up, update it, share a sign-in.</p>
+  </div>
+</div></section>
+
+<section class="get" id="get"><div class="wrap">
+  <svg class="gl grow big"><use href="#g-grow"/></svg>
+  <h2>Tiny Systems for macOS</h2>
+  <p class="sub">The signed app is almost ready. Star the project to hear when it ships.</p>
+  <div class="cta center">
+    <span class="btn primary disabled" aria-disabled="true">Coming soon</span>
+    <a class="btn ghost" href="https://github.com/tiny-systems/tiny">Star on GitHub</a>
+  </div>
+  <p class="dev">Comfortable in a terminal? <a href="/tiny/">tiny</a>, the open-source engine underneath, works today.</p>
+</div></section>
+
+<footer class="foot"><div class="wrap footin">
+  <span>Tiny Systems</span>
+  <a href="/tiny/">For developers</a>
+  <a href="/docs/">Docs</a>
+  <a href="/blog/">Blog</a>
+  <a href="https://github.com/tiny-systems/tiny">GitHub</a>
+  <a href="/privacy/">Privacy</a>
+</div></footer>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var q = $('d-q'), a = $('d-a'), after = $('d-after'), pill = $('d-pill'), gl = $('d-fern-gl'), line = $('d-fern-line'), count = $('d-count');
+  function ask() {
+    q.hidden = false; q.classList.add('pop');
+    pill.textContent = 'Needs you'; pill.className = 'pill warn';
+    gl.setAttribute('class', 'gl ask'); gl.firstElementChild.setAttribute('href', '#g-ask');
+    line.textContent = 'Should I wait for the form, or mock…'; count.textContent = '1'; count.classList.add('on');
+  }
+  function answer(text) {
+    q.querySelectorAll('button').forEach(function (b) { b.disabled = true; if (b.dataset.a === text) b.classList.add('picked'); });
+    a.textContent = text; a.hidden = false;
+    pill.textContent = 'Working'; pill.className = 'pill';
+    gl.setAttribute('class', 'gl grow'); gl.firstElementChild.setAttribute('href', '#g-grow');
+    line.textContent = text; count.textContent = '0'; count.classList.remove('on');
+    setTimeout(function () { after.hidden = false; }, reduce ? 0 : 700);
+  }
+  q.addEventListener('click', function (e) { var b = e.target.closest('button'); if (b && !b.disabled) answer(b.dataset.a); });
+  setTimeout(ask, reduce ? 0 : 1600);
+})();
+</script>
+</body>
+</html>{{end}}
