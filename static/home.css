@@ -57,7 +57,8 @@ p { margin: 0; }
 
 /* Hero */
 .hero { position: relative; padding: 150px 0 80px; text-align: center; overflow: hidden; isolation: isolate; }
-.pollen { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; }
+.pollen, .tree { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+.tree { z-index: -2; }
 .beam { position: absolute; top: -40px; left: 86%; width: 4px; height: 760px; z-index: -1; pointer-events: none; }
 .beam i { position: absolute; inset: 0; background: linear-gradient(180deg, #E8FFF0, #9BF5BD 40%, #46D87A 75%, transparent); filter: blur(1.5px); border-radius: 4px; animation: flicker 5s ease-in-out infinite; }
 .beam::before { content: ""; position: absolute; left: 50%; top: 0; width: 220px; height: 100%; transform: translateX(-50%); background: radial-gradient(50% 60% at 50% 40%, #46D87A40, transparent 70%); filter: blur(20px); }

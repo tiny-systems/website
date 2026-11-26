@@ -15,7 +15,7 @@
     new ResizeObserver(fit).observe(frame);
   }
 
-  // Pollen: a few soft motes drifting up through the sunbeam.
+  // Pollen: a few soft motes drifting up through the tree.
   const cv = $('pollen');
   if (cv && !reduce) {
     const ctx = cv.getContext('2d');
@@ -37,11 +37,11 @@
     function tick(t) {
       if (!on) return;
       ctx.clearRect(0, 0, w, h);
-      const beamX = w * 0.86;
+      const beamX = w * 0.5;
       for (const m of motes) {
         m.y -= m.v; m.x += Math.sin(t / 2400 + m.d) * 0.18;
         if (m.y < -4) { m.y = h + 4; m.x = Math.random() * w; }
-        const near = Math.max(0, 1 - Math.abs(m.x - beamX) / 260); // brighter in the beam
+        const near = Math.max(0, 1 - Math.abs(m.x - beamX) / 420); // brighter near the tree
         ctx.globalAlpha = m.a * (0.35 + near * 0.9);
         ctx.fillStyle = near > 0.3 ? '#D9FFE6' : '#7FE8A6';
         ctx.beginPath(); ctx.arc(m.x, m.y, m.r + near, 0, Math.PI * 2); ctx.fill();
@@ -49,6 +49,124 @@
       requestAnimationFrame(tick);
     }
     requestAnimationFrame(tick);
+  }
+
+  // The tree: grows from behind the app window on load, then light runs
+  // from the trunk out to the buds, like work moving through a garden.
+  const tc = $('tree');
+  if (tc) {
+    const ctx = tc.getContext('2d');
+    const win = $('demo');
+    let W = 0, H = 0, segs = [], tips = [], art = null, born = 0;
+    let seed = 11;
+    const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+    function grow() {
+      const r = devicePixelRatio || 1;
+      W = tc.clientWidth; H = tc.clientHeight;
+      tc.width = W * r; tc.height = H * r;
+      ctx.setTransform(r, 0, 0, r, 0, 0);
+      seed = 11; segs = []; tips = [];
+      const base = win ? win.offsetTop + 120 : H * 0.8;
+      const trunk = Math.min(H * 0.2, 190);
+      const scale = Math.min(1.25, W / 1100);
+      const branch = (x, y, a, len, wd, d, parent) => {
+        const x2 = x + Math.cos(a) * len, y2 = y + Math.sin(a) * len;
+        const bend = (rnd() - 0.5) * len * 0.35;
+        const cx = (x + x2) / 2 + Math.cos(a + Math.PI / 2) * bend, cy = (y + y2) / 2 + Math.sin(a + Math.PI / 2) * bend;
+        const i = segs.push({ x, y, cx, cy, x2, y2, wd, d, parent, t0: d * 0.2 + rnd() * 0.08 }) - 1;
+        if (d >= 8 || len < 9) { tips.push(i); return; }
+        const n = d < 2 ? 2 : (rnd() < 0.35 ? 3 : 2);
+        for (let k = 0; k < n; k++) {
+          const spread = (d < 2 ? 0.55 : 0.42) + rnd() * 0.25;
+          const na = a + (n === 2 ? (k ? spread : -spread) : (k - 1) * spread) + (rnd() - 0.5) * 0.2;
+          branch(x2, y2, na, len * (0.74 + rnd() * 0.1), wd * 0.68, d + 1, i);
+        }
+      };
+      branch(W / 2, base, -Math.PI / 2, trunk * scale, 7 * scale, 0, -1);
+      // A few roots spreading under the window.
+      for (const a of [0.35, 0.9, 2.25, 2.8]) branch(W / 2, base, a, 70 * scale, 3 * scale, 6, -1);
+      art = null;
+      born = performance.now();
+    }
+    const curve = (s, k) => { // point k (0..1) along a segment's curve
+      const u = 1 - k;
+      return [u * u * s.x + 2 * u * k * s.cx + k * k * s.x2, u * u * s.y + 2 * u * k * s.cy + k * k * s.y2];
+    };
+    function drawTree(ctx2, age) {
+      ctx2.lineCap = 'round';
+      for (const s of segs) {
+        const k = Math.min(1, Math.max(0, (age - s.t0) / 0.35));
+        if (!k) continue;
+        const [ex, ey] = curve(s, k);
+        const mx = s.x + (s.cx - s.x) * k, my = s.y + (s.cy - s.y) * k;
+        const glow = 0.18 + (s.d / 8) * 0.5;
+        ctx2.strokeStyle = `rgba(70, 216, 122, ${0.12 + glow * 0.25})`;
+        ctx2.lineWidth = s.wd + 6;
+        ctx2.shadowColor = '#46D87A'; ctx2.shadowBlur = 18;
+        ctx2.beginPath(); ctx2.moveTo(s.x, s.y); ctx2.quadraticCurveTo(mx, my, ex, ey); ctx2.stroke();
+        ctx2.shadowBlur = 0;
+        ctx2.strokeStyle = `rgba(155, 245, 189, ${0.25 + glow * 0.6})`;
+        ctx2.lineWidth = Math.max(0.6, s.wd * 0.55);
+        ctx2.beginPath(); ctx2.moveTo(s.x, s.y); ctx2.quadraticCurveTo(mx, my, ex, ey); ctx2.stroke();
+      }
+    }
+    const pulses = [];
+    function spawn() {
+      let i = tips[Math.floor(Math.random() * tips.length)];
+      const path = [];
+      while (i >= 0) { path.unshift(segs[i]); i = segs[i].parent; }
+      if (path[0].d === 0) pulses.push({ path, t: 0, sp: 0.9 + Math.random() * 0.6 });
+    }
+    let on = true, last = 0, nextSpawn = 0;
+    new IntersectionObserver(([e]) => { on = e.isIntersecting; if (on) requestAnimationFrame(frame); }).observe(tc);
+    function frame(now) {
+      if (!on) return;
+      const age = (now - born) / 1000;
+      const done = age > 8 * 0.2 + 0.5;
+      ctx.clearRect(0, 0, W, H);
+      ctx.globalCompositeOperation = 'lighter';
+      if (done && !art) { // grown: keep a picture of it, redraw only light
+        art = document.createElement('canvas');
+        art.width = tc.width; art.height = tc.height;
+        const a = art.getContext('2d');
+        a.setTransform(tc.width / W, 0, 0, tc.height / H, 0, 0);
+        drawTree(a, 99);
+      }
+      if (art) { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(art, 0, 0); ctx.restore(); } else drawTree(ctx, age);
+      // Buds: tips twinkle once grown.
+      for (const i of tips) {
+        const s = segs[i];
+        if (age < s.t0 + 0.35) continue;
+        const tw = 0.5 + 0.5 * Math.sin(now / 700 + i);
+        ctx.fillStyle = `rgba(205, 255, 222, ${0.25 + tw * 0.45})`;
+        ctx.shadowColor = '#7CF0A5'; ctx.shadowBlur = 10;
+        ctx.beginPath(); ctx.arc(s.x2, s.y2, 1.6 + tw * 1.2, 0, Math.PI * 2); ctx.fill();
+      }
+      // Light running out along the branches.
+      if (done && !reduce) {
+        if (now > nextSpawn && pulses.length < 14) { spawn(); nextSpawn = now + 220; }
+        const dt = Math.min(0.05, (now - last) / 1000);
+        for (let j = pulses.length - 1; j >= 0; j--) {
+          const p = pulses[j];
+          p.t += dt * p.sp * 3;
+          const si = Math.floor(p.t);
+          if (si >= p.path.length) { pulses.splice(j, 1); continue; }
+          const [px, py] = curve(p.path[si], p.t - si);
+          ctx.fillStyle = 'rgba(230, 255, 238, 0.95)';
+          ctx.shadowColor = '#9BF5BD'; ctx.shadowBlur = 16;
+          ctx.beginPath(); ctx.arc(px, py, 2.2, 0, Math.PI * 2); ctx.fill();
+        }
+      }
+      ctx.shadowBlur = 0;
+      ctx.globalCompositeOperation = 'source-over';
+      last = now;
+      if (!reduce || !done) requestAnimationFrame(frame);
+    }
+    grow();
+    if (reduce) born = -1e9;
+    let rt;
+    addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { grow(); born = -1e9; }, 150); });
+    requestAnimationFrame(frame);
   }
 
   // Reveal: blur to sharp as sections come in.
