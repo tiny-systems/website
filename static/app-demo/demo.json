@@ -1,0 +1,223 @@
+{
+  "targets": [
+    {
+      "name": "garden",
+      "context": "__demo__",
+      "namespace": "demo"
+    }
+  ],
+  "fleet": {
+    "target": {
+      "name": "garden",
+      "context": "__demo__",
+      "namespace": "demo"
+    },
+    "rows": [
+      {
+        "name": "s-basil",
+        "depth": 0,
+        "phase": "Running",
+        "glyph": "●",
+        "title": "Writing the welcome email for new customers",
+        "activity": "Drafting the second paragraph, keeping it under 120 words",
+        "message": "",
+        "task": "",
+        "cpu": "210m",
+        "mem": "380Mi",
+        "age": "12m",
+        "paused": false,
+        "command": false,
+        "attachable": true
+      },
+      {
+        "name": "s-fern",
+        "depth": 0,
+        "phase": "Running",
+        "glyph": "✳",
+        "title": "Fixing the checkout test that fails on Mondays",
+        "activity": "",
+        "message": "",
+        "task": "",
+        "cpu": "",
+        "mem": "",
+        "age": "40m",
+        "paused": false,
+        "command": false,
+        "question": {
+          "name": "q-fern",
+          "session": "s-fern",
+          "text": "The test depends on the local time zone. Should I pin it to UTC, or make the test run in every time zone?",
+          "options": [
+            "Pin to UTC",
+            "Every time zone"
+          ],
+          "idle": false
+        },
+        "attachable": true
+      },
+      {
+        "name": "s-mint",
+        "depth": 0,
+        "phase": "Done",
+        "glyph": "✓",
+        "title": "Added a dark mode to the settings page",
+        "activity": "",
+        "message": "",
+        "task": "",
+        "cpu": "",
+        "mem": "",
+        "age": "2h",
+        "paused": false,
+        "command": false,
+        "exit": 0,
+        "attachable": false
+      },
+      {
+        "name": "s-sage",
+        "depth": 0,
+        "phase": "Running",
+        "glyph": "⏸",
+        "title": "Translating the help pages into Spanish",
+        "activity": "",
+        "message": "",
+        "task": "",
+        "cpu": "",
+        "mem": "",
+        "age": "1d",
+        "paused": true,
+        "command": false,
+        "attachable": false
+      },
+      {
+        "name": "s-ivy",
+        "depth": 0,
+        "phase": "Failed",
+        "glyph": "✗",
+        "title": "Updating the payment library",
+        "activity": "",
+        "message": "It couldn't download the new version: the website it needs isn't on this garden's list of allowed sites.",
+        "task": "",
+        "cpu": "",
+        "mem": "",
+        "age": "3h",
+        "paused": false,
+        "command": false,
+        "attachable": false
+      },
+      {
+        "name": "s-moss",
+        "depth": 0,
+        "phase": "starting",
+        "glyph": "◌",
+        "title": "Summarising last week's support tickets",
+        "activity": "",
+        "message": "",
+        "task": "",
+        "cpu": "",
+        "mem": "",
+        "age": "20s",
+        "paused": false,
+        "command": false,
+        "attachable": false
+      }
+    ],
+    "readAt": "22:20:10",
+    "needsYou": 1,
+    "running": 2
+  },
+  "gardens": [
+    {
+      "target": {
+        "name": "garden",
+        "context": "__demo__",
+        "namespace": "demo"
+      },
+      "where": "This Mac",
+      "local": true,
+      "vmStatus": "Running"
+    }
+  ],
+  "health": {
+    "nodes": null,
+    "signIn": "stored",
+    "codex": false,
+    "sandbox": "gvisor",
+    "sandboxAvailable": true
+  },
+  "conversations": {
+    "s-basil": [
+      {
+        "from": "you",
+        "text": "Write the welcome email for new customers. Friendly, short, and link the getting-started guide.",
+        "at": "2026-11-26T22:08:10Z"
+      },
+      {
+        "from": "helper",
+        "text": "Should it come from the team or from you personally?",
+        "at": "2026-11-26T22:11:10Z",
+        "question": "q-b1",
+        "options": [
+          "From the team",
+          "From me"
+        ],
+        "answer": "From the team"
+      },
+      {
+        "from": "you",
+        "text": "Mention the free onboarding call too.",
+        "at": "2026-11-26T22:16:10Z"
+      }
+    ],
+    "s-fern": [
+      {
+        "from": "you",
+        "text": "Fix the checkout test that fails on Mondays",
+        "at": "2026-11-26T21:40:10Z"
+      },
+      {
+        "from": "helper",
+        "text": "Found it: the test builds a date from the local clock and assumes a weekday. On Mondays the 'previous business day' wraps to Friday and the expected total is off by one.",
+        "at": "2026-11-26T21:49:10Z"
+      },
+      {
+        "from": "helper",
+        "text": "The test depends on the local time zone. Should I pin it to UTC, or make the test run in every time zone?",
+        "at": "2026-11-26T22:14:10Z",
+        "question": "q-fern",
+        "options": [
+          "Pin to UTC",
+          "Every time zone"
+        ],
+        "open": true
+      }
+    ],
+    "s-ivy": [
+      {
+        "from": "you",
+        "text": "Updating the payment library",
+        "at": "2026-11-26T21:20:10Z"
+      }
+    ],
+    "s-mint": [
+      {
+        "from": "you",
+        "text": "Added a dark mode to the settings page",
+        "at": "2026-11-26T21:20:10Z"
+      }
+    ],
+    "s-moss": [
+      {
+        "from": "you",
+        "text": "Summarising last week's support tickets",
+        "at": "2026-11-26T21:20:10Z"
+      }
+    ],
+    "s-sage": [
+      {
+        "from": "you",
+        "text": "Translating the help pages into Spanish",
+        "at": "2026-11-26T21:20:10Z"
+      }
+    ]
+  }
+}
