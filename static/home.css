@@ -94,9 +94,15 @@ p { margin: 0; }
 .grove-sub.lit { opacity: 1; transform: none; }
 .grove-field { position: relative; width: min(1000px, 100%); flex: 1; margin-top: 3vh; }
 .grove-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-.grove-lines line { stroke: #46D87A55; stroke-width: 1.5; stroke-dasharray: 2 7; stroke-linecap: round; vector-effect: non-scaling-stroke; opacity: 0; transition: opacity .6s; animation: flow 1.2s linear infinite; }
-.grove-lines line.on { opacity: 1; }
-.grove-lines line.hot { stroke: var(--leaf); stroke-width: 2.2; }
+.grove-lines path { fill: none; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.grove-lines .root { stroke: #46D87A66; stroke-width: 1.6; stroke-dasharray: 100; stroke-dashoffset: 100; transition: stroke-dashoffset 1.1s cubic-bezier(.3,.6,.2,1); }
+.grove-lines .rootlet { stroke: #46D87A40; stroke-width: 1; stroke-dasharray: 100; stroke-dashoffset: 100; transition: stroke-dashoffset .7s ease .7s; }
+.grove-lines .sap { stroke: #C9FFD9; stroke-width: 2.4; stroke-dasharray: 3 97; stroke-dashoffset: 100; opacity: 0; }
+.grove-lines g.on .root, .grove-lines g.on .rootlet { stroke-dashoffset: 0; }
+.grove-lines g.on .sap { opacity: 1; transition: opacity .4s 1.1s; animation: sap 2.6s linear 1.1s infinite; }
+.grove-lines g.hot .root { stroke: #46D87AAA; stroke-width: 2.2; }
+.grove-lines g:not(.hot) .sap { animation-duration: 4.2s; }
+@keyframes sap { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
 @keyframes flow { to { stroke-dashoffset: -18; } }
 .node { position: absolute; transform: translate(-50%, -50%) scale(.4); opacity: 0; display: flex; flex-direction: column; align-items: center; gap: 7px; transition: opacity .5s, transform .6s cubic-bezier(.2, .9, .3, 1.3); }
 .node.on { opacity: 1; transform: translate(-50%, -50%) scale(1); }

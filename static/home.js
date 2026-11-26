@@ -53,38 +53,41 @@
 
   // The tree: grows from behind the app window on load, then light runs
   // from the trunk out to the buds, like work moving through a garden.
+  // Canvas shadowBlur per stroke froze the page (1,300 blurred strokes a
+  // frame), so glow comes from one blur pass and a pre-drawn bud sprite.
   const tc = $('tree');
   if (tc) {
     const ctx = tc.getContext('2d');
     const win = $('demo');
-    let W = 0, H = 0, segs = [], tips = [], art = null, born = 0;
+    let W = 0, H = 0, R = 1, segs = [], tips = [], buds = [], art = null, born = 0, depth = 7;
     let seed = 11;
     const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
     function grow() {
-      const r = devicePixelRatio || 1;
+      R = Math.min(2, devicePixelRatio || 1);
       W = tc.clientWidth; H = tc.clientHeight;
-      tc.width = W * r; tc.height = H * r;
-      ctx.setTransform(r, 0, 0, r, 0, 0);
+      tc.width = W * R; tc.height = H * R;
       seed = 11; segs = []; tips = [];
       const base = win ? win.offsetTop + 120 : H * 0.8;
       const trunk = Math.min(H * 0.2, 190);
       const scale = Math.min(1.25, W / 1100);
+      depth = W < 700 ? 6 : 7;
       const branch = (x, y, a, len, wd, d, parent) => {
         const x2 = x + Math.cos(a) * len, y2 = y + Math.sin(a) * len;
         const bend = (rnd() - 0.5) * len * 0.35;
         const cx = (x + x2) / 2 + Math.cos(a + Math.PI / 2) * bend, cy = (y + y2) / 2 + Math.sin(a + Math.PI / 2) * bend;
-        const i = segs.push({ x, y, cx, cy, x2, y2, wd, d, parent, t0: d * 0.2 + rnd() * 0.08 }) - 1;
-        if (d >= 8 || len < 9) { tips.push(i); return; }
+        const i = segs.push({ x, y, cx, cy, x2, y2, wd, d, parent, t0: d * 0.22 + rnd() * 0.08 }) - 1;
+        if (d >= depth || len < 9) { tips.push(i); return; }
         const n = d < 2 ? 2 : (rnd() < 0.35 ? 3 : 2);
         for (let k = 0; k < n; k++) {
           const spread = (d < 2 ? 0.55 : 0.42) + rnd() * 0.25;
           const na = a + (n === 2 ? (k ? spread : -spread) : (k - 1) * spread) + (rnd() - 0.5) * 0.2;
-          branch(x2, y2, na, len * (0.74 + rnd() * 0.1), wd * 0.68, d + 1, i);
+          branch(x2, y2, na, len * (0.76 + rnd() * 0.1), wd * 0.68, d + 1, i);
         }
       };
       branch(W / 2, base, -Math.PI / 2, trunk * scale, 7 * scale, 0, -1);
       // A few roots spreading under the window.
-      for (const a of [0.35, 0.9, 2.25, 2.8]) branch(W / 2, base, a, 70 * scale, 3 * scale, 6, -1);
+      for (const a of [0.35, 0.9, 2.25, 2.8]) branch(W / 2, base, a, 70 * scale, 3 * scale, depth - 2, -1);
+      buds = tips.filter((_, k) => k % 3 === 0); // twinkle a third of the tips
       art = null;
       born = performance.now();
     }
@@ -92,24 +95,41 @@
       const u = 1 - k;
       return [u * u * s.x + 2 * u * k * s.cx + k * k * s.x2, u * u * s.y + 2 * u * k * s.cy + k * k * s.y2];
     };
-    function drawTree(ctx2, age) {
-      ctx2.lineCap = 'round';
-      for (const s of segs) {
-        const k = Math.min(1, Math.max(0, (age - s.t0) / 0.35));
-        if (!k) continue;
-        const [ex, ey] = curve(s, k);
-        const mx = s.x + (s.cx - s.x) * k, my = s.y + (s.cy - s.y) * k;
-        const glow = 0.18 + (s.d / 8) * 0.5;
-        ctx2.strokeStyle = `rgba(70, 216, 122, ${0.12 + glow * 0.25})`;
-        ctx2.lineWidth = s.wd + 6;
-        ctx2.shadowColor = '#46D87A'; ctx2.shadowBlur = 18;
-        ctx2.beginPath(); ctx2.moveTo(s.x, s.y); ctx2.quadraticCurveTo(mx, my, ex, ey); ctx2.stroke();
-        ctx2.shadowBlur = 0;
-        ctx2.strokeStyle = `rgba(155, 245, 189, ${0.25 + glow * 0.6})`;
-        ctx2.lineWidth = Math.max(0.6, s.wd * 0.55);
-        ctx2.beginPath(); ctx2.moveTo(s.x, s.y); ctx2.quadraticCurveTo(mx, my, ex, ey); ctx2.stroke();
+    // Strokes grouped by depth: one path and one stroke per group.
+    function strokes(c, age, wide) {
+      c.lineCap = 'round';
+      for (let d = 0; d <= depth; d++) {
+        c.beginPath();
+        let any = false, wd = 0;
+        for (const s of segs) {
+          if (s.d !== d) continue;
+          const k = Math.min(1, Math.max(0, (age - s.t0) / 0.35));
+          if (!k) continue;
+          const [ex, ey] = curve(s, k);
+          c.moveTo(s.x, s.y); c.quadraticCurveTo(s.x + (s.cx - s.x) * k, s.y + (s.cy - s.y) * k, ex, ey);
+          any = true; wd = s.wd;
+        }
+        if (!any) continue;
+        const glow = 0.18 + (d / depth) * 0.5;
+        c.strokeStyle = wide ? `rgba(70, 216, 122, ${0.14 + glow * 0.3})` : `rgba(155, 245, 189, ${0.25 + glow * 0.6})`;
+        c.lineWidth = wide ? wd + 6 : Math.max(0.6, wd * 0.55);
+        c.stroke();
       }
     }
+    function drawTree(c, age, blur) {
+      if (blur) { c.filter = 'blur(9px)'; strokes(c, age, true); c.filter = 'none'; }
+      strokes(c, age, true);
+      strokes(c, age, false);
+    }
+    // A soft dot drawn once and stamped wherever light should be.
+    const sprite = document.createElement('canvas');
+    sprite.width = sprite.height = 48;
+    {
+      const g = sprite.getContext('2d').createRadialGradient(24, 24, 0, 24, 24, 24);
+      g.addColorStop(0, 'rgba(235, 255, 242, 1)'); g.addColorStop(0.18, 'rgba(155, 245, 189, 0.8)'); g.addColorStop(1, 'rgba(70, 216, 122, 0)');
+      const s = sprite.getContext('2d'); s.fillStyle = g; s.fillRect(0, 0, 48, 48);
+    }
+    const dot = (x, y, r, a) => { ctx.globalAlpha = a; ctx.drawImage(sprite, x - r, y - r, r * 2, r * 2); };
     const pulses = [];
     function spawn() {
       let i = tips[Math.floor(Math.random() * tips.length)];
@@ -117,34 +137,35 @@
       while (i >= 0) { path.unshift(segs[i]); i = segs[i].parent; }
       if (path[0].d === 0) pulses.push({ path, t: 0, sp: 0.9 + Math.random() * 0.6 });
     }
-    let on = true, last = 0, nextSpawn = 0;
-    new IntersectionObserver(([e]) => { on = e.isIntersecting; if (on) requestAnimationFrame(frame); }).observe(tc);
+    let on = true, running = false, last = 0, nextSpawn = 0;
+    new IntersectionObserver(([e]) => { on = e.isIntersecting; if (on && !running) { running = true; requestAnimationFrame(frame); } }).observe(tc);
     function frame(now) {
-      if (!on) return;
+      if (!on) { running = false; return; }
       const age = (now - born) / 1000;
-      const done = age > 8 * 0.2 + 0.5;
-      ctx.clearRect(0, 0, W, H);
-      ctx.globalCompositeOperation = 'lighter';
+      const done = age > depth * 0.22 + 0.5;
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, tc.width, tc.height);
       if (done && !art) { // grown: keep a picture of it, redraw only light
         art = document.createElement('canvas');
         art.width = tc.width; art.height = tc.height;
         const a = art.getContext('2d');
-        a.setTransform(tc.width / W, 0, 0, tc.height / H, 0, 0);
-        drawTree(a, 99);
+        a.setTransform(R, 0, 0, R, 0, 0);
+        drawTree(a, 99, true);
       }
-      if (art) { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(art, 0, 0); ctx.restore(); } else drawTree(ctx, age);
+      if (art) ctx.drawImage(art, 0, 0);
+      ctx.setTransform(R, 0, 0, R, 0, 0);
+      if (!art) drawTree(ctx, age, false);
+      ctx.globalCompositeOperation = 'lighter';
       // Buds: tips twinkle once grown.
-      for (const i of tips) {
+      for (const i of buds) {
         const s = segs[i];
         if (age < s.t0 + 0.35) continue;
         const tw = 0.5 + 0.5 * Math.sin(now / 700 + i);
-        ctx.fillStyle = `rgba(205, 255, 222, ${0.25 + tw * 0.45})`;
-        ctx.shadowColor = '#7CF0A5'; ctx.shadowBlur = 10;
-        ctx.beginPath(); ctx.arc(s.x2, s.y2, 1.6 + tw * 1.2, 0, Math.PI * 2); ctx.fill();
+        dot(s.x2, s.y2, 5 + tw * 4, 0.3 + tw * 0.5);
       }
       // Light running out along the branches.
       if (done && !reduce) {
-        if (now > nextSpawn && pulses.length < 14) { spawn(); nextSpawn = now + 220; }
+        if (now > nextSpawn && pulses.length < 12) { spawn(); nextSpawn = now + 240; }
         const dt = Math.min(0.05, (now - last) / 1000);
         for (let j = pulses.length - 1; j >= 0; j--) {
           const p = pulses[j];
@@ -152,20 +173,19 @@
           const si = Math.floor(p.t);
           if (si >= p.path.length) { pulses.splice(j, 1); continue; }
           const [px, py] = curve(p.path[si], p.t - si);
-          ctx.fillStyle = 'rgba(230, 255, 238, 0.95)';
-          ctx.shadowColor = '#9BF5BD'; ctx.shadowBlur = 16;
-          ctx.beginPath(); ctx.arc(px, py, 2.2, 0, Math.PI * 2); ctx.fill();
+          dot(px, py, 9, 0.95);
         }
       }
-      ctx.shadowBlur = 0;
+      ctx.globalAlpha = 1;
       ctx.globalCompositeOperation = 'source-over';
       last = now;
-      if (!reduce || !done) requestAnimationFrame(frame);
+      if (!reduce || !done) requestAnimationFrame(frame); else running = false;
     }
     grow();
     if (reduce) born = -1e9;
     let rt;
-    addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { grow(); born = -1e9; }, 150); });
+    addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { grow(); born = -1e9; if (!running) { running = true; requestAnimationFrame(frame); } }, 150); });
+    running = true;
     requestAnimationFrame(frame);
   }
 
@@ -184,12 +204,36 @@
   const fixed = { mac: [22, 62], fern: [50, 62], basil: [78, 40] };
   const place = (el, [x, y]) => { el.style.left = `${x}%`; el.style.top = `${y}%`; };
   place($('node-mac'), fixed.mac); place($('node-fern'), fixed.fern); place($('node-basil'), fixed.basil);
+  // Connections are roots: a curve that sags a little below the straight
+  // line, a rootlet or two, and sap that runs along once it has grown.
+  const NS = 'http://www.w3.org/2000/svg';
+  let rootSeed = 3;
+  const rr = () => ((rootSeed = (rootSeed * 16807) % 2147483647) / 2147483647);
+  const pathEl = (d, cls) => {
+    const e = document.createElementNS(NS, 'path');
+    e.setAttribute('d', d); e.setAttribute('class', cls); e.setAttribute('pathLength', '100');
+    return e;
+  };
   const line = (a, b, cls = '') => {
-    const l = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    l.setAttribute('x1', a[0] * 10); l.setAttribute('y1', a[1] * 5.6); l.setAttribute('x2', b[0] * 10); l.setAttribute('y2', b[1] * 5.6);
-    if (cls) l.setAttribute('class', cls);
-    svg.append(l);
-    return l;
+    const [x1, y1, x2, y2] = [a[0] * 10, a[1] * 5.6, b[0] * 10, b[1] * 5.6];
+    const len = Math.hypot(x2 - x1, y2 - y1);
+    const sag = len * (0.12 + rr() * 0.08);
+    const c1 = [x1 + (x2 - x1) * 0.3 + (rr() - 0.5) * 18, y1 + (y2 - y1) * 0.3 + sag];
+    const c2 = [x1 + (x2 - x1) * 0.7 + (rr() - 0.5) * 18, y1 + (y2 - y1) * 0.7 + sag * 0.8];
+    const g = document.createElementNS(NS, 'g');
+    if (cls) g.setAttribute('class', cls);
+    const d = `M${x1} ${y1}C${c1} ${c2} ${x2} ${y2}`;
+    g.append(pathEl(d, 'root'));
+    // Rootlets: short, thinner, drooping off the main curve.
+    const at = (t) => { const u = 1 - t; return [0, 1].map((k) => u * u * u * [x1, y1][k] + 3 * u * u * t * c1[k] + 3 * u * t * t * c2[k] + t * t * t * [x2, y2][k]); };
+    for (const t of len > 140 ? [0.32, 0.68] : [0.5]) {
+      const [px, py] = at(t);
+      const dir = rr() < 0.5 ? -1 : 1, l = 14 + rr() * 16;
+      g.append(pathEl(`M${px} ${py}Q${px + dir * l * 0.5} ${py + l * 0.4} ${px + dir * l * 0.8} ${py + l}`, 'rootlet'));
+    }
+    g.append(pathEl(d, 'sap'));
+    svg.append(g);
+    return g;
   };
   const lMacFern = line(fixed.mac, fixed.fern, 'hot');
   const lFernBasil = line(fixed.fern, fixed.basil, 'hot');
