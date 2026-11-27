@@ -19,7 +19,7 @@ jobs:
           go-version: '1.26'
 
       - name: Generate site
-        run: go run . && test -f dist/index.html && test -f dist/404.html
+        run: go run . && test -f dist/io/index.html && test -f dist/dev/index.html && test -f dist/dev/404.html
 
       - name: Log in to ghcr
         if: github.event_name == 'push'

@@ -1,5 +1,9 @@
-// The tinysystems.io generator: content/ + templates/ + static/ → dist/.
-// Plain files out, nothing at runtime but nginx.
+// The site generator: content/ + templates/ + static/ → two sites.
+//
+//	dist/io   tinysystems.io, the app: for people, not developers
+//	dist/dev  tinysystems.dev, tiny: docs, comparisons, the engineering blog
+//
+// Plain files out, nothing at runtime but nginx, which picks by host.
 package main
 
 import (
@@ -23,7 +27,14 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-const site = "https://tinysystems.io"
+// The two sites. site is the one being built: links, canonical URLs,
+// structured data and sitemaps read it.
+const (
+	appSite = "https://tinysystems.io"
+	devSite = "https://tinysystems.dev"
+)
+
+var site = appSite
 
 type Meta struct {
 	Title       string `yaml:"title"`
@@ -68,8 +79,7 @@ func main() {
 }
 
 func run() error {
-	dist := "dist"
-	if err := os.RemoveAll(dist); err != nil {
+	if err := os.RemoveAll("dist"); err != nil {
 		return err
 	}
 
@@ -105,6 +115,9 @@ func run() error {
 
 	tpl, err := template.New("").Funcs(template.FuncMap{
 		"nicedate":  niceDate,
+		"base":      func() string { return site },
+		"devsite":   func() string { return devSite },
+		"appsite":   func() string { return appSite },
 		"asset":     asset,
 		"ldhome":    ldHome,
 		"ldarticle": ldArticle,
@@ -133,9 +146,13 @@ func run() error {
 		outPath string
 		page    *Page
 	}
-	jobs := []job{
+	appJobs := []job{
 		{"apphome", "index.html", nil},
-		{"home", "tiny/index.html", nil},
+		{"notfound", "404.html", nil},
+		{"privacy", "privacy/index.html", nil},
+	}
+	devJobs := []job{
+		{"home", "index.html", nil},
 		{"notfound", "404.html", nil},
 		{"privacy", "privacy/index.html", nil},
 		{"docindex", "docs/index.html", nil},
@@ -143,51 +160,72 @@ func run() error {
 		{"compareindex", "compare/index.html", nil},
 	}
 	for _, c := range compare {
-		jobs = append(jobs, job{"compare", filepath.Join("compare", c.Slug, "index.html"), c})
+		devJobs = append(devJobs, job{"compare", filepath.Join("compare", c.Slug, "index.html"), c})
 	}
 	for _, d := range docs {
-		jobs = append(jobs, job{"doc", filepath.Join("docs", d.Slug, "index.html"), d})
+		devJobs = append(devJobs, job{"doc", filepath.Join("docs", d.Slug, "index.html"), d})
 	}
 	for _, p := range posts {
-		jobs = append(jobs, job{"post", filepath.Join("blog", p.Slug, "index.html"), p})
+		devJobs = append(devJobs, job{"post", filepath.Join("blog", p.Slug, "index.html"), p})
 	}
 
-	for _, j := range jobs {
-		out := filepath.Join(dist, j.outPath)
-		if err := os.MkdirAll(filepath.Dir(out), 0o755); err != nil {
+	build := func(base, dist string, jobs []job, skipStatic map[string]bool) error {
+		site = base
+		for _, j := range jobs {
+			out := filepath.Join(dist, j.outPath)
+			if err := os.MkdirAll(filepath.Dir(out), 0o755); err != nil {
+				return err
+			}
+			var buf bytes.Buffer
+			err := tpl.ExecuteTemplate(&buf, j.tplName, map[string]any{
+				"Site": data,
+				"Page": j.page,
+			})
+			if err != nil {
+				return fmt.Errorf("%s %s: %w", dist, j.outPath, err)
+			}
+			if err := os.WriteFile(out, buf.Bytes(), 0o644); err != nil {
+				return err
+			}
+		}
+		if err := copyDir("static", filepath.Join(dist, "static"), skipStatic); err != nil {
 			return err
 		}
-		var buf bytes.Buffer
-		err := tpl.ExecuteTemplate(&buf, j.tplName, map[string]any{
-			"Site": data,
-			"Page": j.page,
-		})
-		if err != nil {
-			return fmt.Errorf("%s: %w", j.outPath, err)
-		}
-		if err := os.WriteFile(out, buf.Bytes(), 0o644); err != nil {
+		if err := copyFile(filepath.Join("static", "favicon.svg"), filepath.Join(dist, "favicon.svg")); err != nil {
 			return err
 		}
+		robots := "User-agent: *\nAllow: /\n\nSitemap: " + base + "/sitemap.xml\n"
+		return os.WriteFile(filepath.Join(dist, "robots.txt"), []byte(robots), 0o644)
 	}
 
-	if err := copyDir("static", filepath.Join(dist, "static")); err != nil {
+	if err := build(appSite, "dist/io", appJobs, map[string]bool{}); err != nil {
 		return err
 	}
-	// root-level singles served from /
-	for _, f := range []string{"robots.txt", "favicon.svg"} {
-		if err := copyFile(filepath.Join("static", f), filepath.Join(dist, f)); err != nil {
-			return err
-		}
+	if err := writeSitemap("dist/io", "/", "/privacy/"); err != nil {
+		return err
+	}
+	// The web build of the app is only shown on the app's site.
+	if err := build(devSite, "dist/dev", devJobs, map[string]bool{"app-demo": true}); err != nil {
+		return err
+	}
+	devPaths := []string{"/", "/docs/", "/blog/", "/compare/", "/privacy/"}
+	for _, d := range docs {
+		devPaths = append(devPaths, d.Path)
+	}
+	for _, p := range posts {
+		devPaths = append(devPaths, p.Path+"|"+p.Date)
+	}
+	for _, c := range compare {
+		devPaths = append(devPaths, c.Path+"|"+c.Updated)
+	}
+	if err := writeSitemap("dist/dev", devPaths...); err != nil {
+		return err
+	}
+	if err := writeLLMs("dist/dev", data); err != nil {
+		return err
 	}
 
-	if err := writeSitemap(dist, data); err != nil {
-		return err
-	}
-	if err := writeLLMs(dist, data); err != nil {
-		return err
-	}
-
-	fmt.Printf("built %d docs, %d posts → %s/\n", len(docs), len(posts), dist)
+	fmt.Printf("built %d docs, %d posts → dist/io, dist/dev\n", len(docs), len(posts))
 	return nil
 }
 
@@ -249,42 +287,37 @@ func niceDate(d string) string {
 	return t.Format("Jan 2, 2006")
 }
 
-func writeSitemap(dist string, data *SiteData) error {
+// writeSitemap lists paths on the site being built; "path|date" adds a
+// lastmod.
+func writeSitemap(dist string, paths ...string) error {
 	var b strings.Builder
 	b.WriteString(`<?xml version="1.0" encoding="UTF-8"?>` + "\n")
 	b.WriteString(`<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">` + "\n")
-	add := func(path, lastmod string) {
+	for _, p := range paths {
+		path, lastmod, _ := strings.Cut(p, "|")
 		if lastmod != "" {
 			fmt.Fprintf(&b, "  <url><loc>%s%s</loc><lastmod>%s</lastmod></url>\n", site, path, lastmod)
-			return
+			continue
 		}
 		fmt.Fprintf(&b, "  <url><loc>%s%s</loc></url>\n", site, path)
-	}
-	add("/", "")
-	add("/tiny/", "")
-	add("/docs/", "")
-	add("/blog/", "")
-	add("/compare/", "")
-	add("/privacy/", "")
-	for _, d := range data.Docs {
-		add(d.Path, "")
-	}
-	for _, p := range data.Posts {
-		add(p.Path, p.Date)
-	}
-	for _, c := range data.Compare {
-		add(c.Path, c.Updated)
 	}
 	b.WriteString("</urlset>\n")
 	return os.WriteFile(filepath.Join(dist, "sitemap.xml"), []byte(b.String()), 0o644)
 }
 
-func copyDir(src, dst string) error {
+// copyDir copies src to dst, leaving out the top-level entries in skip.
+func copyDir(src, dst string, skip map[string]bool) error {
 	return filepath.WalkDir(src, func(path string, d os.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
 		rel, _ := filepath.Rel(src, path)
+		if skip[strings.Split(filepath.ToSlash(rel), "/")[0]] {
+			if d.IsDir() {
+				return filepath.SkipDir
+			}
+			return nil
+		}
 		target := filepath.Join(dst, rel)
 		if d.IsDir() {
 			return os.MkdirAll(target, 0o755)
