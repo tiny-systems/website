@@ -297,21 +297,23 @@
     extra.push({ n, l: line(near, p) });
   });
   const bubble = $('fern-bubble');
-  function groveAt(p) {
-    words.forEach((w, i) => w.classList.toggle('lit', p > 0.02 + i * 0.05));
-    sub.classList.toggle('lit', p > 0.22);
-    $('node-fern').classList.toggle('on', p > 0.26);
-    $('node-mac').classList.toggle('on', p > 0.34);
-    lMacFern.classList.toggle('on', p > 0.36);
-    bubble.classList.toggle('on', p > 0.44 && p < 0.72);
-    $('node-basil').classList.toggle('on', p > 0.52);
-    lFernBasil.classList.toggle('on', p > 0.54);
+  // The title lights in one sweep as it arrives (CSS staggers the words);
+  // the rest is tied to scroll, compressed so nothing feels stuck.
+  function groveAt(p, arrived) {
+    words.forEach((w) => w.classList.toggle('lit', arrived || p > 0));
+    sub.classList.toggle('lit', p > 0.08);
+    $('node-fern').classList.toggle('on', p > 0.12);
+    $('node-mac').classList.toggle('on', p > 0.2);
+    lMacFern.classList.toggle('on', p > 0.22);
+    bubble.classList.toggle('on', p > 0.3 && p < 0.7);
+    $('node-basil').classList.toggle('on', p > 0.38);
+    lFernBasil.classList.toggle('on', p > 0.4);
     extra.forEach(({ n, l }, i) => {
-      const show = p > 0.62 + (i / extra.length) * 0.3;
+      const show = p > 0.48 + (i / extra.length) * 0.36;
       n.classList.toggle('on', show); l.classList.toggle('on', show);
     });
   }
-  if (reduce) groveAt(1);
+  if (reduce) groveAt(1, true);
 
   // Zero keys: the keys an agent usually gets fall away one by one as the
   // section passes, and the count drops to 0. Without JS it just says 0.
@@ -335,7 +337,7 @@
     if (cue) cue.classList.toggle('gone', scrollY > 60);
     if (grove && !reduce) {
       const r = grove.getBoundingClientRect();
-      groveAt(clamp(-r.top / (r.height - vh)));
+      groveAt(clamp(-r.top / (r.height - vh)), r.top < vh * 0.45);
     }
     if (zero && !reduce) {
       const r = zero.getBoundingClientRect();

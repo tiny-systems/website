@@ -106,10 +106,11 @@ p { margin: 0; }
 .appframe iframe { position: absolute; top: 0; left: 0; width: 1180px; height: 720px; border: 0; transform: scale(var(--s)); transform-origin: 0 0; display: block; }
 
 /* Grove: pinned while you scroll */
-.grove { position: relative; height: 300vh; }
+.grove { position: relative; height: 240vh; }
 .grove-stage { position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; align-items: center; padding-top: 14vh; overflow: hidden; }
 .grove-copy { text-align: center; padding: 0 16px; }
-.words span { color: var(--text-3); opacity: .35; transition: color .4s, opacity .4s; }
+.words span { color: var(--text-3); opacity: .35; transition: color .45s, opacity .45s; }
+.words span.lit:nth-child(2) { transition-delay: .1s; } .words span.lit:nth-child(3) { transition-delay: .2s; } .words span.lit:nth-child(4) { transition-delay: .3s; }
 .words span.lit { color: var(--text); opacity: 1; }
 .grove-sub { color: var(--text-2); font-size: 17px; max-width: 46ch; margin: 18px auto 0; opacity: 0; transform: translateY(10px); transition: opacity .6s, transform .6s; }
 .grove-sub.lit { opacity: 1; transform: none; }
@@ -133,7 +134,7 @@ p { margin: 0; }
 .bubble { position: absolute; bottom: calc(100% + 10px); left: 50%; width: 250px; transform: translateX(-30%) translateY(6px); background: var(--raised); border: 1px solid var(--line-2); border-radius: 12px; padding: 9px 12px; font-size: 13px; color: var(--text-2); text-align: left; opacity: 0; transition: opacity .4s, transform .4s; }
 .bubble.on { opacity: 1; transform: translateX(-30%); }
 .node.tiny .av { width: 34px; height: 34px; border-radius: 11px; }
-@media (max-width: 600px) { .grove { height: 240vh; } .bubble { width: 190px; font-size: 12px; } }
+@media (max-width: 600px) { .grove { height: 200vh; } .bubble { width: 190px; font-size: 12px; } }
 
 /* Reveal: blur to sharp */
 .reveal { opacity: 0; filter: blur(12px); transform: translateY(18px); transition: opacity .9s ease, filter .9s ease, transform .9s cubic-bezier(.2, .8, .2, 1); }
