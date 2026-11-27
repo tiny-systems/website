@@ -4,9 +4,9 @@
 # return the themed 404 on purpose — a blanket 301-to-home reads as a
 # soft 404 to crawlers. docs.tinysystems.io 301s wholesale at the ingress.
 
-location = /install  { return 301 /docs/install/; }
-location = /download { return 301 /docs/install/; }
+location = /install  { return 301 https://tinysystems.dev/docs/install/; }
+location = /download { return 301 https://tinysystems.dev/docs/install/; }
 # the one old page about this exact product
 location = /agents   { return 301 /; }
 # old blog posts: the index carries the impressions, the posts are gone
-location ~ ^/blog/(admission-webhook-registry-mirror|building-k8s-workflows-from-a-prompt|introducing-tiny-systems|registry-mirror-automation|self-hosted-ai-agents|workflow-engines-compared)/?$ { return 301 /blog/; }
+location ~ ^/blog/(admission-webhook-registry-mirror|building-k8s-workflows-from-a-prompt|introducing-tiny-systems|registry-mirror-automation|self-hosted-ai-agents|workflow-engines-compared)/?$ { return 301 https://tinysystems.dev/blog/; }

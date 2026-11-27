@@ -5,17 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{.title}}</title>
 <meta name="description" content="{{.desc}}">
-<link rel="canonical" href="https://tinysystems.io{{.path}}">
+<link rel="canonical" href="{{base}}{{.path}}">
 <meta property="og:title" content="{{.title}}">
 <meta property="og:description" content="{{.desc}}">
-<meta property="og:url" content="https://tinysystems.io{{.path}}">
+<meta property="og:url" content="{{base}}{{.path}}">
 <meta property="og:type" content="{{if .article}}article{{else}}website{{end}}">
 <meta property="og:site_name" content="tiny systems">
-<meta property="og:image" content="https://tinysystems.io/static/og.jpg">
+<meta property="og:image" content="{{base}}/static/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://tinysystems.io/static/og.jpg">
+<meta name="twitter:image" content="{{base}}/static/og.jpg">
 {{if .ld}}<script type="application/ld+json">{{.ld}}</script>
 {{end}}<link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -40,7 +40,7 @@
   <div class="mastin">
     <a href="/" style="display:flex;align-items:center" aria-label="tiny systems home">{{template "sprout"}}</a>
     <a class="wordmark" href="/">tiny systems</a>
-    <span class="links"><a href="/docs/">docs</a><a href="/compare/">compare</a><a href="/blog/">blog</a><a class="starbtn" href="https://github.com/tiny-systems/tiny">★ <span class="count" id="starcount">star</span></a></span>
+    <span class="links"><a href="/docs/">docs</a><a href="/compare/">compare</a><a href="/blog/">blog</a><a href="{{appsite}}/">the app</a><a class="starbtn" href="https://github.com/tiny-systems/tiny">★ <span class="count" id="starcount">star</span></a></span>
   </div>
   <div class="manbar"><span>TINY(1)</span><span>General Commands Manual</span><span>TINY(1)</span></div>
 </div></div>{{end}}
@@ -51,6 +51,7 @@
   <a href="https://github.com/tiny-systems/homebrew-tap">brew tap</a>
   <a href="https://github.com/tiny-systems/seedling">seedling — the demo garden</a>
   <a href="/compare/">compare</a>
+  <a href="{{appsite}}/">Tiny Systems, the app</a>
   <a href="/privacy/">privacy</a>
   <span style="margin-left:auto;opacity:.74">TINY(1)</span>
 </div></footer>
