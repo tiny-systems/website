@@ -54,12 +54,12 @@
   // The tree: grows from behind the app window on load, then light runs
   // from the trunk out to the buds, like work moving through a garden.
   // Canvas shadowBlur per stroke froze the page (1,300 blurred strokes a
-  // frame), so glow comes from one blur pass and a pre-drawn bud sprite.
+  // frame), so glow is a small upscaled canvas and buds stamp a sprite.
   const tc = $('tree');
   if (tc) {
     const ctx = tc.getContext('2d');
     const win = $('demo');
-    let W = 0, H = 0, R = 1, segs = [], tips = [], buds = [], art = null, born = 0, depth = 7;
+    let W = 0, H = 0, R = 1, segs = [], tips = [], buds = [], born = 0, depth = 7;
     let seed = 11;
     const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
     function grow() {
@@ -88,7 +88,7 @@
       // A few roots spreading under the window.
       for (const a of [0.35, 0.9, 2.25, 2.8]) branch(W / 2, base, a, 70 * scale, 3 * scale, depth - 2, -1);
       buds = tips.filter((_, k) => k % 3 === 0); // twinkle a third of the tips
-      art = null;
+      glowDone = false;
       born = performance.now();
     }
     const curve = (s, k) => { // point k (0..1) along a segment's curve
@@ -96,7 +96,7 @@
       return [u * u * s.x + 2 * u * k * s.cx + k * k * s.x2, u * u * s.y + 2 * u * k * s.cy + k * k * s.y2];
     };
     // Strokes grouped by depth: one path and one stroke per group.
-    function strokes(c, age, wide) {
+    function strokes(c, age, wide, fat = 1) {
       c.lineCap = 'round';
       for (let d = 0; d <= depth; d++) {
         c.beginPath();
@@ -112,14 +112,19 @@
         if (!any) continue;
         const glow = 0.18 + (d / depth) * 0.5;
         c.strokeStyle = wide ? `rgba(70, 216, 122, ${0.14 + glow * 0.3})` : `rgba(155, 245, 189, ${0.25 + glow * 0.6})`;
-        c.lineWidth = wide ? wd + 6 : Math.max(0.6, wd * 0.55);
+        c.lineWidth = wide ? (wd + 6) * fat : Math.max(0.6, wd * 0.55);
         c.stroke();
       }
     }
-    function drawTree(c, age, blur) {
-      if (blur) { c.filter = 'blur(9px)'; strokes(c, age, true); c.filter = 'none'; }
-      strokes(c, age, true);
-      strokes(c, age, false);
+    // Glow: the wide strokes drawn into a canvas an eighth the size and
+    // scaled up, which blurs them for free. Redrawn only while growing.
+    const Q = 8, glow = document.createElement('canvas'), gx = glow.getContext('2d');
+    let glowDone = false;
+    function paintGlow(age) {
+      if (glow.width !== Math.ceil(W / Q) || glow.height !== Math.ceil(H / Q)) { glow.width = Math.ceil(W / Q); glow.height = Math.ceil(H / Q); }
+      gx.setTransform(1, 0, 0, 1, 0, 0); gx.clearRect(0, 0, glow.width, glow.height);
+      gx.setTransform(1 / Q, 0, 0, 1 / Q, 0, 0);
+      strokes(gx, age, true, 1.6);
     }
     // A soft dot drawn once and stamped wherever light should be.
     const sprite = document.createElement('canvas');
@@ -145,16 +150,13 @@
       const done = age > depth * 0.22 + 0.5;
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.clearRect(0, 0, tc.width, tc.height);
-      if (done && !art) { // grown: keep a picture of it, redraw only light
-        art = document.createElement('canvas');
-        art.width = tc.width; art.height = tc.height;
-        const a = art.getContext('2d');
-        a.setTransform(R, 0, 0, R, 0, 0);
-        drawTree(a, 99, true);
-      }
-      if (art) ctx.drawImage(art, 0, 0);
+      if (!glowDone) { paintGlow(done ? 99 : age); glowDone = done; }
       ctx.setTransform(R, 0, 0, R, 0, 0);
-      if (!art) drawTree(ctx, age, false);
+      ctx.imageSmoothingQuality = 'high';
+      ctx.globalAlpha = 0.4;
+      ctx.drawImage(glow, 0, 0, W, H);
+      ctx.globalAlpha = 1;
+      strokes(ctx, done ? 99 : age, false);
       ctx.globalCompositeOperation = 'lighter';
       // Buds: tips twinkle once grown.
       for (const i of buds) {
