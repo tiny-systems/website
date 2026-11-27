@@ -191,6 +191,25 @@
     requestAnimationFrame(frame);
   }
 
+  // Mascot: the sprout's eyes look toward the pointer.
+  const mascots = [...document.querySelectorAll('.mascot')];
+  if (mascots.length && !reduce) {
+    let mt = 0;
+    addEventListener('pointermove', (e) => {
+      if (mt) return;
+      mt = requestAnimationFrame(() => {
+        mt = 0;
+        for (const m of mascots) {
+          const r = m.getBoundingClientRect();
+          const dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
+          const d = Math.hypot(dx, dy) || 1;
+          m.style.setProperty('--lx', (dx / d).toFixed(2));
+          m.style.setProperty('--ly', (dy / d).toFixed(2));
+        }
+      });
+    }, { passive: true });
+  }
+
   // Reveal: blur to sharp as sections come in.
   const io = new IntersectionObserver((es) => {
     for (const e of es) if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
