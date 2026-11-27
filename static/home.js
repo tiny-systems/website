@@ -1,6 +1,6 @@
 // Tiny Systems home: pollen in the hero, the embedded app scaled to fit,
-// blur-in reveals, the grove that grows as you scroll, the lens over
-// "0 keys" and the stacked garden cards.
+// blur-in reveals, the grove that grows as you scroll, the keys falling
+// away to "0 keys" and the stacked garden cards.
 (function () {
   'use strict';
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -278,9 +278,15 @@
   }
   if (reduce) groveAt(1);
 
-  // Lens: slides across "0 keys" as the section passes.
+  // Zero keys: the keys an agent usually gets fall away one by one as the
+  // section passes, and the count drops to 0. Without JS it just says 0.
   const zero = $('zero');
-  const lens = $('lens');
+  const chips = [...document.querySelectorAll('#keychips li')];
+  const zeroN = $('zero-n');
+  if (zero && !reduce) {
+    $('keychips').classList.add('live');
+    chips.forEach((c, i) => c.style.setProperty('--r', `${(i % 2 ? -1 : 1) * (6 + (i * 5) % 9)}deg`));
+  }
 
   // Stacked cards: the list beside them follows the card on top.
   const cards = [...document.querySelectorAll('.scard')];
@@ -294,10 +300,13 @@
       const r = grove.getBoundingClientRect();
       groveAt(clamp(-r.top / (r.height - vh)));
     }
-    if (zero && lens) {
+    if (zero && !reduce) {
       const r = zero.getBoundingClientRect();
       const p = clamp((vh - r.top) / (vh + r.height));
-      lens.style.left = `${(0.08 + p * 0.84) * 100}%`;
+      let left = 0;
+      chips.forEach((c, i) => { const gone = p > 0.3 + i * 0.045; c.classList.toggle('gone', gone); if (!gone) left++; });
+      zeroN.textContent = left;
+      $('zero-u').textContent = left === 1 ? 'key' : 'keys';
     }
     if (cards.length && nav.length) {
       let top = 0;

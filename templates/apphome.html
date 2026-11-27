@@ -153,10 +153,13 @@
   </div>
 </div></section>
 
-<!-- Zero keys: a lens slides across as you scroll. -->
+<!-- Zero keys: the keys an agent usually gets fall away as you scroll. -->
 <section class="keys" id="keys"><div class="wrap">
   <p class="eyebrowless reveal">Your keys stay yours</p>
-  <div class="zero" id="zero"><span class="zero-text">0 keys</span><i class="lens" id="lens" aria-hidden="true"></i></div>
+  <div class="zero" id="zero">
+    <ul class="keychips" id="keychips" aria-hidden="true"><li><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="5" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 8h6M12 8v2.5M14 8v2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>GitHub token</li><li><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="5" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 8h6M12 8v2.5M14 8v2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Model API key</li><li><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="5" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 8h6M12 8v2.5M14 8v2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>SSH key</li><li><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="5" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 8h6M12 8v2.5M14 8v2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Cloud login</li><li><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="5" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 8h6M12 8v2.5M14 8v2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Database password</li><li><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="5" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 8h6M12 8v2.5M14 8v2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Slack token</li></ul>
+    <span class="zero-text"><span id="zero-n">0</span> <span id="zero-u">keys</span></span>
+  </div>
   <p class="keys-sub reveal">Passwords and sign-in tokens never sit inside a helper, and nothing on the internet can reach in. A helper has nothing to leak.</p>
   <ul class="checks reveal">
     <li><svg><use href="#g-check"/></svg>Open source, MIT</li>
