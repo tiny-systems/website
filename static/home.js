@@ -6,6 +6,9 @@
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const $ = (id) => document.getElementById(id);
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  // Canvas resolution: wider than the GPU's 4096px texture limit (or past
+  // ~8M pixels) Chrome drops to a software canvas and frames take 1.5s.
+  const backing = (w, h, max = 2) => Math.max(0.5, Math.min(max, devicePixelRatio || 1, 4000 / w, 4000 / h, Math.sqrt(8e6 / (w * h))));
 
   // The embedded app is laid out at 1180x720; scale it to the frame.
   const frame = $('appframe');
@@ -21,8 +24,8 @@
     const ctx = cv.getContext('2d');
     let w = 0, h = 0, motes = [];
     const size = () => {
-      const r = devicePixelRatio || 1;
       w = cv.clientWidth; h = cv.clientHeight;
+      const r = backing(w, h, 1.25); // soft motes don't need retina
       cv.width = w * r; cv.height = h * r;
       ctx.setTransform(r, 0, 0, r, 0, 0);
       motes = Array.from({ length: Math.round(w / 22) }, () => ({
@@ -60,12 +63,15 @@
     const ctx = tc.getContext('2d');
     const win = $('demo');
     let W = 0, H = 0, R = 1, segs = [], tips = [], buds = [], born = 0, depth = 7;
+    // The tree itself is painted into `layer` while it grows and then
+    // frozen; each frame only copies it and stamps the moving lights.
+    const layer = document.createElement('canvas'), bx = layer.getContext('2d');
     let seed = 11;
     const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
     function grow() {
-      R = Math.min(2, devicePixelRatio || 1);
       W = tc.clientWidth; H = tc.clientHeight;
-      tc.width = W * R; tc.height = H * R;
+      R = backing(W, H);
+      tc.width = layer.width = Math.round(W * R); tc.height = layer.height = Math.round(H * R);
       seed = 11; segs = []; tips = [];
       const base = win ? win.offsetTop + 120 : H * 0.8;
       const trunk = Math.min(H * 0.2, 190);
@@ -88,8 +94,8 @@
       // A few roots spreading under the window.
       for (const a of [0.35, 0.9, 2.25, 2.8]) branch(W / 2, base, a, 70 * scale, 3 * scale, depth - 2, -1);
       buds = tips.filter((_, k) => k % 3 === 0); // twinkle a third of the tips
-      glowDone = false;
-      born = performance.now();
+      layerDone = false;
+      born = 0; // set on the first frame, so a busy load doesn't skip the growth
     }
     const curve = (s, k) => { // point k (0..1) along a segment's curve
       const u = 1 - k;
@@ -119,12 +125,23 @@
     // Glow: the wide strokes drawn into a canvas an eighth the size and
     // scaled up, which blurs them for free. Redrawn only while growing.
     const Q = 8, glow = document.createElement('canvas'), gx = glow.getContext('2d');
-    let glowDone = false;
+    let layerDone = false;
     function paintGlow(age) {
       if (glow.width !== Math.ceil(W / Q) || glow.height !== Math.ceil(H / Q)) { glow.width = Math.ceil(W / Q); glow.height = Math.ceil(H / Q); }
       gx.setTransform(1, 0, 0, 1, 0, 0); gx.clearRect(0, 0, glow.width, glow.height);
       gx.setTransform(1 / Q, 0, 0, 1 / Q, 0, 0);
       strokes(gx, age, true, 1.6);
+    }
+    function paintLayer(age) {
+      paintGlow(age);
+      bx.setTransform(1, 0, 0, 1, 0, 0);
+      bx.clearRect(0, 0, layer.width, layer.height);
+      bx.setTransform(R, 0, 0, R, 0, 0);
+      bx.imageSmoothingQuality = 'high';
+      bx.globalAlpha = 0.4;
+      bx.drawImage(glow, 0, 0, W, H);
+      bx.globalAlpha = 1;
+      strokes(bx, age, false);
     }
     // A soft dot drawn once and stamped wherever light should be.
     const sprite = document.createElement('canvas');
@@ -146,17 +163,14 @@
     new IntersectionObserver(([e]) => { on = e.isIntersecting; if (on && !running) { running = true; requestAnimationFrame(frame); } }).observe(tc);
     function frame(now) {
       if (!on) { running = false; return; }
+      if (!born) born = now;
       const age = (now - born) / 1000;
       const done = age > depth * 0.22 + 0.5;
+      if (!layerDone) { paintLayer(done ? 99 : age); layerDone = done; }
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.clearRect(0, 0, tc.width, tc.height);
-      if (!glowDone) { paintGlow(done ? 99 : age); glowDone = done; }
+      ctx.drawImage(layer, 0, 0);
       ctx.setTransform(R, 0, 0, R, 0, 0);
-      ctx.imageSmoothingQuality = 'high';
-      ctx.globalAlpha = 0.4;
-      ctx.drawImage(glow, 0, 0, W, H);
-      ctx.globalAlpha = 1;
-      strokes(ctx, done ? 99 : age, false);
       ctx.globalCompositeOperation = 'lighter';
       // Buds: tips twinkle once grown.
       for (const i of buds) {
@@ -311,10 +325,12 @@
   const cards = [...document.querySelectorAll('.scard')];
   const nav = [...document.querySelectorAll('#stack-nav li')];
 
+  const cue = $('scrollcue');
   let ticking = false;
   function onScroll() {
     ticking = false;
     const vh = innerHeight;
+    if (cue) cue.classList.toggle('gone', scrollY > 60);
     if (grove && !reduce) {
       const r = grove.getBoundingClientRect();
       groveAt(clamp(-r.top / (r.height - vh)));
