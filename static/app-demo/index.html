@@ -5,8 +5,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Tiny Systems</title>
-  <script type="module" crossorigin src="./assets/index-BkTl5Utz.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-CfVQqqdh.css">
+  <script type="module" crossorigin src="./assets/index-_NbVHak7.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-DCio_unc.css">
 </head>
 <body>
   <div class="app" id="app">
@@ -105,6 +105,14 @@
 
   <dialog id="wizard" class="dialog wizard"><div class="wz" id="wz"></div></dialog>
   <div class="menu" id="menu" hidden></div>
+  <div class="update" id="update" role="status" hidden>
+    <span class="update-dot" aria-hidden="true"></span>
+    <span id="update-text"></span>
+    <button class="btn primary small" id="update-get">Download</button>
+    <button class="icon-btn" id="update-close" aria-label="Not now" title="Not now">
+      <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
   <div id="toast" class="toast" role="status" hidden></div>
 </body>
 </html>

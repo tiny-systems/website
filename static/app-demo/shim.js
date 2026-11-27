@@ -60,6 +60,7 @@
 
   window.go = { main: { App: {
     Version: async () => 'web demo',
+    CheckUpdate: async () => ({ available: false }),
     DemoSelect: async () => params.get('select') || '',
     Targets: async () => { await ready; return clone(state.targets); },
     Contexts: async () => [],
@@ -135,8 +136,15 @@
     CloseTerminal: async (id) => { terms.delete(id); },
 
     Notify: async () => {},
+    SetBadge: async () => {},
+    GetSettings: async () => ({ openAtLogin: false, startVMs: true, checkUpdates: true }),
+    SaveSettings: notInDemo,
+    CopyDiagnostics: notInDemo,
     SetSandbox: async () => {},
     CopyCredentials: notInDemo,
+    SignIn: notInDemo,
+    HasClaudeCLI: async () => false,
+    ClaudeSetupToken: notInDemo,
     UpgradeRuntime: notInDemo,
     StartVM: notInDemo,
     StopVM: notInDemo,

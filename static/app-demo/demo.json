@@ -121,7 +121,7 @@
         "attachable": false
       }
     ],
-    "readAt": "22:20:10",
+    "readAt": "15:26:28",
     "needsYou": 1,
     "running": 2
   },
@@ -149,12 +149,12 @@
       {
         "from": "you",
         "text": "Write the welcome email for new customers. Friendly, short, and link the getting-started guide.",
-        "at": "2026-11-26T22:08:10Z"
+        "at": "2026-11-27T15:14:28Z"
       },
       {
         "from": "helper",
         "text": "Should it come from the team or from you personally?",
-        "at": "2026-11-26T22:11:10Z",
+        "at": "2026-11-27T15:17:28Z",
         "question": "q-b1",
         "options": [
           "From the team",
@@ -165,24 +165,24 @@
       {
         "from": "you",
         "text": "Mention the free onboarding call too.",
-        "at": "2026-11-26T22:16:10Z"
+        "at": "2026-11-27T15:22:28Z"
       }
     ],
     "s-fern": [
       {
         "from": "you",
         "text": "Fix the checkout test that fails on Mondays",
-        "at": "2026-11-26T21:40:10Z"
+        "at": "2026-11-27T14:46:28Z"
       },
       {
         "from": "helper",
         "text": "Found it: the test builds a date from the local clock and assumes a weekday. On Mondays the 'previous business day' wraps to Friday and the expected total is off by one.",
-        "at": "2026-11-26T21:49:10Z"
+        "at": "2026-11-27T14:55:28Z"
       },
       {
         "from": "helper",
         "text": "The test depends on the local time zone. Should I pin it to UTC, or make the test run in every time zone?",
-        "at": "2026-11-26T22:14:10Z",
+        "at": "2026-11-27T15:20:28Z",
         "question": "q-fern",
         "options": [
           "Pin to UTC",
@@ -195,28 +195,28 @@
       {
         "from": "you",
         "text": "Updating the payment library",
-        "at": "2026-11-26T21:20:10Z"
+        "at": "2026-11-27T14:26:28Z"
       }
     ],
     "s-mint": [
       {
         "from": "you",
         "text": "Added a dark mode to the settings page",
-        "at": "2026-11-26T21:20:10Z"
+        "at": "2026-11-27T14:26:28Z"
       }
     ],
     "s-moss": [
       {
         "from": "you",
         "text": "Summarising last week's support tickets",
-        "at": "2026-11-26T21:20:10Z"
+        "at": "2026-11-27T14:26:28Z"
       }
     ],
     "s-sage": [
       {
         "from": "you",
         "text": "Translating the help pages into Spanish",
-        "at": "2026-11-26T21:20:10Z"
+        "at": "2026-11-27T14:26:28Z"
       }
     ]
   }
