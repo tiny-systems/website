@@ -157,7 +157,7 @@
       let i = tips[Math.floor(Math.random() * tips.length)];
       const path = [];
       while (i >= 0) { path.unshift(segs[i]); i = segs[i].parent; }
-      if (path[0].d === 0) pulses.push({ path, t: 0, sp: 0.9 + Math.random() * 0.6 });
+      if (path[0].d === 0) pulses.push({ path, t: 0, sp: 0.7 + Math.random() * 0.4, ph: Math.random() * 6.3 });
     }
     let on = true, running = false, last = 0, nextSpawn = 0;
     new IntersectionObserver(([e]) => { on = e.isIntersecting; if (on && !running) { running = true; requestAnimationFrame(frame); } }).observe(tc);
@@ -176,20 +176,22 @@
       for (const i of buds) {
         const s = segs[i];
         if (age < s.t0 + 0.35) continue;
-        const tw = 0.5 + 0.5 * Math.sin(now / 700 + i);
-        dot(s.x2, s.y2, 5 + tw * 4, 0.3 + tw * 0.5);
+        const tw = 0.5 + 0.5 * Math.sin(now / 2400 + i * 1.7); // slow breathing, not blinking
+        dot(s.x2, s.y2, 5 + tw * 3, 0.2 + tw * 0.4);
       }
-      // Light running out along the branches.
+      // Sap: a few soft glows rising slowly from the trunk to the tips, in
+      // gentle surges, swelling in the middle of the climb and fading out.
       if (done && !reduce) {
-        if (now > nextSpawn && pulses.length < 12) { spawn(); nextSpawn = now + 240; }
+        if (now > nextSpawn && pulses.length < 5) { spawn(); nextSpawn = now + 1200 + Math.random() * 1600; }
         const dt = Math.min(0.05, (now - last) / 1000);
         for (let j = pulses.length - 1; j >= 0; j--) {
           const p = pulses[j];
-          p.t += dt * p.sp * 3;
+          p.t += dt * p.sp * (0.55 + 0.45 * Math.sin(now / 900 + p.ph));
           const si = Math.floor(p.t);
           if (si >= p.path.length) { pulses.splice(j, 1); continue; }
           const [px, py] = curve(p.path[si], p.t - si);
-          dot(px, py, 9, 0.95);
+          const life = Math.sin(Math.PI * p.t / p.path.length);
+          dot(px, py, 6 + life * 4, 0.15 + life * 0.45);
         }
       }
       ctx.globalAlpha = 1;
