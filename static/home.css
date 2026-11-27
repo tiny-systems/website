@@ -97,7 +97,7 @@ p { margin: 0; }
 /* The window around the embedded app. The app is laid out at 1180x720
    and scaled to fit (home.js sets --s). */
 .window { position: relative; margin: 72px auto 0; max-width: 1080px; background: var(--panel); border: 1px solid var(--line-2); border-radius: 16px; overflow: hidden; text-align: left;
-  box-shadow: 0 0 0 1px #000, 0 60px 120px -40px #000, 0 -30px 120px -40px #46D87A33; }
+  box-shadow: 0 0 0 1px #000, 0 28px 56px -24px #000, 0 -30px 120px -40px #46D87A33; }
 .titlebar { height: 36px; display: flex; align-items: center; gap: 7px; padding: 0 14px; border-bottom: 1px solid var(--line); background: var(--bg); font-size: 12px; }
 .titlebar i { width: 11px; height: 11px; border-radius: 50%; background: #FF5F57; } .titlebar i + i { background: #FEBC2E; } .titlebar i + i + i { background: #28C840; }
 .titlebar span { margin-left: 12px; color: var(--text-3); }
