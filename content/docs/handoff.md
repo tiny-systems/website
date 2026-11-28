@@ -44,6 +44,7 @@ drops you back into the same conversation from any machine.
   monorepo with models in it.
 - The return leg is [`tiny pull`](/docs/commands/): it brings the
   workspace back to a new local directory, and refuses to write into one
-  that already has files in it.
+  that already has files in it. Its `.git` loses hooks and every config
+  key git would execute.
 - No local conversation to carry? [`tiny new --dir .`](/docs/first-session/)
   ships just the folder — same transfer, no transcript.
