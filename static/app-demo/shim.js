@@ -61,6 +61,8 @@
   window.go = { main: { App: {
     Version: async () => 'web demo',
     CheckUpdate: async () => ({ available: false }),
+    CheckForUpdates: async () => false,
+    Updater: async () => false,
     DemoSelect: async () => params.get('select') || '',
     Targets: async () => { await ready; return clone(state.targets); },
     Contexts: async () => [],
@@ -69,6 +71,8 @@
     Health: async () => { await ready; return clone(state.health); },
     Local: async () => ({ lima: false, vms: [], hint: 'Get the app to add gardens.' }),
     Conversation: async (t, name) => { await ready; return clone(convo(name)); },
+    ReadShown: async (t, name, file) => { await ready; const f = state.shown?.[file]; if (!f) throw new Error(`no such file: ${file}`); return clone(f); },
+    SaveShown: async () => '',
 
     Answer: async (t, q, answer) => {
       await ready;
@@ -87,7 +91,7 @@
       await ready;
       const name = names.find((n) => !row(n)) || `s-${Date.now().toString(36)}`;
       const title = (req.task || '').trim() || 'Waiting for instructions';
-      state.fleet.rows.unshift({ name, depth: 0, phase: 'starting', glyph: '◌', title, activity: '', message: '', task: req.task || '', cpu: '', mem: '', age: 'now', paused: false, command: false, attachable: false });
+      state.fleet.rows.unshift({ name, depth: 0, phase: 'starting', glyph: '◌', title, activity: '', message: '', task: req.task || '', cpu: '', mem: '', age: 'now', paused: false, command: false, attachable: false, stage: 'waiting for a machine' });
       if (req.task) convo(name).push({ from: 'you', text: req.task, at: now() });
       later(2500, () => { const r = row(name); if (r) { r.phase = 'Running'; r.attachable = true; r.activity = req.task ? 'Reading the project' : ''; } });
       if (req.task) reply(name, 'Starting now. I’ll ask if anything needs your call.', 4000);
@@ -137,7 +141,7 @@
 
     Notify: async () => {},
     SetBadge: async () => {},
-    GetSettings: async () => ({ openAtLogin: false, startVMs: true, checkUpdates: true }),
+    GetSettings: async () => ({ openAtLogin: false, startVMs: true, checkUpdates: true, autoUpdate: true }),
     SaveSettings: notInDemo,
     CopyDiagnostics: notInDemo,
     SetSandbox: async () => {},

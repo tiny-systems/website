@@ -5,8 +5,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Tiny Systems</title>
-  <script type="module" crossorigin src="./assets/index-_NbVHak7.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-DCio_unc.css">
+  <script type="module" crossorigin src="./assets/index-DiO87Q7X.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-Dxud_EaT.css">
 </head>
 <body>
   <div class="app" id="app">
@@ -97,10 +97,15 @@
       <h2 id="confirm-title"></h2>
       <p id="confirm-body" class="body"></p>
       <div class="actions">
-        <button class="btn ghost" value="cancel">Keep</button>
+        <button class="btn ghost" value="cancel" id="confirm-keep">Keep</button>
         <button class="btn danger" value="ok" id="confirm-ok">Remove</button>
       </div>
     </form>
+  </dialog>
+
+  <dialog id="viewer" class="dialog viewer">
+    <div class="viewer-bar"><span id="viewer-name"></span><button class="btn ghost" id="viewer-save">Save…</button><button class="btn ghost" id="viewer-close">Close</button></div>
+    <img id="viewer-img" alt="">
   </dialog>
 
   <dialog id="wizard" class="dialog wizard"><div class="wz" id="wz"></div></dialog>

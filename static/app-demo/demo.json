@@ -121,7 +121,7 @@
         "attachable": false
       }
     ],
-    "readAt": "15:26:28",
+    "readAt": "00:52:34",
     "needsYou": 1,
     "running": 2
   },
@@ -149,12 +149,12 @@
       {
         "from": "you",
         "text": "Write the welcome email for new customers. Friendly, short, and link the getting-started guide.",
-        "at": "2026-11-27T15:14:28Z"
+        "at": "2026-11-28T00:40:34Z"
       },
       {
         "from": "helper",
         "text": "Should it come from the team or from you personally?",
-        "at": "2026-11-27T15:17:28Z",
+        "at": "2026-11-28T00:43:34Z",
         "question": "q-b1",
         "options": [
           "From the team",
@@ -165,24 +165,30 @@
       {
         "from": "you",
         "text": "Mention the free onboarding call too.",
-        "at": "2026-11-27T15:22:28Z"
+        "at": "2026-11-28T00:48:34Z"
       }
     ],
     "s-fern": [
       {
         "from": "you",
         "text": "Fix the checkout test that fails on Mondays",
-        "at": "2026-11-27T14:46:28Z"
+        "at": "2026-11-28T00:12:34Z"
       },
       {
         "from": "helper",
         "text": "Found it: the test builds a date from the local clock and assumes a weekday. On Mondays the 'previous business day' wraps to Friday and the expected total is off by one.",
-        "at": "2026-11-27T14:55:28Z"
+        "at": "2026-11-28T00:21:34Z"
+      },
+      {
+        "from": "helper",
+        "text": "A month of runs by weekday: every Monday run fails, every other day passes.",
+        "at": "2026-11-28T00:23:34Z",
+        "file": "/workspace/notes/runs-by-weekday.png"
       },
       {
         "from": "helper",
         "text": "The test depends on the local time zone. Should I pin it to UTC, or make the test run in every time zone?",
-        "at": "2026-11-27T15:20:28Z",
+        "at": "2026-11-28T00:46:34Z",
         "question": "q-fern",
         "options": [
           "Pin to UTC",
@@ -195,29 +201,37 @@
       {
         "from": "you",
         "text": "Updating the payment library",
-        "at": "2026-11-27T14:26:28Z"
+        "at": "2026-11-27T23:52:34Z"
       }
     ],
     "s-mint": [
       {
         "from": "you",
         "text": "Added a dark mode to the settings page",
-        "at": "2026-11-27T14:26:28Z"
+        "at": "2026-11-27T23:52:34Z"
       }
     ],
     "s-moss": [
       {
         "from": "you",
         "text": "Summarising last week's support tickets",
-        "at": "2026-11-27T14:26:28Z"
+        "at": "2026-11-27T23:52:34Z"
       }
     ],
     "s-sage": [
       {
         "from": "you",
         "text": "Translating the help pages into Spanish",
-        "at": "2026-11-27T14:26:28Z"
+        "at": "2026-11-27T23:52:34Z"
       }
     ]
+  },
+  "shown": {
+    "/workspace/notes/runs-by-weekday.png": {
+      "name": "runs-by-weekday.png",
+      "type": "image/png",
+      "data": "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",
+      "size": 1715
+    }
   }
 }
