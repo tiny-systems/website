@@ -62,7 +62,8 @@ slash commands and your `.mcp.json` servers. It's tmux underneath
 | `ctrl-q [` | scrollback |
 
 `tiny shell <session>` opens a shell on the workspace without touching
-the agent — finished sessions included.
+the agent — finished sessions included. The desktop app's **Shell** tab
+does the same.
 
 ## Lifecycle
 

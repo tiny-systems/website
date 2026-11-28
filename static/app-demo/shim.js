@@ -33,6 +33,7 @@
     EventsOff(name, ...more) { for (const n of [name, ...more]) handlers.delete(n); },
     EventsEmit: emit,
     BrowserOpenURL(url) { window.open(url, '_blank', 'noopener'); },
+    OnFileDrop() {},
   };
 
   const row = (name) => state.fleet.rows.find((r) => r.name === name);
@@ -73,12 +74,24 @@
     Conversation: async (t, name) => { await ready; return clone(convo(name)); },
     ReadShown: async (t, name, file) => { await ready; const f = state.shown?.[file]; if (!f) throw new Error(`no such file: ${file}`); return clone(f); },
     SaveShown: async () => '',
+    Changes: async (t, name) => { await ready; return clone(state.changes?.[name] || { branch: 'main', files: [] }); },
+    FilePatch: async (t, name, path) => { await ready; return { text: state.patches?.[path] || '', cut: false }; },
+    Pull: notInDemo,
+    Upload: notInDemo,
+    PickUpload: notInDemo,
 
     Answer: async (t, q, answer) => {
       await ready;
       const r = row(q.session);
       if (r) { r.question = null; r.activity = `Going with: ${answer}`; }
-      for (const m of convo(q.session)) if (m.question === q.name) { m.open = false; m.answer = answer; }
+      let acted = false;
+      for (const m of convo(q.session)) {
+        if (m.question !== q.name) continue;
+        m.open = false; m.answer = answer;
+        if (m.action && answer === 'allow' && m.action.type === 'exposePort') { m.action.result = `http://localhost:${m.action.params.port}`; acted = true; }
+        else if (m.action) acted = true;
+      }
+      if (acted) { recount(); return; }
       reply(q.session, `Got it: ${answer.toLowerCase()}. I'll make the change and run the tests again.`);
       recount();
     },
@@ -135,6 +148,12 @@
           termWrite(id, ch);
         }
       }
+    },
+    OpenShell: async (t, name) => {
+      const id = `t${Math.random().toString(36).slice(2, 8)}`;
+      terms.set(id, { name, line: '', shell: true });
+      later(200, () => { termWrite(id, `${dim('A shell on the helper’s files. In the web demo nothing runs.')}\r\n`); termWrite(id, `\r\n${green('/workspace/repo $')} `); });
+      return id;
     },
     TermResize: async () => {},
     CloseTerminal: async (id) => { terms.delete(id); },

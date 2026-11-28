@@ -81,6 +81,11 @@ its files; the bare form summarizes the fleet and flags files two
 sessions are both editing, which is the collision nothing else warns you
 about.
 
+The [desktop app](https://github.com/tiny-systems/tiny-systems) reads the
+same thing in a helper's **Changes** tab: the files on the left, each
+one's diff on the right, and **Pull…** to copy the project (history and
+uncommitted work included) into a new folder, like `tiny pull`.
+
 ## Namespace settings
 
 `☰` toggles the add-ons: [registry cache](/docs/registry-cache/) (and

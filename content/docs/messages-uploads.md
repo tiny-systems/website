@@ -62,6 +62,10 @@ streams to `/workspace/uploads/` with a progress bar; the agent gets the
 path in its prompt. This works on finished sessions too — an inspection
 pod carries the copy.
 
+In the [desktop app](https://github.com/tiny-systems/tiny-systems), drop
+files on a helper's conversation or press the paper clip by the message
+box. They land in the same place, and the helper is told the same way.
+
 ## Files the agent shows you
 
 The other direction. When a picture says it better (a screenshot of

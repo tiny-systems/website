@@ -5,8 +5,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Tiny Systems</title>
-  <script type="module" crossorigin src="./assets/index-DiO87Q7X.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-Dxud_EaT.css">
+  <script type="module" crossorigin src="./assets/index-BTBBMFkP.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-C2exA4xt.css">
 </head>
 <body>
   <div class="app" id="app">
@@ -82,6 +82,13 @@
             <select name="agent"><option value="">Claude Code</option><option value="codex">Codex</option></select>
           </label>
           <label class="field">Model <input name="model" placeholder="default"></label>
+        </div>
+        <div class="row3">
+          <label class="field">CPUs <input name="cpu" placeholder="default" inputmode="decimal" autocomplete="off"></label>
+          <label class="field">Memory GB <input name="memory" placeholder="default" inputmode="decimal" autocomplete="off"></label>
+          <label class="field">Sandbox
+            <select name="sandbox"><option value="">Garden default</option><option value="gvisor">gVisor</option><option value="none">None</option></select>
+          </label>
         </div>
         <label class="field">Container image <input name="image" placeholder="default"></label>
       </details>
