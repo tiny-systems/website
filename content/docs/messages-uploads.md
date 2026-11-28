@@ -61,3 +61,33 @@ Drop a file onto the terminal (fleet screen or attached session) and it
 streams to `/workspace/uploads/` with a progress bar; the agent gets the
 path in its prompt. This works on finished sessions too — an inspection
 pod carries the copy.
+
+## Files the agent shows you
+
+The other direction. When a picture says it better (a screenshot of
+the page it fixed, a chart, a generated report), the agent saves the
+file in its workspace and calls the sidecar's `show_user` tool with the
+path and a one-line caption. Every session's house rules tell it so.
+
+Only the path is recorded, in the session's status (the last 20). The
+file stays in the pod: the sidecar can't read the agent's files, and
+nothing is copied anywhere. A client reads the file from the pod with
+your own access when you open it. The
+[desktop app](https://github.com/tiny-systems/tiny-systems) shows the
+files in the conversation, images inline. From a terminal:
+
+```
+tiny show api-fix            # what it showed, numbered oldest first
+tiny show api-fix latest     # copy it out of the pod and open it
+tiny show api-fix 2 --out ~/Desktop/login.png
+```
+
+On the fleet screen, a row that showed something wears ▣, and `v`
+opens the newest. Only images, PDFs and plain text whose bytes match
+their extension open by themselves: an agent picks the file and its
+name, so anything else (a `.command`, a page, a script) is saved and its
+path printed, never run.
+
+A cluster whose runtime predates the tool drops the record silently;
+the tool notices and tells the agent to name the path in its reply
+instead. `tiny init` upgrades it.

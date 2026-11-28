@@ -124,6 +124,7 @@ directory and fetch from it: `git fetch ./<session> <branch>`.
 | `tiny attach <session>` | join its terminal (detach: `ctrl-q d`) |
 | `tiny shell <session>` | a shell on its workspace, without disturbing the agent — finished sessions too |
 | `tiny questions` | every decision waiting on a human, with the command that answers it. `--json` emits a stable array an event source can post somewhere people look; `--all` includes idle "waiting for input" nudges, which attaching clears |
+| `tiny show <session> [n\|latest]` | the files a session showed you with `show_user` (screenshots, charts, reports). With a number or `latest` it copies one out of the pod and opens it; `--out` saves it instead, `--json` lists. Only images, PDFs and plain text open by themselves |
 | `tiny answer <question> <text>` | answer a ✳ card, and [perform its action with your credentials](/docs/gate/) |
 
 ## Talking to sessions

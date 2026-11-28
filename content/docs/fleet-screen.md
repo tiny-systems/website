@@ -47,6 +47,7 @@ Run `tiny` with no arguments:
 | `b` | broadcast to every unfinished session |
 | `n` / `o` | new session — blank / the full options form |
 | `p` | pause the selected session, or resume it if it's paused (`tiny pause` / `tiny resume`) |
+| `v` | open the newest file the session showed you (rows that showed something wear ▣; `tiny show` lists them all) |
 | `d`, then `y` | delete (two keystrokes on purpose: a session is a workspace and a transcript; `tiny rm` from a shell) |
 | `r` | refresh |
 | `q` | quit |
