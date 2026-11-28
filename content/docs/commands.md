@@ -105,15 +105,18 @@ Code only, since it reads that CLI's transcript. See
 tiny pull <session> [directory]
 ```
 
-The return leg: copies a session's working tree — committed work,
-uncommitted changes and `.git` — back to this machine, by default into
-`./<session>`. The agent wrote that `.git` (and any repository nested in
-the tree), so each one arrives defused: hooks and symlinks inside it are
-removed and its config keeps only remotes, branch tracking and the
-repository format. Anything git would run (`core.fsmonitor`, filters,
-`textconv`, includes, credential helpers, aliases) is dropped before you
-can type `git status` there. Treat the files themselves as untrusted
-code until you've read them.
+The return leg: copies a session's working tree — committed work and
+uncommitted changes — back to this machine, by default into
+`./<session>`.
+
+The session's `.git` is never copied: the agent wrote it, and git runs
+code from a repository's hooks and config (`core.fsmonitor`, filters,
+includes…). The history travels as a `git bundle` instead and is fetched
+into a fresh repository here, on the session's branch, with uncommitted
+work showing as changes and `origin` set when it's an ordinary URL. Any
+other git repository inside the tree is left out, and the summary says
+so. Without git installed locally the files come back without history.
+Treat the files themselves as untrusted code until you've read them.
 
 | flag | what |
 |---|---|
