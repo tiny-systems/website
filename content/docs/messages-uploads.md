@@ -53,7 +53,10 @@ echo "maintenance window at 02:00" | tiny broadcast
 ```
 
 Done sessions are skipped, and one failed delivery does not stop the
-rest.
+rest. The [desktop app](https://github.com/tiny-systems/tiny-systems)'s
+envelope button sends to the helpers you tick, across gardens, and a
+helper's **Send to another helper…** passes a note (and a file from its
+workspace) to one other helper.
 
 ## Uploads
 

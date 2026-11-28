@@ -18,7 +18,8 @@ Every spawn is a [Question](/docs/gate/):
 
 Your approval materialises the child's workload with your credentials;
 no service account creates anything on its own. Children render under
-their parent on the fleet screen, and a child whose parent is gone shows
+their parent on the fleet screen (and in the desktop app, where the
+parent's count folds them away), and a child whose parent is gone shows
 as a root.
 
 ## Watching the tree

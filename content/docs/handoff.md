@@ -15,7 +15,10 @@ cluster session loses the conversation. So don't:
 tiny handoff
 ```
 
-Run from the project directory. It ships three things into a new session:
+Run from the project directory. (In the
+[desktop app](https://github.com/tiny-systems/tiny-systems): New helper →
+**Folder on this Mac**, choose the folder, keep **Continue its Claude Code
+conversation** ticked.) It ships three things into a new session:
 
 1. **The working tree**, exactly as it sits — uncommitted changes and
    `.git` included. No push, no stash, no credentials involved: the tree

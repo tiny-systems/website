@@ -47,7 +47,7 @@
     later(ms, () => { convo(name).push({ from: 'helper', text, at: now() }); });
   }
 
-  const names = ['s-thyme', 's-juniper', 's-willow', 's-hazel', 's-olive', 's-poppy', 's-rowan', 's-aster'];
+  const names = ['s-thyme', 's-yarrow', 's-juniper', 's-willow', 's-hazel', 's-olive', 's-poppy', 's-rowan', 's-aster'];
 
   // Terminals: a pretend session that answers in Claude Code's voice.
   const terms = new Map();
@@ -77,6 +77,20 @@
     Changes: async (t, name) => { await ready; return clone(state.changes?.[name] || { branch: 'main', files: [] }); },
     FilePatch: async (t, name, path) => { await ready; return { text: state.patches?.[path] || '', cut: false }; },
     Pull: notInDemo,
+    SendMany: async (to, text) => {
+      await ready;
+      const delivered = [];
+      for (const r of to) { convo(r.session).push({ from: 'you', text, at: now() }); delivered.push(r.session); }
+      return { delivered };
+    },
+    Deliver: async (from, to, note, file) => {
+      await ready;
+      if (file) return notInDemo();
+      convo(to.session).push({ from: 'you', text: `From ${from.session}: ${note}`, at: now() });
+    },
+    ExportConversation: notInDemo,
+    PickFolder: notInDemo,
+    Folder: notInDemo,
     Upload: notInDemo,
     PickUpload: notInDemo,
 

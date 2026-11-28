@@ -5,8 +5,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Tiny Systems</title>
-  <script type="module" crossorigin src="./assets/index-fVjqW_eK.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-DOVYoRB3.css">
+  <script type="module" crossorigin src="./assets/index-DEMthjFL.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-DEDp7UAT.css">
 </head>
 <body>
   <div class="app" id="app">
@@ -34,6 +34,9 @@
           <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m15 15 4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
           <input id="search" placeholder="Search" autocomplete="off" spellcheck="false">
         </label>
+        <button class="icon-btn" id="many-btn" aria-label="Message several helpers" title="Message several helpers">
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 7.5 12 13l8-5.5M5 5.5h14a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-11a1 1 0 0 1 1-1Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+        </button>
         <button class="icon-btn round" id="new-btn" aria-label="New helper" title="New helper">
           <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
         </button>
@@ -72,9 +75,18 @@
       <label class="field">What should it do? <span class="opt">optional</span>
         <textarea name="task" rows="4" placeholder="Fix the flaky checkout test and open a pull request. Leave empty to start a blank session and talk to it in the terminal."></textarea>
       </label>
-      <label class="field">Project <span class="opt">optional</span>
-        <input name="repo" placeholder="https://github.com/you/your-project">
-      </label>
+      <div class="field">Project <span class="opt">optional</span>
+        <div class="seg source" id="new-source" role="group" aria-label="Where the project comes from">
+          <button type="button" data-source="git" aria-pressed="true">From git</button>
+          <button type="button" data-source="folder" aria-pressed="false">Folder on this Mac</button>
+        </div>
+        <input name="repo" id="new-repo" placeholder="https://github.com/you/your-project">
+        <div id="new-folder" class="folder-pick" hidden>
+          <div class="folder-row"><span id="new-folder-name">No folder chosen</span><button type="button" class="btn small" id="new-folder-pick">Choose…</button></div>
+          <label class="check" id="new-continue-row" hidden><input type="checkbox" id="new-continue"> <span>Continue its Claude Code conversation<br><span class="hint" id="new-continue-note"></span></span></label>
+          <p class="hint">Sent as it is, uncommitted changes included.</p>
+        </div>
+      </div>
       <details class="advanced">
         <summary>Advanced</summary>
         <div class="row2">
