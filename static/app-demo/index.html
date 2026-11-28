@@ -5,8 +5,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Tiny Systems</title>
-  <script type="module" crossorigin src="./assets/index-DRF22YT3.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-Gm_PQIL0.css">
+  <script type="module" crossorigin src="./assets/index-6V0jlMRZ.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-DKJJHSWq.css">
 </head>
 <body>
   <div class="app" id="app">
@@ -37,14 +37,14 @@
         <button class="icon-btn" id="many-btn" aria-label="Message several helpers" title="Message several helpers">
           <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 7.5 12 13l8-5.5M5 5.5h14a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-11a1 1 0 0 1 1-1Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
         </button>
-        <button class="icon-btn round" id="new-btn" aria-label="New helper" title="New helper">
-          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <button class="new-btn" id="new-btn" title="New helper">
+          <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>New
         </button>
       </div>
       <div class="filters" role="tablist" id="filters">
-        <button role="tab" data-filter="all" aria-selected="true">All</button>
+        <button role="tab" data-filter="all" aria-selected="true">All <span class="n" id="count-all"></span></button>
         <button role="tab" data-filter="ask" aria-selected="false">Needs you <span class="count" id="count-ask"></span></button>
-        <button role="tab" data-filter="grow" aria-selected="false">Working</button>
+        <button role="tab" data-filter="grow" aria-selected="false">Working <span class="n" id="count-grow"></span></button>
       </div>
       <div class="rows" id="rows"></div>
     </section>
