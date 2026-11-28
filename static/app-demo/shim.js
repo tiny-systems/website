@@ -89,6 +89,41 @@
       convo(to.session).push({ from: 'you', text: `From ${from.session}: ${note}`, at: now() });
     },
     ExportConversation: notInDemo,
+
+    // Garden settings play along in the page: the list and the sign-in
+    // change, nothing leaves it.
+    GardenSettings: async () => { await ready; return clone(state.gardenSettings); },
+    SetEgressMode: async (t, mode) => {
+      await ready;
+      const g = state.gardenSettings;
+      if (mode !== 'allowlist' && g.model.mode === 'gateway') throw new Error('the model gateway runs in the allow-list proxy: turn the gateway off first');
+      g.egress.mode = mode;
+      g.egress.hosts = mode === 'allowlist' ? (g.egress.hosts || []) : null;
+    },
+    AllowHost: async (t, host) => {
+      await ready;
+      const h = String(host).trim().toLowerCase();
+      if (!/^\.?([a-z0-9_]([a-z0-9_-]*[a-z0-9_])?\.)*[a-z0-9_]([a-z0-9_-]*[a-z0-9_])?$/.test(h)) throw new Error(`not a hostname: "${host}" (write it like github.com, or .github.com for its subdomains too)`);
+      const g = state.gardenSettings;
+      if (!g.egress.hosts.includes(h)) g.egress.hosts.push(h);
+      g.refused = g.refused.filter((r) => r.host !== h);
+    },
+    RemoveHost: async (t, host) => { await ready; const g = state.gardenSettings; g.egress.hosts = g.egress.hosts.filter((h) => h !== host); },
+    SetGateway: async (t, on) => { await ready; const m = state.gardenSettings.model; m.mode = on ? 'gateway' : 'stored'; m.kind = on ? 'oauth' : ''; },
+    SetFederation: notInDemo,
+    ClearFederation: notInDemo,
+    RemoveStoredKey: notInDemo,
+    Presets: async () => { try { return JSON.parse(localStorage.getItem('demo-presets') || '[]'); } catch { return []; } },
+    SavePreset: async (p) => {
+      if (!p.name) throw new Error('give the preset a name');
+      let list = [];
+      try { list = JSON.parse(localStorage.getItem('demo-presets') || '[]'); } catch { /* fresh */ }
+      list = list.filter((x) => x.name.toLowerCase() !== p.name.toLowerCase()).concat([p]).sort((a, b) => a.name.localeCompare(b.name));
+      try { localStorage.setItem('demo-presets', JSON.stringify(list)); } catch { throw new Error('This browser won’t keep presets.'); }
+    },
+    DeletePreset: async (name) => {
+      try { localStorage.setItem('demo-presets', JSON.stringify(JSON.parse(localStorage.getItem('demo-presets') || '[]').filter((x) => x.name !== name))); } catch { /* nothing kept */ }
+    },
     PickFolder: notInDemo,
     Folder: notInDemo,
     Upload: notInDemo,

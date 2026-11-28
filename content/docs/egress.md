@@ -124,6 +124,7 @@ know about — so they have their own command:
 tiny egress           # the current allow-list
 tiny egress denied    # hosts agents tried and were refused, most frequent first
 tiny egress allow <host>
+tiny egress remove <host>
 ```
 
 `denied` reads the proxy's log, so it shows every refusal since the proxy
@@ -132,6 +133,15 @@ appends to the list without touching kubectl; a leading dot matches
 subdomains, so `.npmjs.org` admits `registry.npmjs.org` without admitting
 `npmjs.org.evil.com`. Adding a host is idempotent and keeps whatever
 comments and order you have in the list.
+
+Hosts are checked before they go on the list: write `github.com` or
+`.github.com`, not a URL, a port or a `*` wildcard (the proxy would never
+match those). `remove` takes every line naming exactly that host.
+
+In the [desktop app](https://github.com/tiny-systems/tiny-systems), the same controls are under a garden's
+settings (the sliders button in Gardens): the mode, the list, and the
+sites turned away lately, each with an Allow button. When helpers are
+refused a site you haven't looked at yet, the Gardens view says so.
 
 An allowed host goes live in about a minute or two: kubelet syncs the
 ConfigMap into the proxy's volume on its own cycle, and the proxy re-reads

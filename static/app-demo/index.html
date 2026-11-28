@@ -5,8 +5,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Tiny Systems</title>
-  <script type="module" crossorigin src="./assets/index-DEMthjFL.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-DEDp7UAT.css">
+  <script type="module" crossorigin src="./assets/index-C-VSb2go.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-DgHH2WWD.css">
 </head>
 <body>
   <div class="app" id="app">
@@ -71,7 +71,10 @@
   <dialog id="new-dialog" class="dialog">
     <form id="new-form" method="dialog">
       <h2>New helper</h2>
-      <label class="field">Garden <select name="garden" id="new-garden"></select></label>
+      <div class="row2 tight">
+        <label class="field">Garden <select name="garden" id="new-garden"></select></label>
+        <label class="field" id="new-preset-row" hidden>Preset <select id="new-preset"></select></label>
+      </div>
       <label class="field">What should it do? <span class="opt">optional</span>
         <textarea name="task" rows="4" placeholder="Fix the flaky checkout test and open a pull request. Leave empty to start a blank session and talk to it in the terminal."></textarea>
       </label>
@@ -103,6 +106,11 @@
           </label>
         </div>
         <label class="field">Container image <input name="image" placeholder="default"></label>
+        <div class="preset-save">
+          <input id="preset-name" placeholder="Name these choices to reuse them" aria-label="Preset name" autocomplete="off" spellcheck="false" autocapitalize="off">
+          <button type="button" class="btn small" id="preset-save">Save preset</button>
+          <button type="button" class="btn small ghost" id="preset-forget" hidden>Forget</button>
+        </div>
       </details>
       <div class="actions">
         <button type="button" class="btn ghost" id="new-cancel">Cancel</button>

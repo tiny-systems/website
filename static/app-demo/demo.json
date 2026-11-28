@@ -171,7 +171,7 @@
         "attachable": false
       }
     ],
-    "readAt": "11:05:52",
+    "readAt": "14:22:40",
     "needsYou": 2,
     "running": 4
   },
@@ -199,12 +199,12 @@
       {
         "from": "you",
         "text": "Write the welcome email for new customers. Friendly, short, and link the getting-started guide.",
-        "at": "2026-11-28T10:53:52Z"
+        "at": "2026-11-28T14:10:40Z"
       },
       {
         "from": "helper",
         "text": "Should it come from the team or from you personally?",
-        "at": "2026-11-28T10:56:52Z",
+        "at": "2026-11-28T14:13:40Z",
         "question": "q-b1",
         "options": [
           "From the team",
@@ -215,30 +215,30 @@
       {
         "from": "you",
         "text": "Mention the free onboarding call too.",
-        "at": "2026-11-28T11:01:52Z"
+        "at": "2026-11-28T14:18:40Z"
       }
     ],
     "s-fern": [
       {
         "from": "you",
         "text": "Fix the checkout test that fails on Mondays",
-        "at": "2026-11-28T10:25:52Z"
+        "at": "2026-11-28T13:42:40Z"
       },
       {
         "from": "helper",
         "text": "Found it: the test builds a date from the local clock and assumes a weekday. On Mondays the 'previous business day' wraps to Friday and the expected total is off by one.",
-        "at": "2026-11-28T10:34:52Z"
+        "at": "2026-11-28T13:51:40Z"
       },
       {
         "from": "helper",
         "text": "A month of runs by weekday: every Monday run fails, every other day passes.",
-        "at": "2026-11-28T10:36:52Z",
+        "at": "2026-11-28T13:53:40Z",
         "file": "/workspace/notes/runs-by-weekday.png"
       },
       {
         "from": "helper",
         "text": "The test depends on the local time zone. Should I pin it to UTC, or make the test run in every time zone?",
-        "at": "2026-11-28T10:59:52Z",
+        "at": "2026-11-28T14:16:40Z",
         "question": "q-fern",
         "options": [
           "Pin to UTC",
@@ -251,38 +251,38 @@
       {
         "from": "you",
         "text": "Updating the payment library",
-        "at": "2026-11-28T10:05:52Z"
+        "at": "2026-11-28T13:22:40Z"
       }
     ],
     "s-mint": [
       {
         "from": "you",
         "text": "Added a dark mode to the settings page",
-        "at": "2026-11-28T10:05:52Z"
+        "at": "2026-11-28T13:22:40Z"
       }
     ],
     "s-moss": [
       {
         "from": "you",
         "text": "Summarising last week's support tickets",
-        "at": "2026-11-28T10:05:52Z"
+        "at": "2026-11-28T13:22:40Z"
       }
     ],
     "s-rue": [
       {
         "from": "you",
         "text": "Build the new pricing page from the Figma notes in docs/pricing.md",
-        "at": "2026-11-28T10:40:52Z"
+        "at": "2026-11-28T13:57:40Z"
       },
       {
         "from": "helper",
         "text": "The page is up in the dev server with all three plans and the yearly toggle.",
-        "at": "2026-11-28T11:02:52Z"
+        "at": "2026-11-28T14:19:40Z"
       },
       {
         "from": "helper",
         "text": "Can I open port 5173 so you can look at the page in your browser?",
-        "at": "2026-11-28T11:03:52Z",
+        "at": "2026-11-28T14:20:40Z",
         "question": "q-rue",
         "options": [
           "allow",
@@ -302,14 +302,14 @@
       {
         "from": "you",
         "text": "Translating the help pages into Spanish",
-        "at": "2026-11-28T10:05:52Z"
+        "at": "2026-11-28T13:22:40Z"
       }
     ],
     "s-sorrel": [
       {
         "from": "you",
         "text": "Checking every link in the welcome email",
-        "at": "2026-11-28T10:05:52Z"
+        "at": "2026-11-28T13:22:40Z"
       }
     ]
   },
@@ -397,5 +397,45 @@
     "checkout/cart.go": "diff --git a/checkout/cart.go b/checkout/cart.go\nindex 7f8e9d0..0a1b2c3 100644\n--- a/checkout/cart.go\n+++ b/checkout/cart.go\n@@ -40,7 +40,7 @@ func (c *Cart) Add(it Item) {\n\n-func (c *Cart) Total() int {\n-\tcut := previousBusinessDay()\n+func (c *Cart) Total(now time.Time) int {\n+\tcut := previousBusinessDay(now)\n \tsum := 0\n \tfor _, it := range c.items {\n",
     "checkout/clock.go": "diff --git a/checkout/clock.go b/checkout/clock.go\nindex 1a2b3c4..5d6e7f8 100644\n--- a/checkout/clock.go\n+++ b/checkout/clock.go\n@@ -3,12 +3,14 @@ package checkout\n import \"time\"\n\n-// previousBusinessDay is yesterday, skipping the weekend.\n-func previousBusinessDay() time.Time {\n-\td := time.Now().AddDate(0, 0, -1)\n-\tfor d.Weekday() == time.Saturday || d.Weekday() == time.Sunday {\n+// previousBusinessDay is the working day before now, skipping the\n+// weekend. It takes now so callers (and tests) pick the clock.\n+func previousBusinessDay(now time.Time) time.Time {\n+\td := now.AddDate(0, 0, -1)\n+\tfor d.Weekday() == time.Saturday || d.Weekday() == time.Sunday {\n \t\td = d.AddDate(0, 0, -1)\n \t}\n-\treturn d\n+\treturn d.Truncate(24 * time.Hour)\n }\n",
     "checkout/total_test.go": "diff --git a/checkout/total_test.go b/checkout/total_test.go\nindex 4e1c2a0..9b7d3f1 100644\n--- a/checkout/total_test.go\n+++ b/checkout/total_test.go\n@@ -12,9 +12,10 @@ import (\n func TestTotalIncludesPreviousBusinessDay(t *testing.T) {\n-\tnow := time.Now()\n+\t// A fixed Monday: the case that used to fail.\n+\tnow := time.Date(2026, 11, 23, 9, 0, 0, 0, time.UTC)\n \tcart := newCart(now)\n \tcart.Add(item(\"coffee\", 450))\n-\tif got, want := cart.Total(), 450; got != want {\n+\tif got, want := cart.Total(now), 450; got != want {\n \t\tt.Fatalf(\"total = %d, want %d\", got, want)\n \t}\n }\n"
+  },
+  "gardenSettings": {
+    "egress": {
+      "mode": "allowlist",
+      "enforced": "enforced by Calico",
+      "proxy": "running",
+      "hosts": [
+        "api.anthropic.com",
+        "github.com",
+        ".githubusercontent.com",
+        ".npmjs.org",
+        "pypi.org",
+        "files.pythonhosted.org"
+      ]
+    },
+    "refused": [
+      {
+        "host": "registry.yarnpkg.com",
+        "count": 6,
+        "last": "2026-11-28T14:18:40.976756Z",
+        "lookup": false
+      },
+      {
+        "host": "telemetry.example.dev",
+        "count": 2,
+        "last": "2026-11-28T13:51:40.976756Z",
+        "lookup": false
+      }
+    ],
+    "model": {
+      "mode": "gateway",
+      "kind": "oauth",
+      "federation": {
+        "rule": "",
+        "organization": "",
+        "serviceAccount": "",
+        "workspace": ""
+      },
+      "leftover": false
+    }
   }
 }

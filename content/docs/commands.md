@@ -162,6 +162,7 @@ text can drive a session — see [messages](/docs/messages-uploads/).
 | `tiny egress` | the hostname allow-list the proxy enforces |
 | `tiny egress denied [--tail N]` | hosts agents tried to reach and were refused, most frequent first — read from the last N proxy log lines (default 2000) |
 | `tiny egress allow <host>` | widen the list; a leading dot matches subdomains. Live in a minute or two |
+| `tiny egress remove <host>` | take a host off the list; comments on other lines stay. Refused again in a minute or two |
 
 Needs the [hostname allow-list](/docs/egress/) add-on on.
 

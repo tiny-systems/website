@@ -118,5 +118,11 @@ its signing keys, which is rare, usually at an upgrade.
   call fails and Claude Code carries on; we haven't seen it change
   anything a session does.
 
+In the [desktop app](https://github.com/tiny-systems/tiny-systems), a garden's settings show where its key is
+kept and switch either mode: **Keep the key out of helpers** is the
+gateway (it needs "Sites you allow" on), **Use federation…** takes the
+rule and organization IDs. With federation on, the app offers to remove a
+key still stored in the garden.
+
 Both modes are switched per namespace. The rest of the confinement is the
 same: see the [threat model](/docs/threat-model/).
