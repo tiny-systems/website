@@ -171,7 +171,7 @@
         "attachable": false
       }
     ],
-    "readAt": "14:22:40",
+    "readAt": "19:43:15",
     "needsYou": 2,
     "running": 4
   },
@@ -199,12 +199,12 @@
       {
         "from": "you",
         "text": "Write the welcome email for new customers. Friendly, short, and link the getting-started guide.",
-        "at": "2026-11-28T14:10:40Z"
+        "at": "2026-11-28T19:31:15Z"
       },
       {
         "from": "helper",
         "text": "Should it come from the team or from you personally?",
-        "at": "2026-11-28T14:13:40Z",
+        "at": "2026-11-28T19:34:15Z",
         "question": "q-b1",
         "options": [
           "From the team",
@@ -215,30 +215,30 @@
       {
         "from": "you",
         "text": "Mention the free onboarding call too.",
-        "at": "2026-11-28T14:18:40Z"
+        "at": "2026-11-28T19:39:15Z"
       }
     ],
     "s-fern": [
       {
         "from": "you",
         "text": "Fix the checkout test that fails on Mondays",
-        "at": "2026-11-28T13:42:40Z"
+        "at": "2026-11-28T19:03:15Z"
       },
       {
         "from": "helper",
         "text": "Found it: the test builds a date from the local clock and assumes a weekday. On Mondays the 'previous business day' wraps to Friday and the expected total is off by one.",
-        "at": "2026-11-28T13:51:40Z"
+        "at": "2026-11-28T19:12:15Z"
       },
       {
         "from": "helper",
         "text": "A month of runs by weekday: every Monday run fails, every other day passes.",
-        "at": "2026-11-28T13:53:40Z",
+        "at": "2026-11-28T19:14:15Z",
         "file": "/workspace/notes/runs-by-weekday.png"
       },
       {
         "from": "helper",
         "text": "The test depends on the local time zone. Should I pin it to UTC, or make the test run in every time zone?",
-        "at": "2026-11-28T14:16:40Z",
+        "at": "2026-11-28T19:37:15Z",
         "question": "q-fern",
         "options": [
           "Pin to UTC",
@@ -251,38 +251,38 @@
       {
         "from": "you",
         "text": "Updating the payment library",
-        "at": "2026-11-28T13:22:40Z"
+        "at": "2026-11-28T18:43:15Z"
       }
     ],
     "s-mint": [
       {
         "from": "you",
         "text": "Added a dark mode to the settings page",
-        "at": "2026-11-28T13:22:40Z"
+        "at": "2026-11-28T18:43:15Z"
       }
     ],
     "s-moss": [
       {
         "from": "you",
         "text": "Summarising last week's support tickets",
-        "at": "2026-11-28T13:22:40Z"
+        "at": "2026-11-28T18:43:15Z"
       }
     ],
     "s-rue": [
       {
         "from": "you",
         "text": "Build the new pricing page from the Figma notes in docs/pricing.md",
-        "at": "2026-11-28T13:57:40Z"
+        "at": "2026-11-28T19:18:15Z"
       },
       {
         "from": "helper",
         "text": "The page is up in the dev server with all three plans and the yearly toggle.",
-        "at": "2026-11-28T14:19:40Z"
+        "at": "2026-11-28T19:40:15Z"
       },
       {
         "from": "helper",
         "text": "Can I open port 5173 so you can look at the page in your browser?",
-        "at": "2026-11-28T14:20:40Z",
+        "at": "2026-11-28T19:41:15Z",
         "question": "q-rue",
         "options": [
           "allow",
@@ -302,14 +302,14 @@
       {
         "from": "you",
         "text": "Translating the help pages into Spanish",
-        "at": "2026-11-28T13:22:40Z"
+        "at": "2026-11-28T18:43:15Z"
       }
     ],
     "s-sorrel": [
       {
         "from": "you",
         "text": "Checking every link in the welcome email",
-        "at": "2026-11-28T13:22:40Z"
+        "at": "2026-11-28T18:43:15Z"
       }
     ]
   },
@@ -416,13 +416,13 @@
       {
         "host": "registry.yarnpkg.com",
         "count": 6,
-        "last": "2026-11-28T14:18:40.976756Z",
+        "last": "2026-11-28T19:39:15.74051Z",
         "lookup": false
       },
       {
         "host": "telemetry.example.dev",
         "count": 2,
-        "last": "2026-11-28T13:51:40.976756Z",
+        "last": "2026-11-28T19:12:15.74051Z",
         "lookup": false
       }
     ],
