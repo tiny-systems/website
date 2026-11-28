@@ -150,6 +150,7 @@ func run() error {
 		{"apphome", "index.html", nil},
 		{"notfound", "404.html", nil},
 		{"privacy", "privacy/index.html", nil},
+		{"appsecurity", "security/index.html", nil},
 	}
 	devJobs := []job{
 		{"home", "index.html", nil},
@@ -201,7 +202,7 @@ func run() error {
 	if err := build(appSite, "dist/io", appJobs, map[string]bool{}); err != nil {
 		return err
 	}
-	if err := writeSitemap("dist/io", "/", "/privacy/"); err != nil {
+	if err := writeSitemap("dist/io", "/", "/security/", "/privacy/"); err != nil {
 		return err
 	}
 	// The web build of the app is only shown on the app's site.

@@ -47,3 +47,13 @@ credentials](/docs/gate/), which is what makes the audit log name a
 person. A browser button would act as the web server's own account
 instead, quietly breaking that. So the page prints
 `tiny answer q-xxxxx <answer>` and lets you run it.
+
+## Answering from a phone
+
+To answer from a phone without breaking that, the
+[Tiny Systems app](https://tinysystems.io/) serves its own phone page
+from your Mac (Settings → Answer helpers from your phone). Answers there
+run with the Mac's kubeconfig, the same as `tiny answer`, so the person
+still performs the action. It is reachable only over this Mac's
+Tailscale addresses unless you also allow Wi-Fi, pairs by QR code, and
+signs every request with a key that never crosses the network.
