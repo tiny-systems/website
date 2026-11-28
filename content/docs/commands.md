@@ -107,8 +107,9 @@ tiny pull <session> [directory]
 
 The return leg: copies a session's working tree — committed work,
 uncommitted changes and `.git` — back to this machine, by default into
-`./<session>`. The agent wrote that `.git`, so it arrives defused: hooks
-are removed and its config keeps only remotes, branch tracking and the
+`./<session>`. The agent wrote that `.git` (and any repository nested in
+the tree), so each one arrives defused: hooks and symlinks inside it are
+removed and its config keeps only remotes, branch tracking and the
 repository format. Anything git would run (`core.fsmonitor`, filters,
 `textconv`, includes, credential helpers, aliases) is dropped before you
 can type `git status` there. Treat the files themselves as untrusted
