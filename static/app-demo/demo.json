@@ -154,7 +154,7 @@
         "attachable": false
       }
     ],
-    "readAt": "10:09:27",
+    "readAt": "10:15:28",
     "needsYou": 2,
     "running": 3
   },
@@ -182,12 +182,12 @@
       {
         "from": "you",
         "text": "Write the welcome email for new customers. Friendly, short, and link the getting-started guide.",
-        "at": "2026-11-28T09:57:27Z"
+        "at": "2026-11-28T10:03:28Z"
       },
       {
         "from": "helper",
         "text": "Should it come from the team or from you personally?",
-        "at": "2026-11-28T10:00:27Z",
+        "at": "2026-11-28T10:06:28Z",
         "question": "q-b1",
         "options": [
           "From the team",
@@ -198,30 +198,30 @@
       {
         "from": "you",
         "text": "Mention the free onboarding call too.",
-        "at": "2026-11-28T10:05:27Z"
+        "at": "2026-11-28T10:11:28Z"
       }
     ],
     "s-fern": [
       {
         "from": "you",
         "text": "Fix the checkout test that fails on Mondays",
-        "at": "2026-11-28T09:29:27Z"
+        "at": "2026-11-28T09:35:28Z"
       },
       {
         "from": "helper",
         "text": "Found it: the test builds a date from the local clock and assumes a weekday. On Mondays the 'previous business day' wraps to Friday and the expected total is off by one.",
-        "at": "2026-11-28T09:38:27Z"
+        "at": "2026-11-28T09:44:28Z"
       },
       {
         "from": "helper",
         "text": "A month of runs by weekday: every Monday run fails, every other day passes.",
-        "at": "2026-11-28T09:40:27Z",
+        "at": "2026-11-28T09:46:28Z",
         "file": "/workspace/notes/runs-by-weekday.png"
       },
       {
         "from": "helper",
         "text": "The test depends on the local time zone. Should I pin it to UTC, or make the test run in every time zone?",
-        "at": "2026-11-28T10:03:27Z",
+        "at": "2026-11-28T10:09:28Z",
         "question": "q-fern",
         "options": [
           "Pin to UTC",
@@ -234,38 +234,38 @@
       {
         "from": "you",
         "text": "Updating the payment library",
-        "at": "2026-11-28T09:09:27Z"
+        "at": "2026-11-28T09:15:28Z"
       }
     ],
     "s-mint": [
       {
         "from": "you",
         "text": "Added a dark mode to the settings page",
-        "at": "2026-11-28T09:09:27Z"
+        "at": "2026-11-28T09:15:28Z"
       }
     ],
     "s-moss": [
       {
         "from": "you",
         "text": "Summarising last week's support tickets",
-        "at": "2026-11-28T09:09:27Z"
+        "at": "2026-11-28T09:15:28Z"
       }
     ],
     "s-rue": [
       {
         "from": "you",
         "text": "Build the new pricing page from the Figma notes in docs/pricing.md",
-        "at": "2026-11-28T09:44:27Z"
+        "at": "2026-11-28T09:50:28Z"
       },
       {
         "from": "helper",
         "text": "The page is up in the dev server with all three plans and the yearly toggle.",
-        "at": "2026-11-28T10:06:27Z"
+        "at": "2026-11-28T10:12:28Z"
       },
       {
         "from": "helper",
         "text": "Can I open port 5173 so you can look at the page in your browser?",
-        "at": "2026-11-28T10:07:27Z",
+        "at": "2026-11-28T10:13:28Z",
         "question": "q-rue",
         "options": [
           "allow",
@@ -285,7 +285,7 @@
       {
         "from": "you",
         "text": "Translating the help pages into Spanish",
-        "at": "2026-11-28T09:09:27Z"
+        "at": "2026-11-28T09:15:28Z"
       }
     ]
   },
